@@ -1,5 +1,10 @@
 {
   "dependencies": {
-    "antd": "^5.20.4"
+    "antd": "^5.20.4",
+    "axios": "^1.7.7",
+    "jwt-decode": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.2"
   }
 }
