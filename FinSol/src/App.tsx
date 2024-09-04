@@ -1,51 +1,37 @@
-import React, { useState } from 'react';
-import { Layout } from 'antd';
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Sidebar from './components/Sidebar';
-import AppHeader from './components/Header';
-import RegisterMemberForm from './views/RegisterMemberForm';
-import NotFound from './views/NotFound';
+import LoginForm from './views/UserLogin';
+import ProtectedRoute from './components/ProtectedRoute';
+import AppLayout from './components/AppLayout';
+import PageNotFound from './views/PageNotFound';
+import Dashboard from './views/Dashboard';
+import MemberRegistrationForm from './views/RegisterMemberForm';
 import MemberList from './views/MemberList';
 
-const { Content, Footer } = Layout;
 
 const App: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(false);
 
   return (
     <Router>
-      <Layout style={{ minHeight: '100vh' }}>
-        <Sidebar collapsed={collapsed} onCollapse={(collapsed) => setCollapsed(collapsed)} />
-        <Layout>
-          <AppHeader collapsed={collapsed} onCollapse={() => setCollapsed(!collapsed)} />
-          <Content
-            style={{
-              margin: '24px 16px',
-              padding: 24,
-              minHeight: 280,
-              background: 'white',
-              borderRadius: '8px',
-            }}
-          >
-            <Routes>
-            <Route path="/member-list" element={<MemberList />} />
-              <Route path="/member-registration" element={<RegisterMemberForm />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Content>
-          <Footer
-            style={{
-              textAlign: 'center',
-              padding: '10px 50px',
-              background: 'white',
-              borderTop: '1px solid #e8e8e8',
-            }}
-          >
-            Footer Content
-          </Footer>
-        </Layout>
-      </Layout>
+
+      <Routes>
+        <Route path="/login" element={<LoginForm />} />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <AppLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path='/dashboard' element={<Dashboard />} />
+          <Route path='/member-list' element={<MemberList />} />
+          <Route path='/member-registration' element={<MemberRegistrationForm />} />
+          <Route path="*" element={<PageNotFound />} />
+        </Route>
+      </Routes>
     </Router>
+
   );
 };
 
