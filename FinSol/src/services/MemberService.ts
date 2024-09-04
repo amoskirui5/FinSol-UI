@@ -59,5 +59,9 @@ class MemberService {
 
 }
 
+export const logout = () => {
+    localStorage.removeItem(ACCESS_TOKEN);
+    window.location.reload();
+  };
 
 export default MemberService;

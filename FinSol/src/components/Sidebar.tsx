@@ -5,7 +5,7 @@ import {
     OrderedListOutlined, UsergroupAddOutlined, UserAddOutlined, FileAddOutlined,
     CheckCircleOutlined, WalletOutlined, StockOutlined, ApartmentOutlined,
     TeamOutlined, IdcardOutlined, FileSearchOutlined, MailOutlined, DatabaseOutlined,
-    SafetyOutlined, LockOutlined, MobileOutlined
+    SafetyOutlined, LockOutlined, MobileOutlined,DashboardOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 const { Sider } = Layout;
@@ -69,6 +69,9 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
             case '4-4-3':
                 navigate('/audit-trail');
                 break;
+            case '5':
+                navigate('/dashboard');
+                break;
             default:
                 break;
         }
@@ -98,9 +101,15 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
                     overflowX: 'hidden',
                 }}
                 mode="inline"
-                defaultSelectedKeys={['1']}
+                defaultSelectedKeys={['5']}
                 onClick={handleMenuClick}
                 items={[
+                    {
+                        key: '5',
+                        icon: <DashboardOutlined />,
+                        label: 'Dashboard'
+                        
+                    },
                     {
                         key: '1',
                         icon: <UserOutlined />,
