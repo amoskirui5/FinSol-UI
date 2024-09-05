@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { alertService } from '../services/alertService';
 import { getToken } from '../helpers/tokenService';
-import { logout } from '../services/MemberService';
+import { logout } from '../services/memberService';
 import { getDomainName } from '../helpers/getDomainName';
 
 const { showAlert } = alertService();

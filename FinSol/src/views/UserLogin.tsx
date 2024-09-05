@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Card, Typography, message } from 'antd';
+import { Form, Input, Button, Card, Typography, message, Checkbox } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { userLogin } from '../services/userService';
@@ -11,14 +11,14 @@ const LoginPage: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    const onFinish = async (values: { username: string; password: string }) => {
+    const onFinish = async (values: { username: string; password: string; remember: boolean }) => {
         setLoading(true);
         try {
             const authParams: AuthParams = {
                 email: values.username,
                 password: values.password,
+                remember: values.remember
             };
-
             const response = await userLogin(authParams);
             if (response) {
                 navigate('/dashboard');
@@ -36,7 +36,7 @@ const LoginPage: React.FC = () => {
             justifyContent: 'center',
             alignItems: 'center',
             height: '100vh',
-            background: '#f0f2f5', 
+            background: '#f0f2f5',
         }}>
             <Card style={{ width: 400, padding: '20px' }}>
                 <Title level={2} style={{ textAlign: 'center' }}>
@@ -44,7 +44,7 @@ const LoginPage: React.FC = () => {
                 </Title>
                 <Form
                     name="login"
-                    initialValues={{ remember: true }}
+                    initialValues={{ remember: false }}
                     onFinish={onFinish}
                     layout="vertical"
                 >
@@ -59,6 +59,9 @@ const LoginPage: React.FC = () => {
                         rules={[{ required: true, message: 'Please input your password!' }]}
                     >
                         <Input.Password prefix={<LockOutlined />} placeholder="Password" />
+                    </Form.Item>
+                    <Form.Item name="remember" valuePropName="checked" >
+                        <Checkbox>Remember me</Checkbox>
                     </Form.Item>
                     <Form.Item>
                         <Button
