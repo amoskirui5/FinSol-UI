@@ -1,63 +1,49 @@
-import { LOGIN } from "../constants/apiEndpoints";
+import { ALL_SYSTEM_USERS, LOGIN, REGISTER_SYSTEM_USER } from "../constants/apiEndpoints";
 import { getUser, setToken } from "../helpers/tokenService";
 import axiosInstance from "../interceptors/globaInterceptor";
-import { LoginResponse } from "../types/authTypes";
-
-interface AuthParams {
-    email: string,
-    password: string
-}
-
-interface RegisterUserParams {
-    firstName: string,
-    otherName: string,
-    email: string
-}
-interface ResetPasswordParams {
-    newPassword: string;
-    confirmNewPassword: string;
-    userId: string;
-    token?: string;
-    currentPassword?: string;
-}
-interface ForgotPasswordParams {
-    email: string;
-}
+import { AuthParams, LoginResponse, RegisterSystemUser } from "../types/authTypes";
+import { UsersListResponse } from "../types/systemUsersTypes";
 
 
 export const userLogin = async (params: AuthParams): Promise<LoginResponse | undefined> => {
-    try {
-        const { email, password } = params;
-        const credentials = { email, password };
+    const { email, password, remember } = params;
+    const credentials = { email, password };
 
-        const response = await axiosInstance.post<LoginResponse>(LOGIN, credentials);
+    const response = await axiosInstance.post<LoginResponse>(LOGIN, credentials);
 
-        if (response.data) {
-            if (response.data.token) {
-                setToken(response.data.token);
-            }
-
-            const user = getUser();
-
-            if (!user) {
-                return undefined;
-            }
-
-            let route: string;
-
-            if (response.data.isFirstTimeLogin && !user.aud?.includes('SUPER_ADMIN')) {
-                route = '/reset-password';
-            } else {
-                route = '/';
-            }
-
-            return {
-                ...response.data,
-                route,
-            };
+    if (response.data) {
+        if (response.data.token) {
+            setToken(response.data.token, remember);
         }
-    } catch (error) {
-        console.error('Login failed:', error);
-        return undefined;
+
+        const user = getUser();
+
+        if (!user) {
+            return undefined;
+        }
+
+        let route: string;
+
+        if (response.data.isFirstTimeLogin && !user.roles?.includes('SUPER_ADMIN')) {
+            route = '/reset-password';
+        } else {
+            route = '/';
+        }
+
+        return {
+            ...response.data,
+            route,
+        };
     }
 };
+
+export const getAllSystemUsers = async (): Promise<UsersListResponse> => {
+    const response = await axiosInstance.get<UsersListResponse>(ALL_SYSTEM_USERS);
+    return { ...response.data };
+
+};
+
+export const registerSystemUser = async (params: RegisterSystemUser): Promise<void> => {
+    await axiosInstance.post(REGISTER_SYSTEM_USER, params);
+
+}
