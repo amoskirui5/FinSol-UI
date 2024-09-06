@@ -1,6 +1,6 @@
 import React from 'react';
 import { Table, Button, Space } from 'antd';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface Member {
   key: string;
@@ -27,6 +27,8 @@ const data: Member[] = [
 ];
 
 const MemberList: React.FC = () => {
+  const navigate = useNavigate();
+
   const columns = [
     {
       title: 'Name',
@@ -76,14 +78,27 @@ const MemberList: React.FC = () => {
     },
   ];
 
-  return (
+const handleRegisterMember=async()=>{
+  navigate('/member-registration');
+}
+
+return (
+  <div>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+      <p style={{ margin: 0 }}>Member List</p>
+      <Button type="primary" onClick={handleRegisterMember}>Register Member</Button>
+    </div>
+
     <Table
       columns={columns}
       dataSource={data}
       pagination={{ pageSize: 10 }}
       rowKey="key"
     />
-  );
+  </div>
+);
+
+
 };
 
 export default MemberList;

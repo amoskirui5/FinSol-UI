@@ -10,11 +10,12 @@ import MemberList from './views/MemberList';
 import UserList from './views/UserList';
 import { User } from './types/systemUsersTypes';
 import ChangePasswordForm, { ChangePasswordFormValues } from './views/ChangePasswordForm';
+import { UUID } from 'crypto';
 
 const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
 
-  const handleStatusChange = (id: number, isActive: boolean) => {
+  const handleStatusChange = (id: UUID, isActive: boolean) => {
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
         user.id === id ? { ...user, isActive } : user
