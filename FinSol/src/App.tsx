@@ -11,6 +11,8 @@ import UserList from './views/UserList';
 import { User } from './types/systemUsersTypes';
 import ChangePasswordForm, { ChangePasswordFormValues } from './views/ChangePasswordForm';
 import { UUID } from 'crypto';
+import AccountClassTableListPage from './views/AccountClassTableListPage';
+import AccountClassRegistration from './views/AccountClassRegistration';
 
 const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -43,6 +45,8 @@ const App: React.FC = () => {
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/member-list' element={<MemberList />} />
           <Route path='/member-registration' element={<MemberRegistrationForm />} />
+          <Route path='/account-class' element={<AccountClassTableListPage />} />
+          <Route path='/register-account-class' element={<AccountClassRegistration />} />
           <Route path='/change-password' element={<ChangePasswordForm onSubmit={handlePasswordChange} />} />
           <Route
           path="/user-accounts"

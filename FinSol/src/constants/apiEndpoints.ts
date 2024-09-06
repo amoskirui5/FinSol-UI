@@ -6,3 +6,5 @@ export const LOGIN=`${import.meta.env.VITE_API_BASE_URL}api/user/userlogin`;
 export const ALL_SYSTEM_USERS=`${import.meta.env.VITE_API_BASE_URL}api/User/allusers`
 export const ALL_SYSTEM_ROLES=`${import.meta.env.VITE_API_BASE_URL}api/Roles/GetActiveRoles`
 export const REGISTER_SYSTEM_USER=`${import.meta.env.VITE_API_BASE_URL}api/User/UserRegistration`
+export const REGISTER_ACCOUNT_CLASS=`${import.meta.env.VITE_API_BASE_URL}api/Accounts/addaccountclass`
+export const GET_ACCOUNT_CLASS=`${import.meta.env.VITE_API_BASE_URL}api/Accounts/listaccountclasses`
