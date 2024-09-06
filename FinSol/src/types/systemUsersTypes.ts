@@ -33,5 +33,5 @@ export interface UsersListResponse {
 
 export interface UserListProps {
   users: User[];
-  onStatusChange: (id: number, isActive: boolean) => void;
+  onStatusChange: (id: UUID, isActive: boolean) => void;
 }
