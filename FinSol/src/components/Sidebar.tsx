@@ -5,7 +5,7 @@ import {
     OrderedListOutlined, UsergroupAddOutlined, UserAddOutlined, FileAddOutlined,
     CheckCircleOutlined, WalletOutlined, StockOutlined, ApartmentOutlined,
     TeamOutlined, IdcardOutlined, FileSearchOutlined, MailOutlined, DatabaseOutlined,
-    SafetyOutlined, LockOutlined, MobileOutlined,DashboardOutlined
+    SafetyOutlined, LockOutlined, MobileOutlined,DashboardOutlined,AccountBookOutlined,BookOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 const { Sider } = Layout;
@@ -68,6 +68,8 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
                 break;
             case '4-4-3':
                 navigate('/audit-trail');
+            case '4-5-1':
+                navigate('/account-class');
                 break;
             case '5':
                 navigate('/dashboard');
@@ -175,6 +177,15 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
                                     { key: '4-4-3', icon: <AuditOutlined />, label: 'Audit Trail' },
                                 ],
                             },
+                            {
+                                key: '4-5',
+                                icon: <AccountBookOutlined />,
+                                label: 'Accounts',
+                                children: [
+                                    { key: '4-5-1', icon: <WalletOutlined />, label: 'Account Class' },
+                                    { key: '4-5-2', icon: <BookOutlined />, label: 'Charts Of Accounts' },
+                                ],
+                            }
                         ],
                     },
                 ]}
