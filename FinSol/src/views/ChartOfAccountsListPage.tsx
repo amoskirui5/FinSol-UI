@@ -1,36 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Space, Typography, Popconfirm } from 'antd';
-import { AccountClass } from '../types/accountingTypes';
-import { deleteAccountClass, getAccountClass } from '../services/chartOfAccountsService';
-import { useNavigate } from 'react-router-dom';
-import { UUID } from 'crypto';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { ChartOfAccount } from '../types/accountingTypes';
+import { deleteChartOfAccounts, getChartOfAccounts } from '../services/chartOfAccountsService';
+import { UUID } from 'crypto';
 
 const { Title } = Typography;
 
-const AccountClassTableListPage: React.FC = () => {
 
-    const [data, setData] = useState<AccountClass[]>([]);
+const ChartOfAccountsListPage: React.FC = () => {
+    const [data, setData] = useState<ChartOfAccount[]>([]);
     const navigate = useNavigate();
 
-    const fetchAccountClasses = async () => {
-        var results = await getAccountClass();
+    const getChartOfAccount = async () => {
+        var results = await getChartOfAccounts();
         if (results.success) {
             setData(results.data);
-        }
-    };
 
+        }
+    }
     useEffect(() => {
-        fetchAccountClasses();
+        getChartOfAccount();
     }, []);
 
     const handleEdit = (id: UUID) => {
-        navigate(`/account-class/edit/${id}`);
+        navigate(`/edit/${id}`);
     };
 
     const handleDelete = async (id: UUID) => {
-        const response = await deleteAccountClass(id);
-        console.log(response);
+        var response = await deleteChartOfAccounts(id);
 
         if (response.success) {
             setData(prevData => prevData.filter(item => item.id !== id));
@@ -38,9 +38,19 @@ const AccountClassTableListPage: React.FC = () => {
     };
 
     const columns = [
+
+        {
+            title: 'Account Code',
+            dataIndex: 'accountCode',
+            key: 'accountCode',
+        }, {
+            title: 'Account Name',
+            dataIndex: 'accountName',
+            key: 'AccountName',
+        },
         {
             title: 'Class Name',
-            dataIndex: 'name',
+            dataIndex: 'className',
             key: 'ClassName',
         },
         {
@@ -51,7 +61,7 @@ const AccountClassTableListPage: React.FC = () => {
         {
             title: 'Actions',
             key: 'actions',
-            render: (_: object, record: AccountClass) => (
+            render: (_: object, record: ChartOfAccount) => (
                 <Space size="middle">
                     <Button
                         icon={<EditOutlined />}
@@ -77,10 +87,15 @@ const AccountClassTableListPage: React.FC = () => {
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <Title level={5}>Chart of Accounts</Title>
+                <Button
+                    type="primary"
+                    style={{ marginBottom: 16 }}
+                    onClick={() => navigate('/chart-of-accounts/register')}
 
-                <Title level={5}>Account Classes</Title>
-                <Button type="primary" style={{ marginBottom: 16 }} onClick={() => navigate('/register-account-class')}>
-                    Add New Account Class
+                >
+
+                    Add New Account
                 </Button>
             </div>
 
@@ -93,4 +108,4 @@ const AccountClassTableListPage: React.FC = () => {
     );
 };
 
-export default AccountClassTableListPage;
+export default ChartOfAccountsListPage;

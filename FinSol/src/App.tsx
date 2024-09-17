@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LoginForm from './views/UserLogin';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -13,6 +13,8 @@ import ChangePasswordForm, { ChangePasswordFormValues } from './views/ChangePass
 import { UUID } from 'crypto';
 import AccountClassTableListPage from './views/AccountClassTableListPage';
 import AccountClassRegistration from './views/AccountClassRegistration';
+import ChartOfAccountsListPage from './views/ChartOfAccountsListPage';
+import ChartOfAccountsRegistrationForm from './views/ChartOfAccountsRegistrationForm';
 
 const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -42,21 +44,26 @@ const App: React.FC = () => {
             </ProtectedRoute>
           }
         >
+          <Route index  element={<Dashboard />} />
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/member-list' element={<MemberList />} />
           <Route path='/member-registration' element={<MemberRegistrationForm />} />
           <Route path='/account-class' element={<AccountClassTableListPage />} />
           <Route path='/register-account-class' element={<AccountClassRegistration />} />
           <Route path='/change-password' element={<ChangePasswordForm onSubmit={handlePasswordChange} />} />
+          <Route path="/chart-of-accounts" element={<ChartOfAccountsListPage />} />
+          <Route path="/chart-of-accounts/register" element={<ChartOfAccountsRegistrationForm />} />
+          <Route path="/edit/:id" element={<ChartOfAccountsRegistrationForm />} /> 
+          <Route path="/account-class/edit/:id" element={<AccountClassRegistration />} /> 
           <Route
-          path="/user-accounts"
-          element={
-            <UserList
-              users={users}
-              onStatusChange={handleStatusChange}
-            />
-          }
-        />
+            path="/user-accounts"
+            element={
+              <UserList
+                users={users}
+                onStatusChange={handleStatusChange}
+              />
+            }
+          />
           <Route path="*" element={<PageNotFound />} />
         </Route>
       </Routes>

@@ -68,13 +68,21 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
                 break;
             case '4-4-3':
                 navigate('/audit-trail');
+                break;
             case '4-5-1':
                 navigate('/account-class');
                 break;
+            case '4-5-2':
+                navigate('/chart-of-accounts');
+                break;
+                case '4-6-1':
+                    navigate('/loan-settings');
+                    break;
             case '5':
                 navigate('/dashboard');
                 break;
             default:
+                navigate('/dashboard');
                 break;
         }
     };
@@ -184,6 +192,14 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
                                 children: [
                                     { key: '4-5-1', icon: <WalletOutlined />, label: 'Account Class' },
                                     { key: '4-5-2', icon: <BookOutlined />, label: 'Charts Of Accounts' },
+                                ],
+                            },
+                            {
+                                key: '4-6',
+                                icon: <AccountBookOutlined />,
+                                label: 'Loan',
+                                children: [
+                                    { key: '4-6-1', icon: <WalletOutlined />, label: 'Loan Settings' },
                                 ],
                             }
                         ],

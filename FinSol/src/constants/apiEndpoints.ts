@@ -6,5 +6,14 @@ export const LOGIN=`${import.meta.env.VITE_API_BASE_URL}api/user/userlogin`;
 export const ALL_SYSTEM_USERS=`${import.meta.env.VITE_API_BASE_URL}api/User/allusers`
 export const ALL_SYSTEM_ROLES=`${import.meta.env.VITE_API_BASE_URL}api/Roles/GetActiveRoles`
 export const REGISTER_SYSTEM_USER=`${import.meta.env.VITE_API_BASE_URL}api/User/UserRegistration`
-export const REGISTER_ACCOUNT_CLASS=`${import.meta.env.VITE_API_BASE_URL}api/Accounts/addaccountclass`
-export const GET_ACCOUNT_CLASS=`${import.meta.env.VITE_API_BASE_URL}api/Accounts/listaccountclasses`
+export const REGISTER_ACCOUNT_CLASS=`${import.meta.env.VITE_API_BASE_URL}api/ChartsOfAccounts/addaccountclass`
+export const GET_ACCOUNT_CLASS=`${import.meta.env.VITE_API_BASE_URL}api/ChartsOfAccounts/listaccountclasses`
+export const REGISTER_CHARTS_OF_ACCOUNT=`${import.meta.env.VITE_API_BASE_URL}api/ChartsOfAccounts/addchartsofaccount`
+export const EDIT_CHARTS_OF_ACCOUNT=`${import.meta.env.VITE_API_BASE_URL}api/ChartsOfAccounts/editchartsofaccount`
+export const EDIT_ACCOUNT_CLASS=`${import.meta.env.VITE_API_BASE_URL}api/ChartsOfAccounts/editaccountclass`
+export const GET_CHART_OF_ACCOUNT=`${import.meta.env.VITE_API_BASE_URL}api/ChartsOfAccounts/listchartsofaccount`
+export const GET_CHART_OF_ACCOUNT_BY_ID=`${import.meta.env.VITE_API_BASE_URL}api/ChartsOfAccounts/chartofaccount`
+export const GET_ACCOUNT_CLASS_BY_ID=`${import.meta.env.VITE_API_BASE_URL}api/ChartsOfAccounts/accountclass`
+export const DELETE_CHART_OF_ACCOUNT=`${import.meta.env.VITE_API_BASE_URL}api/ChartsOfAccounts/deletechartofaccount`
+export const DELETE_ACCOUNT_ClASS=`${import.meta.env.VITE_API_BASE_URL}api/ChartsOfAccounts/deleteaccountclass`
+
