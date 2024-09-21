@@ -15,6 +15,10 @@ import AccountClassTableListPage from './views/AccountClassTableListPage';
 import AccountClassRegistration from './views/AccountClassRegistration';
 import ChartOfAccountsListPage from './views/ChartOfAccountsListPage';
 import ChartOfAccountsRegistrationForm from './views/ChartOfAccountsRegistrationForm';
+import LoanTypeForm from './views/LoanTypeForm';
+import { createLoanType, editLoanType } from './services/loanTypeService';
+import LoanTypesPage from './views/LoanTypesPage';
+import LoanTypeDetailsPage from './views/LoanTypeDetailsPage';
 
 const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -53,8 +57,12 @@ const App: React.FC = () => {
           <Route path='/change-password' element={<ChangePasswordForm onSubmit={handlePasswordChange} />} />
           <Route path="/chart-of-accounts" element={<ChartOfAccountsListPage />} />
           <Route path="/chart-of-accounts/register" element={<ChartOfAccountsRegistrationForm />} />
+          <Route path="/loan-type/register" element={<LoanTypeForm/>} />
+          <Route path="/loan-type/edit/:id" element={<LoanTypeForm />} />
           <Route path="/edit/:id" element={<ChartOfAccountsRegistrationForm />} /> 
           <Route path="/account-class/edit/:id" element={<AccountClassRegistration />} /> 
+          <Route path="/loan-types/details/:id" element={<LoanTypeDetailsPage />} /> 
+          <Route path='/loan-types' element={<LoanTypesPage/>}/>
           <Route
             path="/user-accounts"
             element={
