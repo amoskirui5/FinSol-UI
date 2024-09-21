@@ -17,3 +17,9 @@ export const GET_ACCOUNT_CLASS_BY_ID=`${import.meta.env.VITE_API_BASE_URL}api/Ch
 export const DELETE_CHART_OF_ACCOUNT=`${import.meta.env.VITE_API_BASE_URL}api/ChartsOfAccounts/deletechartofaccount`
 export const DELETE_ACCOUNT_ClASS=`${import.meta.env.VITE_API_BASE_URL}api/ChartsOfAccounts/deleteaccountclass`
 
+//Loans
+export const REGISTER_LOAN_TYPE=`${import.meta.env.VITE_API_BASE_URL}api/loantypes/createLoanType`
+export const FETCH_LOAN_TYPES=`${import.meta.env.VITE_API_BASE_URL}api/loantypes`
+export const FETCH_LOAN_TYPE_BY_ID=`${import.meta.env.VITE_API_BASE_URL}api/loantypes`
+export const EDIT_LOAN_TYPE=`${import.meta.env.VITE_API_BASE_URL}api/loantypes/update`
+export const DELETE_LOAN_TYPE=`${import.meta.env.VITE_API_BASE_URL}api/loantypes/delete`

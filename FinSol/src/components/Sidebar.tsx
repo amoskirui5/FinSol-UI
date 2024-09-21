@@ -76,7 +76,7 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
                 navigate('/chart-of-accounts');
                 break;
                 case '4-6-1':
-                    navigate('/loan-settings');
+                    navigate('loan-types');
                     break;
             case '5':
                 navigate('/dashboard');
