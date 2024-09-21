@@ -3,9 +3,9 @@ import { Form, Input, InputNumber, Button, Select, Switch, Row, Col } from 'antd
 import { getChartOfAccounts } from '../services/chartOfAccountsService';
 import { ChartOfAccount } from '../types/accountingTypes';
 import { InterestRateMethodOptions, InterestRateTypeOptions } from '../enums/enums';
-import { LoanType, LoanTypeCreationRequestDTO } from '../types/loanTypeTypes';
+import { LoanTypeCreationRequestDTO } from '../types/loanTypeTypes';
 import { createLoanType, editLoanType, fetchLoanTypeById } from '../services/loanTypeService';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const { Option } = Select;
 
@@ -13,24 +13,8 @@ const LoanTypeForm: React.FC = () => {
     const [form] = Form.useForm();
     const [chartsOfAccount, setChartsOfAccount] = useState<ChartOfAccount[]>([]);
     const { id } = useParams<{ id: string }>();
-    const [formData, setFormData] = useState<LoanType>({
-        loanName: "",
-        chartOfAccountId: "21-121-121-12-12-121",
-        gracePeriodInMonths: 0,
-        maxRepayPeriodInMonths: 0,
-        membershipDurationRequirementInMonths: 0,
-        isGuarantorRequired: false,
-        interestRate: 0,
-        interestRateMethod: "",
-        interestRateType: "",
-        isCollateralRequired: false,
-        latePaymentFee: 0,
-        maximumLoanAmount: 0,
-        minimumLoanAmount: 0,
-        processingFee: 0,
-        chartOfAccountName: "",
-        loanTypeId: "21-121-121-12-12-121",
-    });
+    const navigate = useNavigate();
+
     useEffect(() => {
         const fetchChartsOfAccounts = async () => {
             const results = await getChartOfAccounts();
@@ -46,7 +30,6 @@ const LoanTypeForm: React.FC = () => {
             const response = await fetchLoanTypeById(id);
             if (response.success) {
                 const loanTypeData = response.data;
-                setFormData(loanTypeData);
 
                 form.setFieldsValue({
                     loanName: loanTypeData.loanName,
@@ -80,6 +63,8 @@ const LoanTypeForm: React.FC = () => {
             await createLoanType(values);
 
         }
+
+        navigate('/loan-types');
         form.resetFields();
     };
 

@@ -65,6 +65,7 @@ const ChartOfAccountsRegistrationForm: React.FC = () => {
                 await registerChartOfAccount(requestDTO);
 
             }
+            handleBack();
         } catch (error) {
             setLoading(false);
         } finally {

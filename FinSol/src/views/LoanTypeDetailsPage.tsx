@@ -4,6 +4,7 @@ import { Descriptions, Card, Spin } from 'antd';
 import { fetchLoanTypeById } from '../services/loanTypeService';
 import { LoanType } from '../types/loanTypeTypes';
 import { formatCurrency } from '../Utility/formatCurrency';
+import { getInterestRateTypeName } from '../helpers/enumConversion';
 
 const LoanTypeDetailsPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -46,7 +47,7 @@ const LoanTypeDetailsPage: React.FC = () => {
                 <Descriptions.Item label="Loan Name">{loanType?.loanName}</Descriptions.Item>
                 <Descriptions.Item label="Account Name">{loanType?.chartOfAccountName}</Descriptions.Item>
                 <Descriptions.Item label="Interest Rate">{loanType?.interestRate}%</Descriptions.Item>
-                <Descriptions.Item label="Interest Rate Type">{loanType?.interestRateType}</Descriptions.Item>
+                <Descriptions.Item label="Interest Rate Type">{getInterestRateTypeName(loanType?.interestRateType)}</Descriptions.Item>
                 <Descriptions.Item label="Interest Rate Method">{loanType?.interestRateMethod}</Descriptions.Item>
                 <Descriptions.Item label="Processing Fee">{loanType?.processingFee}</Descriptions.Item>
                 <Descriptions.Item label="Max Repayment Period">{loanType?.maxRepayPeriodInMonths} months</Descriptions.Item>
