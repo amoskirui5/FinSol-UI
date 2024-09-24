@@ -1,7 +1,4 @@
-export const REGISTER_MEMBER = `${import.meta.env.VITE_API_BASE_URL}api/members/createMember`;
-export const GET_MEMBER_BY_ID = `${import.meta.env.VITE_API_BASE_URL}api/members/getmemberbyid`;
-export const GET_ALL_MEMBERS= `${import.meta.env.VITE_API_BASE_URL}api/members/getallmembers`;
-export const UPDATE_MEMBER_DETAILS= `${import.meta.env.VITE_API_BASE_URL}api/members/updatemember`;
+
 export const LOGIN=`${import.meta.env.VITE_API_BASE_URL}api/user/userlogin`;
 export const ALL_SYSTEM_USERS=`${import.meta.env.VITE_API_BASE_URL}api/User/allusers`
 export const ALL_SYSTEM_ROLES=`${import.meta.env.VITE_API_BASE_URL}api/Roles/GetActiveRoles`
@@ -23,3 +20,10 @@ export const FETCH_LOAN_TYPES=`${import.meta.env.VITE_API_BASE_URL}api/loantypes
 export const FETCH_LOAN_TYPE_BY_ID=`${import.meta.env.VITE_API_BASE_URL}api/loantypes`
 export const EDIT_LOAN_TYPE=`${import.meta.env.VITE_API_BASE_URL}api/loantypes/update`
 export const DELETE_LOAN_TYPE=`${import.meta.env.VITE_API_BASE_URL}api/loantypes/delete`
+
+//Member
+export const REGISTER_MEMBER = `${import.meta.env.VITE_API_BASE_URL}api/members/REGISTER`;
+export const GET_MEMBER_BY_ID = `${import.meta.env.VITE_API_BASE_URL}api/members`;
+export const GET_ALL_MEMBERS= `${import.meta.env.VITE_API_BASE_URL}api/members/getallmembers`;
+export const GET_ALL_MEMBERS_BY_JOIN_DATE= `${import.meta.env.VITE_API_BASE_URL}api/members/by-join-date`;
+export const UPDATE_MEMBER_DETAILS= `${import.meta.env.VITE_API_BASE_URL}api/members/UPDATE`;
