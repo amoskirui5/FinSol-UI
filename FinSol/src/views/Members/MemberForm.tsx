@@ -1,19 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, DatePicker, message, Col, Row } from 'antd';
 import { CreateMemberRegistrationRequestDTO } from '../../types/Member/MemberRegistrationRequestDTO';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getMemberById, registerMember, updateMember } from '../../services/memberService';
+import moment from 'moment';
 
 interface MemberFormProps {
     isUpdate?: boolean;
 }
+import dayjs, { Dayjs } from 'dayjs';
 
 const MemberForm: React.FC<MemberFormProps> = ({ isUpdate = false }) => {
     const [form] = Form.useForm();
     const { id } = useParams();
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+   
+    const disableFutureDates = (current:Dayjs) => {
+        return current && current > dayjs().endOf('day');
+      };
+    
+      const disablePastDates = (current:Dayjs) => {
+        return current && current.isAfter(dayjs().subtract(18, 'years'));
+      };
 
-    // If this is an update, load the member data
     useEffect(() => {
         if (isUpdate && id) {
             const fetchMember = async () => {
@@ -42,6 +52,9 @@ const MemberForm: React.FC<MemberFormProps> = ({ isUpdate = false }) => {
             } else {
                 await registerMember(values);
             }
+
+            navigate('/members-list');
+
             form.resetFields();
         } catch (error) {
             message.error('An error occurred');
@@ -152,7 +165,9 @@ const MemberForm: React.FC<MemberFormProps> = ({ isUpdate = false }) => {
                         name="dateOfBirth"
                         label="Date of Birth"
                     >
-                        <DatePicker placeholder="Select Date of Birth" />
+                        <DatePicker placeholder="Select Date of Birth"
+                            disabledDate={disablePastDates}
+ />
                     </Form.Item>
                 </Col>
 
@@ -162,7 +177,10 @@ const MemberForm: React.FC<MemberFormProps> = ({ isUpdate = false }) => {
                         label="Date Joined"
                         rules={[{ required: true, message: 'Please select the date joined' }]}
                     >
-                        <DatePicker placeholder="Select Date Joined" />
+                        <DatePicker placeholder="Select Date Joined"
+                            disabledDate={disableFutureDates}
+                        
+                        />
                     </Form.Item>
                 </Col>
 

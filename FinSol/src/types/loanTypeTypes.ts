@@ -1,7 +1,6 @@
 
 import { UUID } from "crypto";
 
-// }
 export interface LoanType {
     loanTypeId: UUID;
     loanName: string;

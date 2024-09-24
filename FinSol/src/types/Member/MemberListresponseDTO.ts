@@ -15,3 +15,15 @@ export interface MemberListDto {
     dateJoined: Date; 
   }
   
+  export interface PaginatedMemberListResponse {
+    data: {
+        items: MemberListDto[]; 
+        totalRecords: number;
+        pageNumber: number;
+        pageSize: number;
+        totalPages: number;
+    };
+    success: boolean;
+    message: string;
+    errors: string[];
+}

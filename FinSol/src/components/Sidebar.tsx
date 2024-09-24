@@ -16,13 +16,13 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
     const handleMenuClick = (e: { key: string }) => {
         switch (e.key) {
             case '1-1':
-                navigate('/member-list');
+                navigate('/members-list');
                 break;
             case '1-2':
                 navigate('/next-of-kin');
                 break;
             case '1-3':
-                navigate('/member-registration');
+                navigate('/members/register');
                 break;
             case '2-1':
                 navigate('/loan-applications');

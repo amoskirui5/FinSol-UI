@@ -6,7 +6,7 @@ import AppLayout from './components/AppLayout';
 import PageNotFound from './views/PageNotFound';
 import Dashboard from './views/Dashboard';
 import MemberRegistrationForm from './views/RegisterMemberForm';
-import MemberList from './views/MemberList';
+import MemberList from './views/Members/MemberList';
 import UserList from './views/UserList';
 import { User } from './types/systemUsersTypes';
 import ChangePasswordForm, { ChangePasswordFormValues } from './views/ChangePasswordForm';
@@ -51,7 +51,7 @@ const App: React.FC = () => {
         >
           <Route index element={<Dashboard />} />
           <Route path='/dashboard' element={<Dashboard />} />
-          <Route path='/member-list' element={<MemberList />} />
+          <Route path='/members-list' element={<MemberList />} />
           <Route path='/member-registration' element={<MemberRegistrationForm />} />
           <Route path='/account-class' element={<AccountClassTableListPage />} />
           <Route path='/register-account-class' element={<AccountClassRegistration />} />
