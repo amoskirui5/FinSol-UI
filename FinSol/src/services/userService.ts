@@ -1,4 +1,5 @@
 import { ALL_SYSTEM_USERS, LOGIN, REGISTER_SYSTEM_USER } from "../constants/apiEndpoints";
+import { ACCESS_TOKEN } from "../constants/applicationNames";
 import { getUser, setToken } from "../helpers/tokenService";
 import axiosInstance from "../interceptors/globaInterceptor";
 import { AuthParams, LoginResponse, RegisterSystemUser } from "../types/authTypes";
@@ -47,3 +48,8 @@ export const registerSystemUser = async (params: RegisterSystemUser): Promise<vo
     await axiosInstance.post(REGISTER_SYSTEM_USER, params);
 
 }
+
+export const logout = () => {
+    localStorage.removeItem(ACCESS_TOKEN);
+    window.location.reload();
+  };

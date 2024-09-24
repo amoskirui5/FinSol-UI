@@ -16,9 +16,10 @@ import AccountClassRegistration from './views/AccountClassRegistration';
 import ChartOfAccountsListPage from './views/ChartOfAccountsListPage';
 import ChartOfAccountsRegistrationForm from './views/ChartOfAccountsRegistrationForm';
 import LoanTypeForm from './views/LoanTypeForm';
-import { createLoanType, editLoanType } from './services/loanTypeService';
 import LoanTypesPage from './views/LoanTypesPage';
 import LoanTypeDetailsPage from './views/LoanTypeDetailsPage';
+import MemberForm from './views/Members/MemberForm';
+import { registerMember, updateMember } from './services/memberService';
 
 const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -48,7 +49,7 @@ const App: React.FC = () => {
             </ProtectedRoute>
           }
         >
-          <Route index  element={<Dashboard />} />
+          <Route index element={<Dashboard />} />
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/member-list' element={<MemberList />} />
           <Route path='/member-registration' element={<MemberRegistrationForm />} />
@@ -57,12 +58,16 @@ const App: React.FC = () => {
           <Route path='/change-password' element={<ChangePasswordForm onSubmit={handlePasswordChange} />} />
           <Route path="/chart-of-accounts" element={<ChartOfAccountsListPage />} />
           <Route path="/chart-of-accounts/register" element={<ChartOfAccountsRegistrationForm />} />
-          <Route path="/loan-type/register" element={<LoanTypeForm/>} />
+          <Route path="/loan-type/register" element={<LoanTypeForm />} />
           <Route path="/loan-type/edit/:id" element={<LoanTypeForm />} />
-          <Route path="/edit/:id" element={<ChartOfAccountsRegistrationForm />} /> 
-          <Route path="/account-class/edit/:id" element={<AccountClassRegistration />} /> 
-          <Route path="/loan-types/details/:id" element={<LoanTypeDetailsPage />} /> 
-          <Route path='/loan-types' element={<LoanTypesPage/>}/>
+          <Route path="/edit/:id" element={<ChartOfAccountsRegistrationForm />} />
+          <Route path="/account-class/edit/:id" element={<AccountClassRegistration />} />
+          <Route path="/loan-types/details/:id" element={<LoanTypeDetailsPage />} />
+          <Route path='/loan-types' element={<LoanTypesPage />} />
+          <Route path="/members/register" element={<MemberForm isUpdate={false}/>} />
+          <Route path="/members/edit/:id" element={<MemberForm  isUpdate={true} />} />
+
+
           <Route
             path="/user-accounts"
             element={
