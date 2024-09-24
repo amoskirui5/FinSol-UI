@@ -4,4 +4,6 @@
     pageSize: number;
     searchTerm?: string;
     searchField?: string;
+    sortBy?: string;
+    sortDescending?:boolean
 }

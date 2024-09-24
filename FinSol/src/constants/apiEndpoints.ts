@@ -24,6 +24,6 @@ export const DELETE_LOAN_TYPE=`${import.meta.env.VITE_API_BASE_URL}api/loantypes
 //Member
 export const REGISTER_MEMBER = `${import.meta.env.VITE_API_BASE_URL}api/members/REGISTER`;
 export const GET_MEMBER_BY_ID = `${import.meta.env.VITE_API_BASE_URL}api/members`;
-export const GET_ALL_MEMBERS= `${import.meta.env.VITE_API_BASE_URL}api/members/getallmembers`;
+export const GET_ALL_MEMBERS= `${import.meta.env.VITE_API_BASE_URL}api/members`;
 export const GET_ALL_MEMBERS_BY_JOIN_DATE= `${import.meta.env.VITE_API_BASE_URL}api/members/by-join-date`;
 export const UPDATE_MEMBER_DETAILS= `${import.meta.env.VITE_API_BASE_URL}api/members/UPDATE`;
