@@ -12,6 +12,7 @@ import {
 import { formatDate } from '../../helpers/dateFormater';
 import { MemberListDto } from '../../types/Member/memberTypes';
 import { fetchAllMembers } from '../../services/memberService';
+import { maskData } from '../../Utility/maskBioData';
 
 
 const MemberList: React.FC = () => {
@@ -63,16 +64,21 @@ const MemberList: React.FC = () => {
       title: 'Email',
       dataIndex: 'email',
       key: 'email',
+      render: (email: string) => maskData(email, 'email')
     },
     {
       title: 'Phone Number',
       dataIndex: 'phoneNumber',
       key: 'phoneNumber',
+      render: (phone: string) => maskData(phone, 'phone')
+
     },
     {
       title: 'National Id',
       dataIndex: 'nationalID',
       key: 'nationalID',
+      render: (nationalID: string) => maskData(nationalID, 'nationalID')
+
     },
     {
       title: 'Date Joined',
