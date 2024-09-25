@@ -32,9 +32,10 @@ const MemberForm: React.FC<MemberFormProps> = ({ isUpdate = false }) => {
                         
                         form.setFieldsValue({
                             ...member,
-                            dateOfBirth: member?.dateOfBirth,
-                            dateJoined: member.dateJoined,
+                            dateOfBirth: member?.dateOfBirth ? dayjs(member.dateOfBirth) : null,
+                            dateJoined: member.dateJoined ? dayjs(member.dateJoined) : null,
                         });
+                        
                     }
                 } catch (error) {
                     message.error('Failed to load member data');
