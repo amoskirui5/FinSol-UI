@@ -1,4 +1,4 @@
-import { GET_ALL_MEMBERS, GET_MEMBER_BY_ID, REGISTER_MEMBER } from "../constants/apiEndpoints";
+import { GET_ALL_MEMBERS, GET_MEMBER_BY_ID, REGISTER_MEMBER, UPDATE_MEMBER_DETAILS } from "../constants/apiEndpoints";
 import axiosInstance from "../interceptors/globaInterceptor";
 import { BaseResponseDTO } from "../types/BaseResponseDTO";
 import { UUID } from "crypto";
@@ -11,7 +11,7 @@ export const registerMember = async (member: CreateMemberRegistrationRequestDTO)
 }
 
 export const updateMember = async (id:UUID,member: CreateMemberRegistrationRequestDTO): Promise<BaseResponseDTO> => {
-  const response = await axiosInstance.put(REGISTER_MEMBER+`/${id}`, member);
+  const response = await axiosInstance.put(UPDATE_MEMBER_DETAILS+`/${id}`, member);
   return response.data;
 }
 

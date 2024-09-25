@@ -23,7 +23,8 @@ export interface MemberFormProps {
 
 export interface MemberListDto {
     memberId: string; 
-    memberName: string;
+    firstName: string;
+    otherName: string;
     memberNumber: string;
     email: string;
     phoneNumber: string;

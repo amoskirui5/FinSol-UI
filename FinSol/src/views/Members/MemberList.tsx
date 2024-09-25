@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Space, Tooltip } from 'antd';
-import { Link, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 import { PaginationOptions } from '../../types/paginationTypes';
 
-import {EditOutlined,
-StopOutlined,
-UserAddOutlined,
-EyeOutlined,
-} from '@ant-design/icons'; 
+import {
+  EditOutlined,
+  StopOutlined,
+  UserAddOutlined,
+  EyeOutlined,
+} from '@ant-design/icons';
 import { formatDate } from '../../helpers/dateFormater';
 import { MemberListDto } from '../../types/Member/memberTypes';
 import { fetchAllMembers } from '../../services/memberService';
@@ -21,17 +22,17 @@ const MemberList: React.FC = () => {
   const [pageSize, setPageSize] = useState<number>(10);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [searchField, setSearchField] = useState<string>('');
-  const [sortingType,SetSortingType]=useState<boolean>(false);
+  const [sortingType, SetSortingType] = useState<boolean>(false);
   const options: PaginationOptions = {
     pageNumber,
     pageSize,
     searchTerm,
     searchField,
-    sortDescending:sortingType
+    sortDescending: sortingType
   };
   useEffect(() => {
     fetchAllMembersAPI();
-  }, [pageNumber, pageSize, searchTerm, searchField,sortingType]);
+  }, [pageNumber, pageSize, searchTerm, searchField, sortingType]);
 
   const fetchAllMembersAPI = async () => {
     const response = await fetchAllMembers(options);
@@ -43,7 +44,7 @@ const MemberList: React.FC = () => {
 
   };
 
-const data=memberData;
+  const data = memberData;
 
   const columns = [
     {
@@ -53,9 +54,11 @@ const data=memberData;
     },
     {
       title: 'Name',
-      dataIndex: 'memberName',
+      dataIndex: ['firstName', 'otherName'],
       key: 'name',
+      render: (_: object, record: MemberListDto) => `${record.firstName} ${record.otherName}`,
     },
+
     {
       title: 'Email',
       dataIndex: 'email',
@@ -75,9 +78,9 @@ const data=memberData;
       title: 'Date Joined',
       dataIndex: 'dateJoined',
       key: 'dateJoined',
-      render:(value:string)=>formatDate(value)
+      render: (value: string) => formatDate(value)
     },
-    
+
     {
       title: 'Action',
       key: 'action',
@@ -104,21 +107,21 @@ const data=memberData;
     navigate('/members/register');
   }
 
-const viewDetails = (id: string) => {
-  navigate(`/members/details/${id}`); 
+  const viewDetails = (id: string) => {
+    navigate(`/members/details/${id}`);
 
 
-};
+  };
 
-const editMember = (id: string) => {
-  navigate(`/members/edit/${id}`);
-};
+  const editMember = (id: string) => {
+    navigate(`/members/edit/${id}`);
+  };
 
-const deactivateMember = (memberId: string) => {
-};
+  const deactivateMember = (memberId: string) => {
+  };
 
-const addNextOfKin = (memberId: string) => {
-};
+  const addNextOfKin = (memberId: string) => {
+  };
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
@@ -131,7 +134,7 @@ const addNextOfKin = (memberId: string) => {
         dataSource={data}
         pagination={{ pageSize: pageSize }}
         rowKey="memberNumber"
-        scroll={{ x: 1000 }} 
+        scroll={{ x: 1000 }}
       />
     </div>
   );

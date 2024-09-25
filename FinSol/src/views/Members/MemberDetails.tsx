@@ -50,7 +50,7 @@ const MemberDetails: React.FC = () => {
         <Card>
             <Title level={3}>Member Details</Title>
             <Descriptions bordered layout="vertical">
-                <Descriptions.Item label="Member Name">{member.memberName}</Descriptions.Item>
+                <Descriptions.Item label="Member Name">{member.firstName+' '+ member.otherName}</Descriptions.Item>
                 <Descriptions.Item label="Member Number">{member.memberNumber}</Descriptions.Item>
                 <Descriptions.Item label="Email">{member.email}</Descriptions.Item>
                 <Descriptions.Item label="Phone Number">{member.phoneNumber}</Descriptions.Item>
