@@ -19,7 +19,7 @@ import LoanTypeForm from './views/LoanTypeForm';
 import LoanTypesPage from './views/LoanTypesPage';
 import LoanTypeDetailsPage from './views/LoanTypeDetailsPage';
 import MemberForm from './views/Members/MemberForm';
-import { registerMember, updateMember } from './services/memberService';
+import MemberDetails from './views/Members/MemberDetails';
 
 const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -66,6 +66,7 @@ const App: React.FC = () => {
           <Route path='/loan-types' element={<LoanTypesPage />} />
           <Route path="/members/register" element={<MemberForm isUpdate={false}/>} />
           <Route path="/members/edit/:id" element={<MemberForm  isUpdate={true} />} />
+          <Route path="/members/details/:id" element={<MemberDetails />} />
 
 
           <Route

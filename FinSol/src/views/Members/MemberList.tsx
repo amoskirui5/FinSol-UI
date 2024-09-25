@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Space, Tooltip } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
-import { MemberListDto } from '../../types/Member/MemberListresponseDTO';
-import { fetchAllMembers } from '../../services/memberService';
 import { PaginationOptions } from '../../types/paginationTypes';
 
 import {EditOutlined,
@@ -11,6 +9,8 @@ UserAddOutlined,
 EyeOutlined,
 } from '@ant-design/icons'; 
 import { formatDate } from '../../helpers/dateFormater';
+import { MemberListDto } from '../../types/Member/memberTypes';
+import { fetchAllMembers } from '../../services/memberService';
 
 
 const MemberList: React.FC = () => {
@@ -104,10 +104,14 @@ const data=memberData;
     navigate('/members/register');
   }
 
-const viewDetails = (memberId: string) => {
+const viewDetails = (id: string) => {
+  navigate(`/members/details/${id}`); 
+
+
 };
 
-const editMember = (memberId: string) => {
+const editMember = (id: string) => {
+  navigate(`/members/edit/${id}`);
 };
 
 const deactivateMember = (memberId: string) => {

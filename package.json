@@ -6,7 +6,8 @@
     "chart.js": "^4.4.4",
     "dayjs": "^1.11.13",
     "jwt-decode": "^4.0.0",
-    "react-chartjs-2": "^5.2.0"
+    "react-chartjs-2": "^5.2.0",
+    "react-router-dom": "^6.26.2"
   },
   "devDependencies": {
     "@types/node": "^22.5.2"

@@ -41,3 +41,17 @@ export const InterestRateMethodOptions = [
     { label: 'Amortized', value: InterestRateMethod.Amortized },
     { label: 'Compound', value: InterestRateMethod.Compound },
 ];
+
+export enum Gender
+{
+    Unknown = 0,
+    Male = 1,
+    Female = 2,
+}
+
+export const GenderOptions=
+[
+    {label:"Unknown",value: Gender.Unknown},
+    {label:"Male",value: Gender.Male},
+    {label:"Female",value: Gender.Female},
+]
