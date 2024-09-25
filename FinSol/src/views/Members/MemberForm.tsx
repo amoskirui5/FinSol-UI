@@ -1,39 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, DatePicker, message, Col, Row } from 'antd';
-import { CreateMemberRegistrationRequestDTO } from '../../types/Member/MemberRegistrationRequestDTO';
+import { Form, Input, Button, DatePicker, message, Col, Row, Select } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getMemberById, registerMember, updateMember } from '../../services/memberService';
-import moment from 'moment';
+import { fetchMemberById, registerMember, updateMember } from '../../services/memberService';
 
-interface MemberFormProps {
-    isUpdate?: boolean;
-}
+
 import dayjs, { Dayjs } from 'dayjs';
+import { GenderOptions } from '../../enums/enums';
+import { CreateMemberRegistrationRequestDTO, MemberFormProps } from '../../types/Member/memberTypes';
 
 const MemberForm: React.FC<MemberFormProps> = ({ isUpdate = false }) => {
     const [form] = Form.useForm();
     const { id } = useParams();
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-   
-    const disableFutureDates = (current:Dayjs) => {
+
+    const disableFutureDates = (current: Dayjs) => {
         return current && current > dayjs().endOf('day');
-      };
-    
-      const disablePastDates = (current:Dayjs) => {
+    };
+
+    const disablePastDates = (current: Dayjs) => {
         return current && current.isAfter(dayjs().subtract(18, 'years'));
-      };
+    };
 
     useEffect(() => {
         if (isUpdate && id) {
             const fetchMember = async () => {
                 try {
-                    const member = await getMemberById(id); // Fetch member data
-                    form.setFieldsValue({
-                        ...member,
-                        dateOfBirth: member.dateOfBirth ,
-                        dateJoined: member.dateJoined ,
-                    });
+                    const response = await fetchMemberById(id); // Fetch member data
+                    if (response.success) {
+                        const member = response.data
+                        
+                        form.setFieldsValue({
+                            ...member,
+                            dateOfBirth: member?.dateOfBirth,
+                            dateJoined: member.dateJoined,
+                        });
+                    }
                 } catch (error) {
                     message.error('Failed to load member data');
                 }
@@ -91,14 +93,19 @@ const MemberForm: React.FC<MemberFormProps> = ({ isUpdate = false }) => {
                         <Input placeholder="Other Name" />
                     </Form.Item>
                 </Col>
-
                 <Col span={12}>
                     <Form.Item
-                        name="memberNumber"
-                        label="Member Number"
-                        rules={[{ required: true, message: 'Please enter your member number' }]}
+                        name="gender"
+                        label="Gender"
+                        rules={[{ required: true, message: 'Please select your gender' }]}
                     >
-                        <Input placeholder="Member Number" />
+                        <Select placeholder="Select Gender">
+                            {GenderOptions.map(option => (
+                                <Select.Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Select.Option>
+                            ))}
+                        </Select>
                     </Form.Item>
                 </Col>
 
@@ -167,7 +174,7 @@ const MemberForm: React.FC<MemberFormProps> = ({ isUpdate = false }) => {
                     >
                         <DatePicker placeholder="Select Date of Birth"
                             disabledDate={disablePastDates}
- />
+                        />
                     </Form.Item>
                 </Col>
 
@@ -179,7 +186,7 @@ const MemberForm: React.FC<MemberFormProps> = ({ isUpdate = false }) => {
                     >
                         <DatePicker placeholder="Select Date Joined"
                             disabledDate={disableFutureDates}
-                        
+
                         />
                     </Form.Item>
                 </Col>
