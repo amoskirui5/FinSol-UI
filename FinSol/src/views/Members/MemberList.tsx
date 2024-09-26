@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Space, Tooltip } from 'antd';
-import {  useNavigate } from 'react-router-dom';
+import { Table, Button, Space, Tooltip, Select, Input } from 'antd';
+import { useNavigate } from 'react-router-dom';
 import { PaginationOptions } from '../../types/paginationTypes';
 
 import {
@@ -11,9 +11,12 @@ import {
 } from '@ant-design/icons';
 import { formatDate } from '../../helpers/dateFormater';
 import { MemberListDto } from '../../types/Member/memberTypes';
-import { fetchAllMembers } from '../../services/memberService';
 import { maskData } from '../../Utility/maskBioData';
+import { memberSearchFieldOptions } from '../../constants/searchFieldOptions';
+import { fetchAllMembers } from '../../services/memberService';
 
+const { Search } = Input;
+const { Option } = Select;
 
 const MemberList: React.FC = () => {
   const navigate = useNavigate();
@@ -31,6 +34,7 @@ const MemberList: React.FC = () => {
     searchField,
     sortDescending: sortingType
   };
+
   useEffect(() => {
     fetchAllMembersAPI();
   }, [pageNumber, pageSize, searchTerm, searchField, sortingType]);
@@ -123,16 +127,50 @@ const MemberList: React.FC = () => {
     navigate(`/members/edit/${id}`);
   };
 
-  const deactivateMember = (memberId: string) => {
+  const deactivateMember = (id: string) => {
   };
 
-  const addNextOfKin = (memberId: string) => {
+  const addNextOfKin = (id: string) => {
   };
+
+
+  const handleSearch = async (value: string) => {
+    setSearchTerm(value);
+    
+  };
+
+  const handleSearchFieldChange = (value: string) => {
+    setSearchField(value);
+  };
+
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <p style={{ margin: 0 }}>Member List</p>
         <Button type="primary" onClick={handleRegisterMember}>Register Member</Button>
+      </div>
+
+      <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between' }}>
+        <Space>
+          <Select
+            defaultValue={searchField}
+            style={{ width: 200, marginLeft: '10px' }}
+            onChange={handleSearchFieldChange}
+            placeholder="Select search field"
+          >
+            {memberSearchFieldOptions.map(option => (
+              <Option key={option.value} value={option.value}>
+                {option.label}
+              </Option>
+            ))}
+          </Select>
+          <Search
+            placeholder="Search members"
+            onSearch={handleSearch}
+            enterButton
+            allowClear
+          />
+        </Space>
       </div>
 
       <Table
