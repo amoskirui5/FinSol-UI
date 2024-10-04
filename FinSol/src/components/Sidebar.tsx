@@ -75,7 +75,10 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
             case '4-5-2':
                 navigate('/chart-of-accounts');
                 break;
-                case '4-6-1':
+            case '4-5-3':
+                navigate('/member-account-settings');
+                break;
+            case '4-6-1':
                     navigate('loan-types');
                     break;
             case '5':
@@ -192,6 +195,7 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
                                 children: [
                                     { key: '4-5-1', icon: <WalletOutlined />, label: 'Account Class' },
                                     { key: '4-5-2', icon: <BookOutlined />, label: 'Charts Of Accounts' },
+                                    { key: '4-5-3', icon: <BookOutlined />, label: 'Member Accounts Settings' },
                                 ],
                             },
                             {

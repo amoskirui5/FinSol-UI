@@ -55,3 +55,11 @@ export const GenderOptions=
     {label:"Male",value: Gender.Male},
     {label:"Female",value: Gender.Female},
 ]
+
+export enum MemberAccountType {
+    Savings = 0,
+    Deposits = 1,
+    ShareCapital = 2,
+    Loan = 3,
+    RegistrationFee = 4,
+}

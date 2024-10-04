@@ -14,3 +14,17 @@ export const getInterestRateTypeName = (interestRateType: number | undefined |st
             return 'Unknown';
     }
 };
+
+// Generic function to map an enum value to its string representation
+export function mapEnumToString<T>(enumType: T, value: number | string): string {
+    if (typeof value === 'number') {
+      // If value is a number, map it to the corresponding enum string (reverse mapping)
+      return (enumType as any)[value] || 'Unknown';
+    } else if (typeof value === 'string') {
+      // If value is a string, check if it's a valid enum key
+      const enumKey = (enumType as any)[value];
+      return enumKey !== undefined ? value : 'Unknown';
+    }
+    return 'Unknown';
+  }
+  
