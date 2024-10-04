@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Col, Row, Table,Tooltip } from 'antd';
+import { Button, Col, Popconfirm, Row, Table, Tooltip } from 'antd';
 import { MemberAccountsListResponseDTO } from '../../types/MemberAccount/memberAccountTypes';
 import { Link } from 'react-router-dom';
 import { fetchMemberAccountSettings } from '../../services/memberAccountService';
@@ -13,7 +13,7 @@ const MemberAccountsTable: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response= await fetchMemberAccountSettings();
+      const response = await fetchMemberAccountSettings();
       if (response.success) {
         setData(response.data);
       }
@@ -100,11 +100,18 @@ const MemberAccountsTable: React.FC = () => {
             />
           </Tooltip>
           <Tooltip title="Delete">
-            <Button
-              icon={<DeleteOutlined />}
-              onClick={() => handleDelete(record.accountId)}
-              danger
-            />
+            <Popconfirm
+              title="Are you sure you want to delete this item?"
+              onConfirm={() => handleDelete(record.accountId)}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button
+                icon={<DeleteOutlined />}
+                type="link"
+                danger
+              />
+            </Popconfirm>
           </Tooltip>
         </div>
       ),
