@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Space, Typography, Popconfirm } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ChartOfAccount } from '../types/accountingTypes';
 import { deleteChartOfAccounts, getChartOfAccounts } from '../services/chartOfAccountsService';
