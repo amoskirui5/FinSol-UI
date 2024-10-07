@@ -1,48 +1,58 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, DatePicker, Select, InputNumber, Table, Modal, Alert } from 'antd';
-import { CreateMemberReceiptRequestDTO } from '../../types/MemberAccount/memberAccountTypes';
+import { Form, Input, Button, DatePicker, Select, InputNumber, Table, Modal, Alert, Switch } from 'antd';
+import { CreateMemberReceiptRequestDTO, ReceiptItemDTO } from '../../types/MemberAccount/memberAccountTypes';
 import { alertService } from '../../services/alertService';
+import { useNavigate } from 'react-router-dom';
+import { MemberAccountType } from '../../enums/enums';
 
 const { Option } = Select;
 
-interface ReceiptItem {
-    key: string;
-    description: string;
-    amountDue: number;
-    amountReceipted: number;
-}
+
 
 const CreateReceiptForm: React.FC = () => {
     const [form] = Form.useForm();
-    const [receiptItems, setReceiptItems] = useState<ReceiptItem[]>([]);
+    const [receiptItems, setReceiptItems] = useState<ReceiptItemDTO[]>([]);
     const [totalAmountDue, setTotalAmountDue] = useState<number>(0);
     const [totalAmountReceipted, setTotalAmountReceipted] = useState<number>(0);
     const [totalAmount, setTotalAmount] = useState<number>(0);
     const [warningVisible, setWarningVisible] = useState(false);
+    const [autoDistribute, setAutoDistribute] = useState(false);
     const { showAlert } = alertService();
+    const navigate = useNavigate();
 
     useEffect(() => {
         setWarningVisible(totalAmount !== totalAmountReceipted && totalAmount > 0);
     }, [totalAmount, totalAmountReceipted]);
-
+    useEffect(() => {
+        // If autoDistribute is enabled, set amountReceipted equal to amountDue for all items
+        if (autoDistribute) {
+            const updatedItems = receiptItems.map(item => ({
+                ...item,
+                amountReceipted: item.amountDue,
+            }));
+            setReceiptItems(updatedItems);
+            calculateTotalReceipted(updatedItems);
+        }
+    }, [autoDistribute]);
     const handleMemberSelect = (memberId: string) => {
-        const fetchedItems: ReceiptItem[] = defaultReceiptItems.map((item, index) => ({
+        const fetchedItems: ReceiptItemDTO[] = defaultReceiptItems.map((item, index) => ({
             key: (index + 1).toString(),
             description: item.description,
             amountDue: item.amountDue,
-            amountReceipted: 0,
+            amountReceipted: autoDistribute ? item.amountDue : 0,
+            accountType: item.accountType
         }));
 
         setReceiptItems(fetchedItems);
         calculateTotalDue(fetchedItems);
     };
 
-    const calculateTotalDue = (items: ReceiptItem[]) => {
+    const calculateTotalDue = (items: ReceiptItemDTO[]) => {
         const totalDue = items.reduce((sum, item) => sum + item.amountDue, 0);
         setTotalAmountDue(totalDue);
     };
 
-    const calculateTotalReceipted = (items: ReceiptItem[]) => {
+    const calculateTotalReceipted = (items: ReceiptItemDTO[]) => {
         const totalReceipted = items.reduce((sum, item) => sum + item.amountReceipted, 0);
         setTotalAmountReceipted(totalReceipted);
     };
@@ -71,16 +81,39 @@ const CreateReceiptForm: React.FC = () => {
         }
     };
 
-    const handleSubmit = (values: CreateMemberReceiptRequestDTO) => {
+    const handleSubmit = (values: any) => {
         if (totalAmountReceipted !== totalAmount) {
             showAlert('Error', 'The total receipted amount must match the distributed amount.', 'error');
             return;
         }
-        // Proceed with form submission
-        console.log('Form values: ', values);
+    
+        const receiptData: CreateMemberReceiptRequestDTO = {
+            memberId: values.memberId,
+            amount: totalAmount,
+            receiptDate: values.receiptDate.format('YYYY-MM-DD'), // Format DatePicker value if necessary
+            receiptMethod: values.receiptMethod,
+            debitAccountId: values.debitAccountId,
+            transactionReference: values.transactionReference,
+            description: values.description,
+            receiptItems: receiptItems.map(item => ({
+                key: item.key,
+                description: item.description,
+                loanNo: item?.loanNo,
+                amountDue: item.amountDue,
+                amountReceipted: item.amountReceipted,
+                accountType: item.accountType
+            })),
+        };
+    
+        console.log('Sending data to API: ', receiptData);
+        // Call API here, e.g., API service call with receiptData
         showAlert('Success', 'Receipt created successfully!', 'success');
     };
+    
 
+    const handleBack = ()=>{
+        navigate('/receipt-list')
+    }
     const columns = [
         {
             title: 'Item to be Receipted',
@@ -96,7 +129,7 @@ const CreateReceiptForm: React.FC = () => {
             title: 'Amount Receipted',
             dataIndex: 'amountReceipted',
             key: 'amountReceipted',
-            render: (text: number, record: ReceiptItem) => (
+            render: (text: number, record: ReceiptItemDTO) => (
                 <InputNumber
                     min={0}
                     value={record.amountReceipted}
@@ -114,28 +147,11 @@ const CreateReceiptForm: React.FC = () => {
         {
             title: 'Action',
             key: 'action',
-            render: (text: any, record: ReceiptItem) => (
+            render: (text: any, record: ReceiptItemDTO) => (
                 <Button type="link" onClick={() => removeReceiptItem(record.key)}>Remove</Button>
             ),
         },
     ];
-
-    const addReceiptItem = (value: string) => {
-        // Check if the item already exists
-        if (receiptItems.some(item => item.description === value)) {
-            showAlert('Error', 'This receipt item has already been added.', 'error');
-            return;
-        }
-
-        const newItem: ReceiptItem = {
-            key: Date.now().toString(), // Unique key using timestamp
-            description: value,
-            amountDue: defaultReceiptItems.find(item => item.description === value)?.amountDue || 0,
-            amountReceipted: 0,
-        };
-
-        setReceiptItems([...receiptItems, newItem]);
-    };
 
     const removeReceiptItem = (key: string) => {
         const updatedItems = receiptItems.filter(item => item.key !== key);
@@ -144,10 +160,10 @@ const CreateReceiptForm: React.FC = () => {
     };
 
     const defaultReceiptItems = [
-        { description: 'Principal', amountDue: 2300 },
-        { description: 'Interest', amountDue: 200 },
-        { description: 'Deposit', amountDue: 200 },
-        { description: 'Registration Fee', amountDue: 100 },
+        { description: 'Principal',accountType: MemberAccountType.Loan, amountDue: 2300 },
+        { description: 'Interest',accountType: MemberAccountType.Loan, amountDue: 200 },
+        { description: 'Deposit', accountType: MemberAccountType.Deposits,amountDue: 200 },
+        { description: 'Registration Fee',accountType: MemberAccountType.RegistrationFee, amountDue: 100 },
     ];
 
     return (
@@ -236,7 +252,6 @@ const CreateReceiptForm: React.FC = () => {
             >
                 <Input.TextArea rows={3} style={{ width: '100%' }} />
             </Form.Item>
-            <Button type="primary" onClick={() => addReceiptItem('Item Description Here')}>Add Item</Button>
             {warningVisible && (
                 <Alert
                     message="Warning"
@@ -246,6 +261,15 @@ const CreateReceiptForm: React.FC = () => {
                     style={{ marginTop: '24px' }}
                 />
             )}
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
+                <Form.Item
+                    label="Distribute Amount Automatically"
+                    valuePropName="checked"
+                    style={{ flex: 1 }}
+                >
+                    <Switch checked={autoDistribute} onChange={setAutoDistribute} />
+                </Form.Item>
+            </div>
             <Table
                 columns={columns}
                 dataSource={receiptItems}
@@ -255,9 +279,16 @@ const CreateReceiptForm: React.FC = () => {
             />
 
             <Form.Item style={{ marginTop: '24px' }}>
-                <Button type="primary" htmlType="submit">
-                    Create Receipt
-                </Button>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+
+                    <Button type="primary" htmlType="submit">
+                        Create Receipt
+                    </Button>
+                    <Button type="info" onClick={handleBack}>
+                        Back To List
+                    </Button>
+                </div>
+
             </Form.Item>
         </Form>
     );
