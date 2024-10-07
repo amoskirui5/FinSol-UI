@@ -39,6 +39,9 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
             case '3-2':
                 navigate('/member-share-capital');
                 break;
+            case '3-3':
+                navigate('/member-receipt');
+                break;    
             case '4-1':
                 navigate('/administration');
                 break;
@@ -150,6 +153,7 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
                         children: [
                             { key: '3-1', icon: <WalletOutlined />, label: 'Member Deposits' },
                             { key: '3-2', icon: <StockOutlined />, label: 'Member Share Capital' },
+                            { key: '3-3', icon: <AccountBookOutlined />, label: 'Member Receipting' },
                         ],
                     },
                     {

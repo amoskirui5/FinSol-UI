@@ -22,6 +22,7 @@ import MemberForm from './views/Members/MemberForm';
 import MemberDetails from './views/Members/MemberDetails';
 import MemberAccountsTable from './views/MemberAccount/MemberAccountsTable';
 import CreateMemberAccountForm from './views/MemberAccount/CreateMemberAccountForm';
+import CreateReceiptForm from './views/Members/CreateReceiptForm';
 
 const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -71,7 +72,7 @@ const App: React.FC = () => {
           <Route path="/members/details/:id" element={<MemberDetails />} />
           <Route path="/member-account-settings" element={<MemberAccountsTable />} />
           <Route path="/create-member-account" element={<CreateMemberAccountForm />} />
-
+          <Route path='/member-receipt' element={<CreateReceiptForm />} />
           <Route
             path="/user-accounts"
             element={

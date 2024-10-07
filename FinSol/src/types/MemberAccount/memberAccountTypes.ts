@@ -30,3 +30,15 @@ import { MemberAccountType } from "../../enums/enums";
     message: string;
     errors: string[];
   }
+
+export interface CreateMemberReceiptRequestDTO {
+  memberId: string;
+  amount: number;
+  receiptDate: string;
+  receiptMethod: string;
+  debitAccountId: string;
+  creditAccountId: string;
+  transactionReference?: string;
+  description: string;
+  accountType: MemberAccountType;
+}
