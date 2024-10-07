@@ -224,7 +224,6 @@ const CreateReceiptForm: React.FC = () => {
                 >
                     <InputNumber
                         min={0}
-
                         value={totalAmount}
                         onChange={handleTotalAmountChange}
                         style={{ width: '100%' }}
