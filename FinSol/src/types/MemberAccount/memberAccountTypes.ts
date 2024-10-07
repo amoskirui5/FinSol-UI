@@ -37,8 +37,16 @@ export interface CreateMemberReceiptRequestDTO {
   receiptDate: string;
   receiptMethod: string;
   debitAccountId: string;
-  creditAccountId: string;
   transactionReference?: string;
   description: string;
-  accountType: MemberAccountType;
+  receiptItems : ReceiptItemDTO[]
+}
+
+export interface ReceiptItemDTO {
+  key: string;
+  loanNo?:string;
+  description: string;
+  amountDue: number;
+  amountReceipted: number;
+  accountType: MemberAccountType
 }
