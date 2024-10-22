@@ -3,21 +3,14 @@ import { Form, Input, Button, DatePicker, Select, InputNumber, Table, Modal, Ale
 import { CreateMemberReceiptRequestDTO, ReceiptItemDTO } from '../../types/MemberAccount/memberAccountTypes';
 import { alertService } from '../../services/alertService';
 import { useNavigate } from 'react-router-dom';
-import { MemberAccountType } from '../../enums/enums';
-import { createMemberReceipt, fetchMembersItemToReceipt } from '../../services/memberReceiptService';
-import { UUID } from 'crypto';
-import { fetchAllMembers } from '../../services/memberService';
-import { PaginationOptions } from '../../types/paginationTypes';
 import { MemberListDto } from '../../types/Member/memberTypes';
 import { getChartOfAccounts } from '../../services/chartOfAccountsService';
 import { ChartOfAccount } from '../../types/accountingTypes';
-import { memberSearchFieldOptions } from '../../constants/searchFieldOptions';
-import Search from 'antd/es/input/Search';
 import moment from 'moment';
+import { createMemberReceipt, fetchMembersItemToReceipt } from '../../services/memberReceiptService';
+import MemberSearch from '../../components/MemberSearch';
 
 const { Option } = Select;
-
-
 
 const CreateReceiptForm: React.FC = () => {
     const [form] = Form.useForm();
@@ -27,42 +20,18 @@ const CreateReceiptForm: React.FC = () => {
     const [totalAmount, setTotalAmount] = useState<number>(0);
     const [warningVisible, setWarningVisible] = useState(false);
     const [autoDistribute, setAutoDistribute] = useState(false);
-    const [members, setMembers] = useState<MemberListDto[]>([]);
+    const [selectedMember, setselectedMember] = useState<MemberListDto | null>(null);
     const [chartsOfAccount, setChartsOfAccount] = useState<ChartOfAccount[]>([]);
-    const [pageNumber,] = useState<number>(1);
-    const [pageSize,] = useState<number>(10);
-    const [searchTerm, setSearchTerm] = useState<string>('');
-    const [searchField, setSearchField] = useState<string>('');
-    const [sortingType, SetSortingType] = useState<boolean>(false);
+    const [isModalVisible, SetIsModalVisible] = useState<boolean>(false);
+
     const navigate = useNavigate();
     const { showAlert } = alertService();
-
-    const options: PaginationOptions = {
-        pageNumber,
-        pageSize,
-        searchTerm,
-        searchField,
-        sortDescending: sortingType
-    };
-
-    useEffect(() => {
-        fetchAllMembersAPI();
-    }, [pageNumber, pageSize, searchTerm, searchField, sortingType]);
-
-    const fetchAllMembersAPI = async () => {
-        const response = await fetchAllMembers(options);
-        if (response.success) {
-            setMembers(response.data.items);
-        }
-
-    };
 
     useEffect(() => {
         setWarningVisible(totalAmount !== totalAmountReceipted && totalAmount > 0);
     }, [totalAmount, totalAmountReceipted]);
 
     useEffect(() => {
-        // If autoDistribute is enabled, set amountReceipted equal to amountDue for all items
         if (autoDistribute) {
             const updatedItems = receiptItems.map(item => ({
                 ...item,
@@ -73,8 +42,13 @@ const CreateReceiptForm: React.FC = () => {
         }
     }, [autoDistribute]);
 
-    const handleMemberSelect = async (memberId: UUID) => {
-        const response = await fetchMembersItemToReceipt(`${memberId}`);
+    const handleMemberSelect = async (member: MemberListDto) => {
+        if (member) {
+            setselectedMember(member);
+            form.setFieldsValue({ memberId: member.memberId });
+        }
+        SetIsModalVisible(false);
+        const response = await fetchMembersItemToReceipt(`${member.memberId}`);
         const apiItems = response.data;
 
         const fetchedItems: ReceiptItemDTO[] = apiItems.map((item: any, index: number) => ({
@@ -117,11 +91,7 @@ const CreateReceiptForm: React.FC = () => {
     };
 
     const handleTotalAmountChange = (value: number | null) => {
-        if (value === null) {
-            setTotalAmount(0);
-        } else {
-            setTotalAmount(value);
-        }
+        setTotalAmount(value || 0);
     };
 
     const handleSubmit = async (values: any) => {
@@ -151,18 +121,16 @@ const CreateReceiptForm: React.FC = () => {
         const response = await createMemberReceipt(receiptData);
         if (response.success) {
             showAlert('Success', response.message, 'success');
-
-        }
-        else {
+            navigate('/receipt-list');
+        } else {
             showAlert('Error', response.message, 'error');
-
         }
     };
 
-
     const handleBack = () => {
-        navigate('/receipt-list')
-    }
+        navigate('/receipt-list');
+    };
+
     const columns = [
         {
             title: 'Item to be Receipted',
@@ -183,9 +151,8 @@ const CreateReceiptForm: React.FC = () => {
                     min={0}
                     value={record.amountReceipted}
                     onChange={value => handleAmountReceiptedChange(record.key, value || 0)}
-                    style={{ width: '100%' }} // Ensure it fills the column
+                    style={{ width: '100%' }}
                     onBlur={() => {
-                        // Show alert if amount receipted is greater than amount due
                         if (record.amountReceipted > record.amountDue) {
                             confirmLargerAmountDistribution(record.amountReceipted, record.amountDue, record.description);
                         }
@@ -233,40 +200,22 @@ const CreateReceiptForm: React.FC = () => {
                 >
                     <Select
                         placeholder="Select a member"
-                        onChange={handleMemberSelect}
+                        value={selectedMember ? selectedMember.memberId : undefined}
+                        onClick={() => SetIsModalVisible(true)}
+                        allowClear
+                        dropdownRender={() => <></>}
+                        popupMatchSelectWidth={false}
                         style={{ width: '100%' }}
-                        loading={members.length === 0}  // Show loading if members haven't been fetched yet
+                        loading={selectedMember?.memberId === null}
                     >
-                        {members.map((member) => (
-                            <Option key={member.memberId} value={member.memberId}>
-                                {member.firstName + ' '+ member.otherName}
-                            </Option>
-                        ))}
+                        {selectedMember && (
+                            <Select.Option key={selectedMember.memberId} value={selectedMember.memberId}>
+                                {`${selectedMember.firstName} ${selectedMember.otherName}`}
+                            </Select.Option>
+                        )}
                     </Select>
                 </Form.Item>
 
-                {/* <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between' }}>
-                    <Space>
-                        <Select
-                            defaultValue={searchField}
-                            style={{ width: 200, marginLeft: '10px' }}
-                            onChange={handleSearchFieldChange}
-                            placeholder="Select search field"
-                        >
-                            {memberSearchFieldOptions.map(option => (
-                                <Option key={option.value} value={option.value}>
-                                    {option.label}
-                                </Option>
-                            ))}
-                        </Select>
-                        <Search
-                            placeholder="Search members"
-                            onSearch={handleSearch}
-                            enterButton
-                            allowClear
-                        />
-                    </Space>
-                </div> */}
                 <Form.Item
                     label="Total Amount"
                     name="totalAmount"
@@ -275,109 +224,114 @@ const CreateReceiptForm: React.FC = () => {
                 >
                     <InputNumber
                         min={0}
+
                         value={totalAmount}
                         onChange={handleTotalAmountChange}
-                        placeholder="Total amount to be distributed"
-                        style={{ width: '100%' }} // Ensure it fills the column
+                        style={{ width: '100%' }}
+                    />
+                </Form.Item>
+
+                <Form.Item
+                    label="Receipt Date"
+                    name="receiptDate"
+                    rules={[{ required: true, message: 'Please select a receipt date' }]}
+                    style={{ flex: 1 }}
+                >
+                    <DatePicker
+                        format="YYYY-MM-DD"
+                        style={{ width: '100%' }}
                     />
                 </Form.Item>
             </div>
 
-            <div style={{ display: 'flex', gap: '24px', marginBottom: '24px' }}>
-                <Form.Item
-                    label="Receipt Date"
-                    name="receiptDate"
-                    rules={[{ required: true, message: 'Please select the receipt date' }]}
-                    style={{ flex: 1 }}
-                >
-                    <DatePicker style={{ width: '100%' }} />
-                </Form.Item>
+            <Form.Item
+                label="Receipt Method"
+                name="receiptMethod"
+                rules={[{ required: true, message: 'Please select a receipt method' }]}
+            >
+                <Select placeholder="Select a receipt method" style={{ width: '100%' }}>
+                    <Option value="cash">Cash</Option>
+                    <Option value="bank_transfer">Bank Transfer</Option>
+                    <Option value="cheque">Cheque</Option>
+                </Select>
+            </Form.Item>
 
-                <Form.Item
-                    label="Receipt Method"
-                    name="receiptMethod"
-                    rules={[{ required: true, message: 'Please select a receipt method' }]}
-                    style={{ flex: 1 }}
-                >
-                    <Select placeholder="Select a method" style={{ width: '100%' }}>
-                        <Option value="cash">Cash</Option>
-                        <Option value="bank_transfer">Bank Transfer</Option>
-                        <Option value="mobile_money">Mobile Money</Option>
-                    </Select>
-                </Form.Item>
-            </div>
+            <Form.Item
+                label="Debit Account"
+                name="debitAccountId"
+                rules={[{ required: true, message: 'Please select a debit account' }]}
+            >
+                <Select placeholder="Select a debit account" style={{ width: '100%' }}>
+                    {chartsOfAccount.map(account => (
+                        <Option key={account.id} value={account.id}>
+                            {account.accountName}
+                        </Option>
+                    ))}
+                </Select>
+            </Form.Item>
 
-            <div style={{ display: 'flex', gap: '24px', marginBottom: '24px' }}>
-                <Form.Item
-                    label="Debit Account ID"
-                    name="debitAccountId"
-                    rules={[{ required: true, message: 'Please input the debit account ID' }]}
-                    style={{ flex: 1 }}
-                >
-                    <Select placeholder="Select an account">
-                        {chartsOfAccount.map(account => (
-                            <Option key={account.id} value={account.id}>
-                                {account.accountName}
-                            </Option>
-                        ))}
-                    </Select>
-                </Form.Item>
-
-                <Form.Item
-                    label="Transaction Reference"
-                    name="transactionReference"
-                    style={{ flex: 1 }}
-                >
-                    <Input placeholder="Optional" style={{ width: '100%' }} />
-                </Form.Item>
-            </div>
+            <Form.Item
+                label="Transaction Reference"
+                name="transactionReference"
+            >
+                <Input placeholder="Enter transaction reference" />
+            </Form.Item>
 
             <Form.Item
                 label="Description"
                 name="description"
-                rules={[{ required: true, message: 'Please provide a description' }]}
-                style={{ marginBottom: '24px' }}
             >
-                <Input.TextArea rows={3} style={{ width: '100%' }} />
+                <Input.TextArea rows={4} placeholder="Enter description" />
             </Form.Item>
+
+            <Form.Item>
+                <Space>
+                    <Switch
+                        checked={autoDistribute}
+                        onChange={setAutoDistribute}
+                        checkedChildren="Auto Distribute"
+                        unCheckedChildren="Manual"
+                    />
+                    <span>{autoDistribute ? "Auto distributing amounts to all items." : "Manual input of amounts."}</span>
+                </Space>
+            </Form.Item>
+
             {warningVisible && (
                 <Alert
                     message="Warning"
-                    description="The total amount receipted does not match the total amount."
+                    description="The total amount receipted does not match the total amount due."
                     type="warning"
                     showIcon
-                    style={{ marginTop: '24px' }}
+                    style={{ marginBottom: 16 }}
                 />
             )}
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
-                <Form.Item
-                    label="Distribute Amount Automatically"
-                    valuePropName="checked"
-                    style={{ flex: 1 }}
-                >
-                    <Switch checked={autoDistribute} onChange={setAutoDistribute} />
-                </Form.Item>
-            </div>
+
             <Table
                 columns={columns}
                 dataSource={receiptItems}
                 pagination={false}
-                rowClassName="receipt-table-row"
-                style={{ marginTop: '24px' }}
+                rowKey="key"
+                style={{ marginBottom: 16 }}
             />
 
-            <Form.Item style={{ marginTop: '24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-
-                    <Button type="primary" htmlType="submit">
-                        Create Receipt
-                    </Button>
-                    <Button type="info" onClick={handleBack}>
-                        Back To List
-                    </Button>
-                </div>
-
-            </Form.Item>
+            <div style={{ textAlign: 'right', marginTop: 16 }}>
+                <Button type="default" onClick={handleBack} style={{ marginRight: 8 }}>
+                    Back
+                </Button>
+                <Button type="primary" htmlType="submit">
+                    Submit
+                </Button>
+            </div>
+            <Modal
+                title="Search Member"
+                open={isModalVisible}
+                onCancel={() => SetIsModalVisible(false)}
+                footer={null}
+                width="80%"
+                bodyStyle={{ padding: '0' }}
+            >
+                <MemberSearch onMemberSelect={handleMemberSelect} />
+            </Modal>
         </Form>
     );
 };
