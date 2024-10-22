@@ -30,3 +30,7 @@ export const UPDATE_MEMBER_DETAILS= `${import.meta.env.VITE_API_BASE_URL}api/mem
 
 // member account
 export const GET_ALL_MEMBER_ACCOUNTS_SETTINGS=`${import.meta.env.VITE_API_BASE_URL}api/MemberAccount`
+
+// Member Receipts
+export const GET_ITEMS_TO_RECEIPT=`${import.meta.env.VITE_API_BASE_URL}api/MemberReceipts/get-member-items-to-receipt`
+export const CREATE_MEMBER_RECEIPT = `${import.meta.env.VITE_API_BASE_URL}api/MemberReceipts/create`
