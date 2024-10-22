@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, DatePicker, Select, InputNumber, Table, Modal, Alert, Switch } from 'antd';
+import { Form, Input, Button, DatePicker, Select, InputNumber, Table, Modal, Alert, Switch, Space } from 'antd';
 import { CreateMemberReceiptRequestDTO, ReceiptItemDTO } from '../../types/MemberAccount/memberAccountTypes';
 import { alertService } from '../../services/alertService';
 import { useNavigate } from 'react-router-dom';
 import { MemberAccountType } from '../../enums/enums';
+import { createMemberReceipt, fetchMembersItemToReceipt } from '../../services/memberReceiptService';
+import { UUID } from 'crypto';
+import { fetchAllMembers } from '../../services/memberService';
+import { PaginationOptions } from '../../types/paginationTypes';
+import { MemberListDto } from '../../types/Member/memberTypes';
+import { getChartOfAccounts } from '../../services/chartOfAccountsService';
+import { ChartOfAccount } from '../../types/accountingTypes';
+import { memberSearchFieldOptions } from '../../constants/searchFieldOptions';
+import Search from 'antd/es/input/Search';
+import moment from 'moment';
 
 const { Option } = Select;
 
@@ -17,12 +27,40 @@ const CreateReceiptForm: React.FC = () => {
     const [totalAmount, setTotalAmount] = useState<number>(0);
     const [warningVisible, setWarningVisible] = useState(false);
     const [autoDistribute, setAutoDistribute] = useState(false);
-    const { showAlert } = alertService();
+    const [members, setMembers] = useState<MemberListDto[]>([]);
+    const [chartsOfAccount, setChartsOfAccount] = useState<ChartOfAccount[]>([]);
+    const [pageNumber,] = useState<number>(1);
+    const [pageSize,] = useState<number>(10);
+    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [searchField, setSearchField] = useState<string>('');
+    const [sortingType, SetSortingType] = useState<boolean>(false);
     const navigate = useNavigate();
+    const { showAlert } = alertService();
+
+    const options: PaginationOptions = {
+        pageNumber,
+        pageSize,
+        searchTerm,
+        searchField,
+        sortDescending: sortingType
+    };
+
+    useEffect(() => {
+        fetchAllMembersAPI();
+    }, [pageNumber, pageSize, searchTerm, searchField, sortingType]);
+
+    const fetchAllMembersAPI = async () => {
+        const response = await fetchAllMembers(options);
+        if (response.success) {
+            setMembers(response.data.items);
+        }
+
+    };
 
     useEffect(() => {
         setWarningVisible(totalAmount !== totalAmountReceipted && totalAmount > 0);
     }, [totalAmount, totalAmountReceipted]);
+
     useEffect(() => {
         // If autoDistribute is enabled, set amountReceipted equal to amountDue for all items
         if (autoDistribute) {
@@ -34,13 +72,18 @@ const CreateReceiptForm: React.FC = () => {
             calculateTotalReceipted(updatedItems);
         }
     }, [autoDistribute]);
-    const handleMemberSelect = (memberId: string) => {
-        const fetchedItems: ReceiptItemDTO[] = defaultReceiptItems.map((item, index) => ({
+
+    const handleMemberSelect = async (memberId: UUID) => {
+        const response = await fetchMembersItemToReceipt(`${memberId}`);
+        const apiItems = response.data;
+
+        const fetchedItems: ReceiptItemDTO[] = apiItems.map((item: any, index: number) => ({
             key: (index + 1).toString(),
             description: item.description,
+            loanNo: item.loanNo,
             amountDue: item.amountDue,
-            amountReceipted: autoDistribute ? item.amountDue : 0,
-            accountType: item.accountType
+            amountReceipted: autoDistribute ? item.amount : 0,
+            accountType: item.accountType,
         }));
 
         setReceiptItems(fetchedItems);
@@ -81,16 +124,16 @@ const CreateReceiptForm: React.FC = () => {
         }
     };
 
-    const handleSubmit = (values: any) => {
+    const handleSubmit = async (values: any) => {
         if (totalAmountReceipted !== totalAmount) {
             showAlert('Error', 'The total receipted amount must match the distributed amount.', 'error');
             return;
         }
-    
+
         const receiptData: CreateMemberReceiptRequestDTO = {
             memberId: values.memberId,
             amount: totalAmount,
-            receiptDate: values.receiptDate.format('YYYY-MM-DD'), // Format DatePicker value if necessary
+            receiptDate: moment(values.receiptDate).format('YYYY-MM-DDTHH:mm:ss'),
             receiptMethod: values.receiptMethod,
             debitAccountId: values.debitAccountId,
             transactionReference: values.transactionReference,
@@ -104,14 +147,20 @@ const CreateReceiptForm: React.FC = () => {
                 accountType: item.accountType
             })),
         };
-    
-        console.log('Sending data to API: ', receiptData);
-        // Call API here, e.g., API service call with receiptData
-        showAlert('Success', 'Receipt created successfully!', 'success');
-    };
-    
 
-    const handleBack = ()=>{
+        const response = await createMemberReceipt(receiptData);
+        if (response.success) {
+            showAlert('Success', response.message, 'success');
+
+        }
+        else {
+            showAlert('Error', response.message, 'error');
+
+        }
+    };
+
+
+    const handleBack = () => {
         navigate('/receipt-list')
     }
     const columns = [
@@ -159,12 +208,15 @@ const CreateReceiptForm: React.FC = () => {
         calculateTotalReceipted(updatedItems);
     };
 
-    const defaultReceiptItems = [
-        { description: 'Principal',accountType: MemberAccountType.Loan, amountDue: 2300 },
-        { description: 'Interest',accountType: MemberAccountType.Loan, amountDue: 200 },
-        { description: 'Deposit', accountType: MemberAccountType.Deposits,amountDue: 200 },
-        { description: 'Registration Fee',accountType: MemberAccountType.RegistrationFee, amountDue: 100 },
-    ];
+    useEffect(() => {
+        const fetchChartsOfAccounts = async () => {
+            const results = await getChartOfAccounts();
+            if (results.success) {
+                setChartsOfAccount(results.data);
+            }
+        };
+        fetchChartsOfAccounts();
+    }, []);
 
     return (
         <Form
@@ -179,12 +231,42 @@ const CreateReceiptForm: React.FC = () => {
                     rules={[{ required: true, message: 'Please select a member' }]}
                     style={{ flex: 1 }}
                 >
-                    <Select placeholder="Select a member" onChange={handleMemberSelect} style={{ width: '100%' }}>
-                        <Option value="member1">Member 1</Option>
-                        <Option value="member2">Member 2</Option>
+                    <Select
+                        placeholder="Select a member"
+                        onChange={handleMemberSelect}
+                        style={{ width: '100%' }}
+                        loading={members.length === 0}  // Show loading if members haven't been fetched yet
+                    >
+                        {members.map((member) => (
+                            <Option key={member.memberId} value={member.memberId}>
+                                {member.firstName + ' '+ member.otherName}
+                            </Option>
+                        ))}
                     </Select>
                 </Form.Item>
 
+                {/* <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between' }}>
+                    <Space>
+                        <Select
+                            defaultValue={searchField}
+                            style={{ width: 200, marginLeft: '10px' }}
+                            onChange={handleSearchFieldChange}
+                            placeholder="Select search field"
+                        >
+                            {memberSearchFieldOptions.map(option => (
+                                <Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Option>
+                            ))}
+                        </Select>
+                        <Search
+                            placeholder="Search members"
+                            onSearch={handleSearch}
+                            enterButton
+                            allowClear
+                        />
+                    </Space>
+                </div> */}
                 <Form.Item
                     label="Total Amount"
                     name="totalAmount"
@@ -232,7 +314,13 @@ const CreateReceiptForm: React.FC = () => {
                     rules={[{ required: true, message: 'Please input the debit account ID' }]}
                     style={{ flex: 1 }}
                 >
-                    <Input style={{ width: '100%' }} />
+                    <Select placeholder="Select an account">
+                        {chartsOfAccount.map(account => (
+                            <Option key={account.id} value={account.id}>
+                                {account.accountName}
+                            </Option>
+                        ))}
+                    </Select>
                 </Form.Item>
 
                 <Form.Item
