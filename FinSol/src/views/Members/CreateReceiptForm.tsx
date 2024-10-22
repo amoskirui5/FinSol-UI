@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, DatePicker, Select, InputNumber, Table, Modal, Alert } from 'antd';
 import { CreateMemberReceiptRequestDTO } from '../../types/MemberAccount/memberAccountTypes';
 import { alertService } from '../../services/alertService';
+import { ChartOfAccount } from '../../types/accountingTypes';
+import { getChartOfAccounts } from '../../services/chartOfAccountsService';
+import { MemberListDto } from '../../types/Member/memberTypes';
+import { fetchAllMembers } from '../../services/memberService';
+import { PaginationOptions } from '../../types/paginationTypes';
+import MemberSearch from '../../components/MemberSearch';
 
 const { Option } = Select;
 
@@ -20,12 +26,31 @@ const CreateReceiptForm: React.FC = () => {
     const [totalAmount, setTotalAmount] = useState<number>(0);
     const [warningVisible, setWarningVisible] = useState(false);
     const { showAlert } = alertService();
+    const [chartsOfAccount, setChartsOfAccount] = useState<ChartOfAccount[]>([]);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedMember, setSelectedMember] = useState<MemberListDto | null>(null);
 
     useEffect(() => {
         setWarningVisible(totalAmount !== totalAmountReceipted && totalAmount > 0);
     }, [totalAmount, totalAmountReceipted]);
 
-    const handleMemberSelect = (memberId: string) => {
+    useEffect(() => {
+        const fetchChartsOfAccounts = async () => {
+            const results = await getChartOfAccounts();
+            if (results.success) {
+                setChartsOfAccount(results.data);
+            }
+        };
+        fetchChartsOfAccounts();
+    }, []);
+
+
+    const handleMemberSelect = (member: MemberListDto) => {
+        if (member) {
+            setSelectedMember(member);
+            form.setFieldsValue({ member: member.memberId });
+        }
+        setIsModalVisible(false);
         const fetchedItems: ReceiptItem[] = defaultReceiptItems.map((item, index) => ({
             key: (index + 1).toString(),
             description: item.description,
@@ -76,7 +101,7 @@ const CreateReceiptForm: React.FC = () => {
             showAlert('Error', 'The total receipted amount must match the distributed amount.', 'error');
             return;
         }
-        // Proceed with form submission
+        
         console.log('Form values: ', values);
         showAlert('Success', 'Receipt created successfully!', 'success');
     };
@@ -121,7 +146,6 @@ const CreateReceiptForm: React.FC = () => {
     ];
 
     const addReceiptItem = (value: string) => {
-        // Check if the item already exists
         if (receiptItems.some(item => item.description === value)) {
             showAlert('Error', 'This receipt item has already been added.', 'error');
             return;
@@ -157,15 +181,20 @@ const CreateReceiptForm: React.FC = () => {
             onFinish={handleSubmit}
         >
             <div style={{ display: 'flex', gap: '24px', marginBottom: '24px' }}>
-                <Form.Item
-                    label="Member ID"
-                    name="memberId"
-                    rules={[{ required: true, message: 'Please select a member' }]}
-                    style={{ flex: 1 }}
-                >
-                    <Select placeholder="Select a member" onChange={handleMemberSelect} style={{ width: '100%' }}>
-                        <Option value="member1">Member 1</Option>
-                        <Option value="member2">Member 2</Option>
+                <Form.Item label="Member" name="member" style={{ marginBottom: '24px',width: '50%' }}>
+                    <Select
+                        placeholder="Select a member"
+                        value={selectedMember ? selectedMember.memberId : undefined}
+                        onClick={() => setIsModalVisible(true)}
+                        allowClear
+                        dropdownRender={() => <></>}
+                        popupMatchSelectWidth={false}
+                    >
+                        {selectedMember && (
+                            <Select.Option key={selectedMember.memberId} value={selectedMember.memberId}>
+                                {`${selectedMember.firstName} ${selectedMember.otherName}`} 
+                            </Select.Option>
+                        )}
                     </Select>
                 </Form.Item>
 
@@ -180,7 +209,7 @@ const CreateReceiptForm: React.FC = () => {
                         value={totalAmount}
                         onChange={handleTotalAmountChange}
                         placeholder="Total amount to be distributed"
-                        style={{ width: '100%' }} // Ensure it fills the column
+                        style={{ width: '100%' }}
                     />
                 </Form.Item>
             </div>
@@ -210,13 +239,19 @@ const CreateReceiptForm: React.FC = () => {
             </div>
 
             <div style={{ display: 'flex', gap: '24px', marginBottom: '24px' }}>
+
                 <Form.Item
-                    label="Debit Account ID"
+                    label="Debit Account"
                     name="debitAccountId"
-                    rules={[{ required: true, message: 'Please input the debit account ID' }]}
-                    style={{ flex: 1 }}
+                    rules={[{ required: true, message: 'Please select an debit account' }]}
                 >
-                    <Input style={{ width: '100%' }} />
+                    <Select placeholder="Select an account">
+                        {chartsOfAccount.map(account => (
+                            <Option key={account.id} value={account.id}>
+                                {account.accountName}
+                            </Option>
+                        ))}
+                    </Select>
                 </Form.Item>
 
                 <Form.Item
@@ -259,6 +294,15 @@ const CreateReceiptForm: React.FC = () => {
                     Create Receipt
                 </Button>
             </Form.Item>
+            <Modal
+                title="Search Members"
+                open={isModalVisible}
+                onCancel={() => setIsModalVisible(false)}
+                footer={null}
+                width={800}
+            >
+                <MemberSearch onMemberSelect={handleMemberSelect} />
+            </Modal>
         </Form>
     );
 };

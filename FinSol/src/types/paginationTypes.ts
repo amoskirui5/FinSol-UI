@@ -1,7 +1,7 @@
 
   export interface PaginationOptions {
-    pageNumber: number;
-    pageSize: number;
+    pageNumber?: number;
+    pageSize?: number;
     searchTerm?: string;
     searchField?: string;
     sortBy?: string;
