@@ -34,3 +34,7 @@ export const GET_ALL_MEMBER_ACCOUNTS_SETTINGS=`${import.meta.env.VITE_API_BASE_U
 // Member Receipts
 export const GET_ITEMS_TO_RECEIPT=`${import.meta.env.VITE_API_BASE_URL}api/MemberReceipts/get-member-items-to-receipt`
 export const CREATE_MEMBER_RECEIPT = `${import.meta.env.VITE_API_BASE_URL}api/MemberReceipts/create`
+
+//member loan
+export const CREATE_MEMBER_LOAN_APPLICATION = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoan/CreateApplication`
+export const FETCH_MEMBER_LOAN_APPLICATION = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoan/FetchLoanApplication`
