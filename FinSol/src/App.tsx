@@ -23,6 +23,9 @@ import MemberDetails from './views/Members/MemberDetails';
 import MemberAccountsTable from './views/MemberAccount/MemberAccountsTable';
 import CreateMemberAccountForm from './views/MemberAccount/CreateMemberAccountForm';
 import CreateReceiptForm from './views/Members/CreateReceiptForm';
+import LoanApplicationForm from './views/MemberAccount/LoanApplicationForm';
+import LoanApplicationsTable from './components/LoanApplicationsTable';
+import LoanApplicationsPage from './views/MemberAccount/LoanApplicationsPage';
 
 const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -73,6 +76,8 @@ const App: React.FC = () => {
           <Route path="/member-account-settings" element={<MemberAccountsTable />} />
           <Route path="/create-member-account" element={<CreateMemberAccountForm />} />
           <Route path='/member-receipt' element={<CreateReceiptForm />} />
+          <Route path='/create-loan-application' element={<LoanApplicationForm />} />
+          <Route path='/loan-applications' element={<LoanApplicationsPage/>}/>
           <Route
             path="/user-accounts"
             element={
