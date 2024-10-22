@@ -216,6 +216,28 @@ const CreateReceiptForm: React.FC = () => {
                     </Select>
                 </Form.Item>
 
+                {/* <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between' }}>
+                    <Space>
+                        <Select
+                            defaultValue={searchField}
+                            style={{ width: 200, marginLeft: '10px' }}
+                            onChange={handleSearchFieldChange}
+                            placeholder="Select search field"
+                        >
+                            {memberSearchFieldOptions.map(option => (
+                                <Option key={option.value} value={option.value}>
+                                    {option.label}
+                                </Option>
+                            ))}
+                        </Select>
+                        <Search
+                            placeholder="Search members"
+                            onSearch={handleSearch}
+                            enterButton
+                            allowClear
+                        />
+                    </Space>
+                </div> */}
                 <Form.Item
                     label="Total Amount"
                     name="totalAmount"
