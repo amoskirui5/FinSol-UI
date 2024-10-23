@@ -5,7 +5,7 @@ import { CREATE_MEMBER_RECEIPT, GET_ITEMS_TO_RECEIPT } from "../constants/apiEnd
 import { BaseResponseDTO } from "../types/BaseResponseDTO";
 
 
-export const fetchMembersItemToReceipt=async(id:UUID):Promise<ReceiptItemResponse>=>{
+export const fetchMembersItemToReceipt=async(id:string):Promise<ReceiptItemResponse>=>{
     const response = await axiosInstance.get(GET_ITEMS_TO_RECEIPT+`/${id}`);
     return response.data;
   }

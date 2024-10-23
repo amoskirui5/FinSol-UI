@@ -5,7 +5,6 @@ import { MemberListDto } from '../types/Member/memberTypes';
 import { PaginationOptions } from '../types/paginationTypes';
 import { fetchAllMembers } from '../services/memberService';
 import { maskData } from '../Utility/maskBioData';
-import { formatDate } from '../helpers/dateFormater';
 
 const { Option } = Select;
 

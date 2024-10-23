@@ -3,17 +3,12 @@ import { Form, Input, Button, DatePicker, Select, InputNumber, Table, Modal, Ale
 import { CreateMemberReceiptRequestDTO, ReceiptItemDTO } from '../../types/MemberAccount/memberAccountTypes';
 import { alertService } from '../../services/alertService';
 import { useNavigate } from 'react-router-dom';
-import { MemberAccountType } from '../../enums/enums';
-import { UUID } from 'crypto';
-import { fetchAllMembers } from '../../services/memberService';
-import { PaginationOptions } from '../../types/paginationTypes';
 import { MemberListDto } from '../../types/Member/memberTypes';
 import { getChartOfAccounts } from '../../services/chartOfAccountsService';
 import { ChartOfAccount } from '../../types/accountingTypes';
-import { memberSearchFieldOptions } from '../../constants/searchFieldOptions';
-import Search from 'antd/es/input/Search';
 import moment from 'moment';
 import { createMemberReceipt, fetchMembersItemToReceipt } from '../../services/memberReceiptService';
+import MemberSearch from '../../components/MemberSearch';
 
 const { Option } = Select;
 
@@ -25,34 +20,12 @@ const CreateReceiptForm: React.FC = () => {
     const [totalAmount, setTotalAmount] = useState<number>(0);
     const [warningVisible, setWarningVisible] = useState(false);
     const [autoDistribute, setAutoDistribute] = useState(false);
-    const [members, setMembers] = useState<MemberListDto[]>([]);
+    const [selectedMember, setselectedMember] = useState<MemberListDto | null>(null);
     const [chartsOfAccount, setChartsOfAccount] = useState<ChartOfAccount[]>([]);
-    const [pageNumber, setPageNumber] = useState<number>(1);
-    const [pageSize, setPageSize] = useState<number>(10);
-    const [searchTerm, setSearchTerm] = useState<string>('');
-    const [searchField, setSearchField] = useState<string>('');
-    const [sortingType, SetSortingType] = useState<boolean>(false);
+    const [isModalVisible, SetIsModalVisible] = useState<boolean>(false);
+
     const navigate = useNavigate();
     const { showAlert } = alertService();
-
-    const options: PaginationOptions = {
-        pageNumber,
-        pageSize,
-        searchTerm,
-        searchField,
-        sortDescending: sortingType
-    };
-
-    useEffect(() => {
-        fetchAllMembersAPI();
-    }, [pageNumber, pageSize, searchTerm, searchField, sortingType]);
-
-    const fetchAllMembersAPI = async () => {
-        const response = await fetchAllMembers(options);
-        if (response.success) {
-            setMembers(response.data.items);
-        }
-    };
 
     useEffect(() => {
         setWarningVisible(totalAmount !== totalAmountReceipted && totalAmount > 0);
@@ -69,8 +42,13 @@ const CreateReceiptForm: React.FC = () => {
         }
     }, [autoDistribute]);
 
-    const handleMemberSelect = async (memberId: UUID) => {
-        const response = await fetchMembersItemToReceipt(`${memberId}`);
+    const handleMemberSelect = async (member: MemberListDto) => {
+        if (member) {
+            setselectedMember(member);
+            form.setFieldsValue({ memberId: member.memberId });
+        }
+        SetIsModalVisible(false);
+        const response = await fetchMembersItemToReceipt(`${member.memberId}`);
         const apiItems = response.data;
 
         const fetchedItems: ReceiptItemDTO[] = apiItems.map((item: any, index: number) => ({
@@ -222,40 +200,22 @@ const CreateReceiptForm: React.FC = () => {
                 >
                     <Select
                         placeholder="Select a member"
-                        onChange={handleMemberSelect}
+                        value={selectedMember ? selectedMember.memberId : undefined}
+                        onClick={() => SetIsModalVisible(true)}
+                        allowClear
+                        dropdownRender={() => <></>}
+                        popupMatchSelectWidth={false}
                         style={{ width: '100%' }}
-                        loading={members.length === 0}
+                        loading={selectedMember?.memberId === null}
                     >
-                        {members.map((member) => (
-                            <Option key={member.memberId} value={member.memberId}>
-                                {member.firstName + ' ' + member.otherName}
-                            </Option>
-                        ))}
+                        {selectedMember && (
+                            <Select.Option key={selectedMember.memberId} value={selectedMember.memberId}>
+                                {`${selectedMember.firstName} ${selectedMember.otherName}`}
+                            </Select.Option>
+                        )}
                     </Select>
                 </Form.Item>
 
-                {/* <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between' }}>
-                    <Space>
-                        <Select
-                            defaultValue={searchField}
-                            style={{ width: 200, marginLeft: '10px' }}
-                            onChange={handleSearchFieldChange}
-                            placeholder="Select search field"
-                        >
-                            {memberSearchFieldOptions.map(option => (
-                                <Option key={option.value} value={option.value}>
-                                    {option.label}
-                                </Option>
-                            ))}
-                        </Select>
-                        <Search
-                            placeholder="Search members"
-                            onSearch={handleSearch}
-                            enterButton
-                            allowClear
-                        />
-                    </Space>
-                </div> */}
                 <Form.Item
                     label="Total Amount"
                     name="totalAmount"
@@ -264,7 +224,7 @@ const CreateReceiptForm: React.FC = () => {
                 >
                     <InputNumber
                         min={0}
-                       
+
                         value={totalAmount}
                         onChange={handleTotalAmountChange}
                         style={{ width: '100%' }}
@@ -304,7 +264,7 @@ const CreateReceiptForm: React.FC = () => {
                 <Select placeholder="Select a debit account" style={{ width: '100%' }}>
                     {chartsOfAccount.map(account => (
                         <Option key={account.id} value={account.id}>
-                            {account.name}
+                            {account.accountName}
                         </Option>
                     ))}
                 </Select>
@@ -326,11 +286,11 @@ const CreateReceiptForm: React.FC = () => {
 
             <Form.Item>
                 <Space>
-                    <Switch 
-                        checked={autoDistribute} 
-                        onChange={setAutoDistribute} 
-                        checkedChildren="Auto Distribute" 
-                        unCheckedChildren="Manual" 
+                    <Switch
+                        checked={autoDistribute}
+                        onChange={setAutoDistribute}
+                        checkedChildren="Auto Distribute"
+                        unCheckedChildren="Manual"
                     />
                     <span>{autoDistribute ? "Auto distributing amounts to all items." : "Manual input of amounts."}</span>
                 </Space>
@@ -362,6 +322,16 @@ const CreateReceiptForm: React.FC = () => {
                     Submit
                 </Button>
             </div>
+            <Modal
+                title="Search Member"
+                open={isModalVisible}
+                onCancel={() => SetIsModalVisible(false)}
+                footer={null}
+                width="80%"
+                bodyStyle={{ padding: '0' }}
+            >
+                <MemberSearch onMemberSelect={handleMemberSelect} />
+            </Modal>
         </Form>
     );
 };
