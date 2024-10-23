@@ -35,8 +35,6 @@ const LoanApplicationForm: React.FC = () => {
     useEffect(() => {
         const getLoanTypes = async () => {
             const types = await fetchLoanTypes(paginationOptions);
-            console.log(types.data.items);
-            
             setLoanTypes(types.data.items);
 
         };
@@ -60,7 +58,7 @@ const LoanApplicationForm: React.FC = () => {
         const requestData: CreateLoanApplicationRequest = {
             applicationDate: values.applicationDate.format('YYYY-MM-DD'),
             loanTypeId: values.loanTypeId,
-            memberNumber: values.memberNumber,
+            memberId: values.memberId,
             repayPeriod: values.repayPeriod,
             amount: values.amount,
         };
@@ -77,7 +75,8 @@ const LoanApplicationForm: React.FC = () => {
 
             }
         } catch (error) {
-            message.error('Failed to submit loan application');
+            setLoading(false);
+
         } finally {
             setLoading(false);
         }
@@ -114,16 +113,16 @@ const LoanApplicationForm: React.FC = () => {
 
             <Form.Item
                 label="Member Number"
-                name="memberNumber"
+                name="memberId"
                 rules={[{ required: true, message: 'Please enter member number' }]}
             >
                 <Select
                     placeholder="Select a member"
                     style={{ width: '100%' }}
-                    loading={members.length === 0}  // Show loading if members haven't been fetched yet
+                    loading={members.length === 0} 
                 >
                     {members.map((member) => (
-                        <Option key={member.memberNumber} value={member.memberNumber}>
+                        <Option key={member.memberId} value={member.memberId}>
                             {member.firstName + ' ' + member.otherName}
                         </Option>
                     ))}

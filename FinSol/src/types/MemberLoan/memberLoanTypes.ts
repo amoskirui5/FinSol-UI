@@ -1,7 +1,7 @@
 export interface CreateLoanApplicationRequest {
     applicationDate: string;
     loanTypeId: string;
-    memberNumber: string;
+    memberId: string;
     repayPeriod: number;
     amount: number;
   }

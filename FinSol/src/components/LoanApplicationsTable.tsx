@@ -4,6 +4,7 @@ import moment from 'dayjs';
 import { fetchLoanApplications } from '../services/memberLoanService';
 import { LoanApplicationList } from '../types/MemberLoan/memberLoanTypes';
 import { PaginationOptions } from '../types/paginationTypes';
+import { formatCurrency } from '../Utility/formatCurrency';
 
 const LoanApplicationsTable: React.FC = () => {
   const [loanApplications, setLoanApplications] = useState<LoanApplicationList[]>([]);
@@ -39,13 +40,18 @@ const LoanApplicationsTable: React.FC = () => {
     },
     {
       title: 'Loan Type',
-      dataIndex: 'loanTypeName',
-      key: 'loanTypeName',
+      dataIndex: 'loanName',
+      key: 'loanName',
     },
     {
       title: 'Member Number',
       dataIndex: 'memberNumber',
       key: 'memberNumber',
+    },
+    {
+      title: 'Member Name',
+      dataIndex: 'memberName',
+      key: 'memberName',
     },
     {
       title: 'Repay Period (Months)',
@@ -56,7 +62,7 @@ const LoanApplicationsTable: React.FC = () => {
       title: 'Amount',
       dataIndex: 'amount',
       key: 'amount',
-      render: (amount: number) => `$${amount.toFixed(2)}`,
+      render: (amount: number) => formatCurrency(amount),
     },
   ];
 
