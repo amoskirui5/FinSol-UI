@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Tag, message } from 'antd';
+import { Button, Table, Tag, Tooltip, message } from 'antd';
 import moment from 'dayjs';
 import { fetchLoanApplications } from '../services/memberLoanService';
 import { LoanApplicationList } from '../types/MemberLoan/memberLoanTypes';
 import { PaginationOptions } from '../types/paginationTypes';
 import { formatCurrency } from '../Utility/formatCurrency';
+import { CheckCircleOutlined, CloseCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
 
 const LoanApplicationsTable: React.FC = () => {
   const [loanApplications, setLoanApplications] = useState<LoanApplicationList[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
-    const [searchField, setSearchField] = useState<string>('name');
+  const [searchField, setSearchField] = useState<string>('name');
   const paginationOptions: PaginationOptions = {
     searchTerm,
     searchField,
-};
+  };
   useEffect(() => {
     const getLoanApplications = async () => {
       setLoading(true);
@@ -24,8 +25,19 @@ const LoanApplicationsTable: React.FC = () => {
 
     };
     getLoanApplications();
-  }, [searchTerm,searchField]);
+  }, [searchTerm, searchField]);
 
+  const handleApproveLoan = (loanNumber: string) => {
+    console.log(`Approved loan: ${loanNumber}`);
+  };
+
+  const handleDeclineLoan = (loanNumber: string) => {
+    console.log(`Declined loan: ${loanNumber}`);
+  };
+
+  const handleCheckMemberInfo = (memberNumber: string) => {
+    console.log(`Checking member info for: ${memberNumber}`);
+  };
   const columns = [
     {
       title: 'Loan Number',
@@ -63,6 +75,37 @@ const LoanApplicationsTable: React.FC = () => {
       dataIndex: 'amount',
       key: 'amount',
       render: (amount: number) => formatCurrency(amount),
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (text: any, record: any) => (
+        <div>
+          <Tooltip title="Approve Loan">
+            <Button
+              type="primary"
+              icon={<CheckCircleOutlined />}
+              onClick={() => handleApproveLoan(record.loanNumber)}
+              style={{ marginRight: 8 }}
+            />
+          </Tooltip>
+          <Tooltip title="Decline Loan">
+            <Button
+              danger
+              icon={<CloseCircleOutlined />}
+              onClick={() => handleDeclineLoan(record.loanNumber)}
+              style={{ marginRight: 8 }}
+            />
+          </Tooltip>
+          <Tooltip title="Check Member Info">
+            <Button
+              type="default"
+              icon={<InfoCircleOutlined />}
+              onClick={() => handleCheckMemberInfo(record.memberNumber)}
+            />
+          </Tooltip>
+        </div>
+      ),
     },
   ];
 
