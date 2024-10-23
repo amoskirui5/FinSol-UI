@@ -3,26 +3,27 @@ import { Table, Tag, message } from 'antd';
 import moment from 'dayjs';
 import { fetchLoanApplications } from '../services/memberLoanService';
 import { LoanApplicationList } from '../types/MemberLoan/memberLoanTypes';
+import { PaginationOptions } from '../types/paginationTypes';
 
 const LoanApplicationsTable: React.FC = () => {
   const [loanApplications, setLoanApplications] = useState<LoanApplicationList[]>([]);
   const [loading, setLoading] = useState(false);
-
-  // Fetch loan applications on component mount
+  const [searchTerm, setSearchTerm] = useState<string>('');
+    const [searchField, setSearchField] = useState<string>('name');
+  const paginationOptions: PaginationOptions = {
+    searchTerm,
+    searchField,
+};
   useEffect(() => {
     const getLoanApplications = async () => {
       setLoading(true);
-      try {
-        const response = await fetchLoanApplications();
-        setLoanApplications(response.data.items);
-      } catch (error) {
-        message.error('Failed to load loan applications');
-      } finally {
-        setLoading(false);
-      }
+      const response = await fetchLoanApplications(paginationOptions);
+      setLoanApplications(response.data.items);
+      setLoading(false);
+
     };
     getLoanApplications();
-  }, []);
+  }, [searchTerm,searchField]);
 
   const columns = [
     {
@@ -55,7 +56,7 @@ const LoanApplicationsTable: React.FC = () => {
       title: 'Amount',
       dataIndex: 'amount',
       key: 'amount',
-      render: (amount: number) => `$${amount.toFixed(2)}`, 
+      render: (amount: number) => `$${amount.toFixed(2)}`,
     },
   ];
 
@@ -64,8 +65,8 @@ const LoanApplicationsTable: React.FC = () => {
       columns={columns}
       dataSource={loanApplications}
       loading={loading}
-      rowKey="loanNumber" 
-      pagination={{ pageSize: 10 }} 
+      rowKey="loanNumber"
+      pagination={{ pageSize: 10 }}
     />
   );
 };

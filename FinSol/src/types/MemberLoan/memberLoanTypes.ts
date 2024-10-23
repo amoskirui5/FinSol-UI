@@ -7,7 +7,12 @@ export interface CreateLoanApplicationRequest {
   }
 
   export interface LoanApplicationList {
-    
+    loanNumber:string;
+    applicationDate:string;
+    loanType:string;
+    memberNumber:string;
+    repayPeriod: number;
+    amount:number
   }
   export interface PaginatedLoanApplicationList {
     data: {

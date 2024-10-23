@@ -23,7 +23,7 @@ const LoanApplicationForm: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [searchField, setSearchField] = useState<string>('');
     const [members, setMembers] = useState<MemberListDto[]>([]);
-    const [sortingType, ] = useState<boolean>(false);
+    const [sortingType,] = useState<boolean>(false);
 
     const paginationOptions: PaginationOptions = {
         pageNumber,
@@ -34,12 +34,11 @@ const LoanApplicationForm: React.FC = () => {
     };
     useEffect(() => {
         const getLoanTypes = async () => {
-            try {
-                const types = await fetchLoanTypes(paginationOptions);
-                setLoanTypes(types.data.items);
-            } catch (error) {
-                message.error('Failed to load loan types');
-            }
+            const types = await fetchLoanTypes(paginationOptions);
+            console.log(types.data.items);
+            
+            setLoanTypes(types.data.items);
+
         };
         getLoanTypes();
     }, []);
@@ -106,8 +105,8 @@ const LoanApplicationForm: React.FC = () => {
             >
                 <Select placeholder="Select loan type">
                     {loanTypes.map((type: any) => (
-                        <Option key={type.id} value={type.id}>
-                            {type.name}
+                        <Option key={type.loanTypeId} value={type.loanTypeId}>
+                            {type.loanName}
                         </Option>
                     ))}
                 </Select>
@@ -118,17 +117,17 @@ const LoanApplicationForm: React.FC = () => {
                 name="memberNumber"
                 rules={[{ required: true, message: 'Please enter member number' }]}
             >
-                 <Select
-                        placeholder="Select a member"
-                        style={{ width: '100%' }}
-                        loading={members.length === 0}  // Show loading if members haven't been fetched yet
-                    >
-                        {members.map((member) => (
-                            <Option key={member.memberNumber} value={member.memberNumber}>
-                                {member.firstName + ' '+ member.otherName}
-                            </Option>
-                        ))}
-                    </Select>
+                <Select
+                    placeholder="Select a member"
+                    style={{ width: '100%' }}
+                    loading={members.length === 0}  // Show loading if members haven't been fetched yet
+                >
+                    {members.map((member) => (
+                        <Option key={member.memberNumber} value={member.memberNumber}>
+                            {member.firstName + ' ' + member.otherName}
+                        </Option>
+                    ))}
+                </Select>
             </Form.Item>
 
             <Form.Item
