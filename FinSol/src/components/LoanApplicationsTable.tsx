@@ -1,17 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Table, Tag, Tooltip, message } from 'antd';
 import moment from 'dayjs';
-import { fetchLoanApplications } from '../services/memberLoanService';
-import { LoanApplicationList } from '../types/MemberLoan/memberLoanTypes';
+import { fetchLoanApplications, fetchLoanEligibility } from '../services/memberLoanService';
+import { LoanApplicationList, LoanInfoResponseDTO } from '../types/MemberLoan/memberLoanTypes';
 import { PaginationOptions } from '../types/paginationTypes';
 import { formatCurrency } from '../Utility/formatCurrency';
 import { CheckCircleOutlined, CloseCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import LoanEligibilityModal from './LoanEligibilityModal';
+import LoanApprovalConfirmationModal from './LoanApprovalConfirmationModal';
 
 const LoanApplicationsTable: React.FC = () => {
   const [loanApplications, setLoanApplications] = useState<LoanApplicationList[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [searchField, setSearchField] = useState<string>('name');
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [loanInfo, setLoanInfo] = useState<LoanInfoResponseDTO | null>(null);
+  const [hasViewedEligibility, setHasViewedEligibility] = useState(false);
+  const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
+  const [requestedLoanAmount, setRequestedLoanAmount] = useState<number>(0);
+  const [memLoanId, SetMemLoanId] = useState<string>('');
   const paginationOptions: PaginationOptions = {
     searchTerm,
     searchField,
@@ -27,17 +35,61 @@ const LoanApplicationsTable: React.FC = () => {
     getLoanApplications();
   }, [searchTerm, searchField]);
 
-  const handleApproveLoan = (loanNumber: string) => {
-    console.log(`Approved loan: ${loanNumber}`);
+  const handleApproveLoan = async (loanId: string, memberId: string, loanTypeId: string, requestedAmount: number) => {
+    setRequestedLoanAmount(requestedAmount);
+    SetMemLoanId(loanId)
+
+    if (!hasViewedEligibility) {
+      const eligibilityResponse = await fetchLoanEligibility(memberId, loanTypeId);
+      if (eligibilityResponse.success) {
+        setLoanInfo(eligibilityResponse.data);
+        setIsModalVisible(true); 
+        setHasViewedEligibility(true); 
+      } else {
+        console.log('Could not fetch eligibility info:', eligibilityResponse.message);
+      }
+    } else {
+      const maxQualified = loanInfo?.maxLoanQualified == undefined ? 0 : loanInfo?.maxLoanQualified;
+
+      if (requestedAmount > maxQualified) {
+        setIsConfirmModalVisible(true);
+      } else {
+        console.log(`Approved loan: ${loanId}`);
+      }
+    }
   };
 
-  const handleDeclineLoan = (loanNumber: string) => {
-    console.log(`Declined loan: ${loanNumber}`);
+  const handleConfirmApproval = (loanId: string) => {
+    console.log(`Approved loan: ${loanId}`);
+    setIsConfirmModalVisible(false);
   };
 
-  const handleCheckMemberInfo = (memberNumber: string) => {
-    console.log(`Checking member info for: ${memberNumber}`);
+  // Handle cancel of confirmation
+  const handleCancelApproval = () => {
+    setIsConfirmModalVisible(false); 
   };
+
+  const handleDeclineLoan = (loanId: string) => {
+    console.log(`Declined loan: ${loanId}`);
+  };
+
+  const handleCheckMemberInfo = async (memberId: string, loanTypeId: string) => {
+
+    setLoading(true);
+    const eligibilityResponse = await fetchLoanEligibility(memberId, loanTypeId);
+    if (eligibilityResponse.success) {
+      setLoanInfo(eligibilityResponse.data);
+      setIsModalVisible(true);
+      setHasViewedEligibility(true);
+
+    }
+    setLoading(false);
+  };
+
+  const handleModalClose = () => {
+    setIsModalVisible(false);
+  };
+
   const columns = [
     {
       title: 'Loan Number',
@@ -48,7 +100,7 @@ const LoanApplicationsTable: React.FC = () => {
       title: 'Application Date',
       dataIndex: 'applicationDate',
       key: 'applicationDate',
-      render: (text: string) => moment(text).format('YYYY-MM-DD'), // Format date
+      render: (text: string) => moment(text).format('YYYY-MM-DD'),
     },
     {
       title: 'Loan Type',
@@ -85,7 +137,7 @@ const LoanApplicationsTable: React.FC = () => {
             <Button
               type="primary"
               icon={<CheckCircleOutlined />}
-              onClick={() => handleApproveLoan(record.loanNumber)}
+              onClick={() => handleApproveLoan(record.loanId, record.memberId, record.loanTypeId, record.amount)}
               style={{ marginRight: 8 }}
             />
           </Tooltip>
@@ -93,7 +145,7 @@ const LoanApplicationsTable: React.FC = () => {
             <Button
               danger
               icon={<CloseCircleOutlined />}
-              onClick={() => handleDeclineLoan(record.loanNumber)}
+              onClick={() => handleDeclineLoan(record.loanId)}
               style={{ marginRight: 8 }}
             />
           </Tooltip>
@@ -101,7 +153,7 @@ const LoanApplicationsTable: React.FC = () => {
             <Button
               type="default"
               icon={<InfoCircleOutlined />}
-              onClick={() => handleCheckMemberInfo(record.memberNumber)}
+              onClick={() => handleCheckMemberInfo(record.memberId, record.loanTypeId)}
             />
           </Tooltip>
         </div>
@@ -110,13 +162,30 @@ const LoanApplicationsTable: React.FC = () => {
   ];
 
   return (
-    <Table
-      columns={columns}
-      dataSource={loanApplications}
-      loading={loading}
-      rowKey="loanNumber"
-      pagination={{ pageSize: 10 }}
-    />
+    <div>
+      <Table
+        columns={columns}
+        dataSource={loanApplications}
+        loading={loading}
+        rowKey="loanNumber"
+        pagination={{ pageSize: 10 }}
+      />
+      <LoanEligibilityModal
+        visible={isModalVisible}
+        onClose={handleModalClose}
+        loanInfo={loanInfo}
+        loading={loading}
+      />
+
+      <LoanApprovalConfirmationModal
+        visible={isConfirmModalVisible}
+        onConfirm={() => handleConfirmApproval(memLoanId)}
+        onCancel={handleCancelApproval}
+        requestedAmount={requestedLoanAmount}
+        maxQualified={loanInfo?.maxLoanQualified == null ? 0 : loanInfo?.maxLoanQualified}
+      />
+    </div>
+
   );
 };
 
