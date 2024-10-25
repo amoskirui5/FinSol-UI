@@ -120,7 +120,6 @@ const CreateReceiptForm: React.FC = () => {
 
         const response = await createMemberReceipt(receiptData);
         if (response.success) {
-            showAlert('Success', response.message, 'success');
             navigate('/receipt-list');
         } else {
             showAlert('Error', response.message, 'error');

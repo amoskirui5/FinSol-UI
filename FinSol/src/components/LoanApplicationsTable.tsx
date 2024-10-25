@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Table, Tag, Tooltip, message } from 'antd';
+import { Button, Modal, Table, Tooltip } from 'antd';
 import moment from 'dayjs';
 import { fetchLoanApplications, fetchLoanEligibility } from '../services/memberLoanService';
 import { LoanApplicationList, LoanInfoResponseDTO } from '../types/MemberLoan/memberLoanTypes';
@@ -43,8 +43,8 @@ const LoanApplicationsTable: React.FC = () => {
       const eligibilityResponse = await fetchLoanEligibility(memberId, loanTypeId);
       if (eligibilityResponse.success) {
         setLoanInfo(eligibilityResponse.data);
-        setIsModalVisible(true); 
-        setHasViewedEligibility(true); 
+        setIsModalVisible(true);
+        setHasViewedEligibility(true);
       } else {
         console.log('Could not fetch eligibility info:', eligibilityResponse.message);
       }
@@ -54,7 +54,19 @@ const LoanApplicationsTable: React.FC = () => {
       if (requestedAmount > maxQualified) {
         setIsConfirmModalVisible(true);
       } else {
-        console.log(`Approved loan: ${loanId}`);
+        Modal.confirm({
+          title: 'Approve Loan?',
+          content: `Are you sure you want to approve the loan with ID: ${loanId}?`,
+          okText: 'Yes, Approve',
+          cancelText: 'No',
+          onOk() {
+            console.log(`Approved loan: ${loanId}`);
+            // Place additional approval logic here
+          },
+          onCancel() {
+            console.log('Loan approval canceled');
+          }
+        });
       }
     }
   };
@@ -66,7 +78,7 @@ const LoanApplicationsTable: React.FC = () => {
 
   // Handle cancel of confirmation
   const handleCancelApproval = () => {
-    setIsConfirmModalVisible(false); 
+    setIsConfirmModalVisible(false);
   };
 
   const handleDeclineLoan = (loanId: string) => {
