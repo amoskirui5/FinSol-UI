@@ -39,3 +39,5 @@ export const CREATE_MEMBER_RECEIPT = `${import.meta.env.VITE_API_BASE_URL}api/Me
 export const CREATE_MEMBER_LOAN_APPLICATION = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoan/CreateApplication`
 export const FETCH_MEMBER_LOAN_APPLICATION = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoan/LoanApplications`
 export const FETCH_LOAN_ELIGIBILITY = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoan/eligibility`
+export const FETCH_LOAN_APPLICATION_BY_ID = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoan/LoanApplication`
+export const CREATE_MEMBER_LOAN_APPROVAL = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoan/CreateApproval`

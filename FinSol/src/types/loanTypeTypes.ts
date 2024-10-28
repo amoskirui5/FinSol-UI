@@ -17,7 +17,7 @@ export interface LoanType {
     isCollateralRequired: boolean;
     isGuarantorRequired: boolean;
     chartOfAccountName: string;
-    chartOfAccountId:UUID
+    chartOfAccountId: UUID
 }
 
 export interface LoanTypeTableProps {
@@ -46,18 +46,18 @@ export interface LoanTypeCreationRequestDTO {
     maximumLoanAmount: number;
     minimumLoanAmount: number;
     processingFee: number;
-  }
-  
-  export interface LoanTypeDetailsResponse {
+}
+
+export interface LoanTypeDetailsResponse {
     data: LoanType;
     success: boolean;
     message: string;
     errors: string[];
-  }
+}
 
 export interface PaginatedLoanTypeResponse {
     data: {
-        items: LoanType[]; 
+        items: LoanType[];
         totalRecords: number;
         pageNumber: number;
         pageSize: number;
@@ -66,4 +66,17 @@ export interface PaginatedLoanTypeResponse {
     success: boolean;
     message: string;
     errors: string[];
+}
+
+export interface LoanApprovalRequest {
+    approvalDate: Date;
+    amount: number;
+    comments?: string;
+    repaymentPeriod: number;
+    loanApplicationsId?: string
+}
+export interface LoanApprovalFormProps {
+    initialValues: LoanApprovalRequest;
+    onSubmit: (values: LoanApprovalRequest) => void;
+    loading?: boolean;
 }

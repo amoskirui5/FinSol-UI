@@ -26,6 +26,7 @@ import CreateReceiptForm from './views/Members/CreateReceiptForm';
 import LoanApplicationForm from './views/MemberAccount/LoanApplicationForm';
 import LoanApplicationsTable from './components/LoanApplicationsTable';
 import LoanApplicationsPage from './views/MemberAccount/LoanApplicationsPage';
+import LoanApprovalForm from './views/MemberAccount/LoanApprovalForm';
 
 const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -78,6 +79,8 @@ const App: React.FC = () => {
           <Route path='/member-receipt' element={<CreateReceiptForm />} />
           <Route path='/create-loan-application' element={<LoanApplicationForm />} />
           <Route path='/loan-applications' element={<LoanApplicationsPage/>}/>
+          <Route path='/loan-approval/:loanApplicationId' element={<LoanApprovalForm />} />
+
           <Route
             path="/user-accounts"
             element={
