@@ -9,6 +9,7 @@ import { CheckCircleOutlined, CloseCircleOutlined, InfoCircleOutlined } from '@a
 import LoanEligibilityModal from './LoanEligibilityModal';
 import LoanApprovalConfirmationModal from './LoanApprovalConfirmationModal';
 import { useNavigate } from 'react-router-dom';
+import { LoanStatus } from '../enums/enums';
 
 const LoanApplicationsTable: React.FC = () => {
   const [loanApplications, setLoanApplications] = useState<LoanApplicationList[]>([]);
@@ -118,6 +119,12 @@ const LoanApplicationsTable: React.FC = () => {
       key: 'repayPeriod',
     },
     {
+      title: 'Status',
+      dataIndex: 'loanStatus',
+      key: 'loanStatus',
+      render: (value: LoanStatus) => LoanStatus[value],
+    },
+    {
       title: 'Amount',
       dataIndex: 'amount',
       key: 'amount',
@@ -133,6 +140,7 @@ const LoanApplicationsTable: React.FC = () => {
               type="primary"
               icon={<CheckCircleOutlined />}
               onClick={() => handleApproveLoan(record.loanId, record.memberId, record.loanTypeId, record.amount)}
+              disabled={record.loanStatus==LoanStatus.Approved}
               style={{ marginRight: 8 }}
             />
           </Tooltip>
@@ -141,6 +149,7 @@ const LoanApplicationsTable: React.FC = () => {
               danger
               icon={<CloseCircleOutlined />}
               onClick={() => handleDeclineLoan(record.loanId)}
+              disabled={record.loanStatus==LoanStatus.Approved}
               style={{ marginRight: 8 }}
             />
           </Tooltip>

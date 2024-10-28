@@ -2,9 +2,10 @@
 
 export enum LoanStatus {
     Pending = 0,
-    Approved = 1,
-    Declined = 2,
-    Disbursed = 3,
+    Applied = 1,
+    Approved = 2,
+    Declined = 3,
+    Disbursed = 4
 }
 
 export enum InterestRateType {
@@ -42,19 +43,18 @@ export const InterestRateMethodOptions = [
     { label: 'Compound', value: InterestRateMethod.Compound },
 ];
 
-export enum Gender
-{
+export enum Gender {
     Unknown = 0,
     Male = 1,
     Female = 2,
 }
 
-export const GenderOptions=
-[
-    {label:"Unknown",value: Gender.Unknown},
-    {label:"Male",value: Gender.Male},
-    {label:"Female",value: Gender.Female},
-]
+export const GenderOptions =
+    [
+        { label: "Unknown", value: Gender.Unknown },
+        { label: "Male", value: Gender.Male },
+        { label: "Female", value: Gender.Female },
+    ]
 
 export enum MemberAccountType {
     Savings = 0,

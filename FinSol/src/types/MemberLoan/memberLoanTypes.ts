@@ -1,4 +1,5 @@
 import { UUID } from "crypto";
+import { LoanStatus } from "../../enums/enums";
 
 export interface CreateLoanApplicationRequest {
   applicationDate: string;
@@ -17,7 +18,8 @@ export interface LoanApplicationList {
   memberNumber: string;
   memberId: string;
   repayPeriod: number;
-  amount: number
+  amount: number;
+  loanStatus: LoanStatus
 }
 export interface PaginatedLoanApplicationList {
   data: {
