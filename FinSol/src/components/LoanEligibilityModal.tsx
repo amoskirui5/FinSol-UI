@@ -5,11 +5,12 @@ import { Button, Modal, Table } from 'antd';
 interface LoanEligibilityModalProps {
     visible: boolean;
     onClose: () => void;
+    continueApproval: () =>void;
     loanInfo: LoanInfoResponseDTO | null;
     loading: boolean;
 }
 
-const LoanEligibilityModal: React.FC<LoanEligibilityModalProps> = ({ visible, onClose, loanInfo, loading }) => {
+const LoanEligibilityModal: React.FC<LoanEligibilityModalProps> = ({ visible, onClose,continueApproval, loanInfo, loading }) => {
     const dataSource = loanInfo
         ? [
             { key: '1', label: 'Member Number', value: loanInfo.memberNumber },
@@ -41,11 +42,14 @@ const LoanEligibilityModal: React.FC<LoanEligibilityModalProps> = ({ visible, on
         <Modal
             title="Loan Eligibility Info"
             visible={visible}
-            onOk={onClose}
             onCancel={onClose}
+            onContinueApproval={continueApproval}
             footer={[
-                <Button key="ok" type="primary" onClick={onClose}>
-                    OK
+                <Button key="cancel" onClick={onClose}>
+                    Cancel
+                </Button>,
+                <Button key="continue" type="primary" onClick={continueApproval}>
+                    Continue with Approval
                 </Button>,
             ]}
         >

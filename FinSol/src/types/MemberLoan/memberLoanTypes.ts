@@ -38,6 +38,7 @@ export interface LoanInfoResponseDTO {
   memberNumber: string;
   totalDeposits: number;
   maxLoanQualified: number;
+  maxRepayPeriod:number;
   loanBalance: number;
   hasExistingLoan: boolean
   status: string;

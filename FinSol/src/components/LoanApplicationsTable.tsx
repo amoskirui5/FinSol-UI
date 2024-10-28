@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, Table, Tooltip } from 'antd';
+import { Button, Table, Tooltip } from 'antd';
 import moment from 'dayjs';
 import { fetchLoanApplications, fetchLoanEligibility } from '../services/memberLoanService';
 import { LoanApplicationList, LoanInfoResponseDTO } from '../types/MemberLoan/memberLoanTypes';
@@ -8,6 +8,7 @@ import { formatCurrency } from '../Utility/formatCurrency';
 import { CheckCircleOutlined, CloseCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import LoanEligibilityModal from './LoanEligibilityModal';
 import LoanApprovalConfirmationModal from './LoanApprovalConfirmationModal';
+import { useNavigate } from 'react-router-dom';
 
 const LoanApplicationsTable: React.FC = () => {
   const [loanApplications, setLoanApplications] = useState<LoanApplicationList[]>([]);
@@ -16,7 +17,6 @@ const LoanApplicationsTable: React.FC = () => {
   const [searchField, setSearchField] = useState<string>('name');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loanInfo, setLoanInfo] = useState<LoanInfoResponseDTO | null>(null);
-  const [hasViewedEligibility, setHasViewedEligibility] = useState(false);
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
   const [requestedLoanAmount, setRequestedLoanAmount] = useState<number>(0);
   const [memLoanId, SetMemLoanId] = useState<string>('');
@@ -24,6 +24,8 @@ const LoanApplicationsTable: React.FC = () => {
     searchTerm,
     searchField,
   };
+
+  const navigate = useNavigate();
   useEffect(() => {
     const getLoanApplications = async () => {
       setLoading(true);
@@ -39,36 +41,15 @@ const LoanApplicationsTable: React.FC = () => {
     setRequestedLoanAmount(requestedAmount);
     SetMemLoanId(loanId)
 
-    if (!hasViewedEligibility) {
-      const eligibilityResponse = await fetchLoanEligibility(memberId, loanTypeId);
-      if (eligibilityResponse.success) {
-        setLoanInfo(eligibilityResponse.data);
-        setIsModalVisible(true);
-        setHasViewedEligibility(true);
-      } else {
-        console.log('Could not fetch eligibility info:', eligibilityResponse.message);
-      }
-    } else {
-      const maxQualified = loanInfo?.maxLoanQualified == undefined ? 0 : loanInfo?.maxLoanQualified;
+    const eligibilityResponse = await fetchLoanEligibility(memberId, loanTypeId);
+    if (eligibilityResponse.success) {
+      setLoanInfo(eligibilityResponse.data);
+      setIsModalVisible(true);
 
-      if (requestedAmount > maxQualified) {
-        setIsConfirmModalVisible(true);
-      } else {
-        Modal.confirm({
-          title: 'Approve Loan?',
-          content: `Are you sure you want to approve the loan with ID: ${loanId}?`,
-          okText: 'Yes, Approve',
-          cancelText: 'No',
-          onOk() {
-            console.log(`Approved loan: ${loanId}`);
-            // Place additional approval logic here
-          },
-          onCancel() {
-            console.log('Loan approval canceled');
-          }
-        });
-      }
+    } else {
+      console.log('Could not fetch eligibility info:', eligibilityResponse.message);
     }
+    
   };
 
   const handleConfirmApproval = (loanId: string) => {
@@ -92,8 +73,6 @@ const LoanApplicationsTable: React.FC = () => {
     if (eligibilityResponse.success) {
       setLoanInfo(eligibilityResponse.data);
       setIsModalVisible(true);
-      setHasViewedEligibility(true);
-
     }
     setLoading(false);
   };
@@ -101,6 +80,10 @@ const LoanApplicationsTable: React.FC = () => {
   const handleModalClose = () => {
     setIsModalVisible(false);
   };
+
+  const handleContinueApproval = () => {
+    navigate(`/loan-approval/${memLoanId}`, { state: { loanInfo } });
+  }
 
   const columns = [
     {
@@ -185,6 +168,7 @@ const LoanApplicationsTable: React.FC = () => {
       <LoanEligibilityModal
         visible={isModalVisible}
         onClose={handleModalClose}
+        continueApproval={handleContinueApproval}
         loanInfo={loanInfo}
         loading={loading}
       />
