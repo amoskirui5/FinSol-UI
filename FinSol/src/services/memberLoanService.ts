@@ -1,8 +1,8 @@
-import { CREATE_MEMBER_LOAN_APPLICATION, CREATE_MEMBER_LOAN_APPROVAL, FETCH_LOAN_APPLICATION_BY_ID, FETCH_LOAN_ELIGIBILITY, FETCH_MEMBER_LOAN_APPLICATION } from "../constants/apiEndpoints";
+import { CREATE_MEMBER_LOAN_APPLICATION, CREATE_MEMBER_LOAN_APPROVAL, CREATE_MEMBER_LOAN_DISBURSEMENT, FETCH_LOAN_APPLICATION_BY_ID, FETCH_LOAN_APPROVAL_BY_ID, FETCH_LOAN_ELIGIBILITY, FETCH_MEMBER_LOAN_APPLICATION } from "../constants/apiEndpoints";
 import axiosInstance from "../interceptors/globaInterceptor";
 import { BaseResponseDTO } from "../types/BaseResponseDTO";
-import { LoanApprovalRequest } from "../types/loanTypeTypes";
-import { CreateLoanApplicationRequest, LoanApplicationByIdResponse, LoanElegibilityResponse, PaginatedLoanApplicationList } from "../types/MemberLoan/memberLoanTypes";
+import { LoanApprovalRequest, LoanDisbursementRequestDTO } from "../types/loanTypeTypes";
+import { CreateLoanApplicationRequest, LoanApplicationByIdResponse, LoanApprovalByIdResponse, LoanElegibilityResponse, PaginatedLoanApplicationList } from "../types/MemberLoan/memberLoanTypes";
 import { PaginationOptions } from "../types/paginationTypes";
 
 export const submitLoanApplication = async (data: CreateLoanApplicationRequest):Promise<BaseResponseDTO> => {
@@ -40,3 +40,17 @@ export const submitLoanApproval = async (data: LoanApprovalRequest):Promise<Base
   const response = await axiosInstance.post(CREATE_MEMBER_LOAN_APPROVAL, data);
   return response.data;
 };
+
+
+export const submitLoanDisbursement = async (data: LoanDisbursementRequestDTO):Promise<BaseResponseDTO> => {
+  const response = await axiosInstance.post(CREATE_MEMBER_LOAN_DISBURSEMENT, data);
+  return response.data;
+};
+
+
+export const fetchLoanApprovalDetailsById = async (loanId: string): Promise<LoanApprovalByIdResponse>=>{
+  
+  const response = await axiosInstance.get(FETCH_LOAN_APPROVAL_BY_ID+ `/${loanId}`);
+
+  return response.data;
+}

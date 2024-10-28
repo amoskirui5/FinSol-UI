@@ -21,6 +21,7 @@ export interface LoanApplicationList {
   amount: number;
   loanStatus: LoanStatus
 }
+
 export interface PaginatedLoanApplicationList {
   data: {
     items: LoanApplicationList[];
@@ -40,7 +41,7 @@ export interface LoanInfoResponseDTO {
   memberNumber: string;
   totalDeposits: number;
   maxLoanQualified: number;
-  maxRepayPeriod:number;
+  maxRepayPeriod: number;
   loanBalance: number;
   hasExistingLoan: boolean
   status: string;
@@ -56,6 +57,26 @@ export interface LoanElegibilityResponse {
 
 export interface LoanApplicationByIdResponse {
   data: LoanApplicationList;
+  success: boolean;
+  message: string;
+  errors: string[];
+}
+
+export interface LoanApprovalListDTO {
+  loanNumber: string;
+  loanId: string;
+  approvalDate: string;
+  loanType: string;
+  loanTypeId: string;
+  memberNumber: string;
+  memberId: string;
+  repayPeriod: number;
+  amount: number;
+  loanStatus?: LoanStatus
+}
+
+export interface LoanApprovalByIdResponse {
+  data: LoanApprovalListDTO;
   success: boolean;
   message: string;
   errors: string[];

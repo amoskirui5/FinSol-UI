@@ -75,8 +75,24 @@ export interface LoanApprovalRequest {
     repaymentPeriod: number;
     loanApplicationsId?: string
 }
+
 export interface LoanApprovalFormProps {
     initialValues: LoanApprovalRequest;
     onSubmit: (values: LoanApprovalRequest) => void;
     loading?: boolean;
 }
+
+export interface LoanDisbursementRequestDTO {
+    dateDisbursed: string;  
+    amount: number;        
+    accountNumber: string;  
+    approvalId?: string;     
+    loanAppId?: string;      
+    memberId?: string;      
+    paymentMethod: string;   
+    transactionReference: string; 
+    loanId: string;         
+    debitAccountId: string; 
+    loanTypeId: string
+  }
+  
