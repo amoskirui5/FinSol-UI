@@ -53,7 +53,6 @@ const LoanApplicationForm: React.FC = () => {
 
     };
 
-    // Submit the form data
     const onFinish = async (values: any) => {
         const requestData: CreateLoanApplicationRequest = {
             applicationDate: values.applicationDate.format('YYYY-MM-DD'),
@@ -65,15 +64,8 @@ const LoanApplicationForm: React.FC = () => {
 
         setLoading(true);
         try {
-            const submitResponse = await submitLoanApplication(requestData);
-            if (submitResponse.success) {
+            await submitLoanApplication(requestData);
 
-                showAlert("Success", submitResponse.message, 'success');
-            }
-            else {
-                showAlert("Error", submitResponse.message, 'error');
-
-            }
         } catch (error) {
             setLoading(false);
 
@@ -119,7 +111,7 @@ const LoanApplicationForm: React.FC = () => {
                 <Select
                     placeholder="Select a member"
                     style={{ width: '100%' }}
-                    loading={members.length === 0} 
+                    loading={members.length === 0}
                 >
                     {members.map((member) => (
                         <Option key={member.memberId} value={member.memberId}>

@@ -49,3 +49,11 @@ export interface LoanElegibilityResponse {
   message: string;
   errors: string[];
 }
+
+
+export interface LoanApplicationByIdResponse {
+  data: LoanApplicationList;
+  success: boolean;
+  message: string;
+  errors: string[];
+}

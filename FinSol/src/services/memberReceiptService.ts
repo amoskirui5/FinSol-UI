@@ -1,4 +1,3 @@
-import { UUID } from "crypto";
 import { CreateMemberReceiptRequestDTO, ReceiptItemResponse } from "../types/MemberAccount/memberAccountTypes";
 import axiosInstance from "../interceptors/globaInterceptor";
 import { CREATE_MEMBER_RECEIPT, GET_ITEMS_TO_RECEIPT } from "../constants/apiEndpoints";
