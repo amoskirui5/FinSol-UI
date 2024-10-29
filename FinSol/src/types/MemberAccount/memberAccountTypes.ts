@@ -35,6 +35,7 @@ export interface MemberAccountSettingsDetailsResponse {
 export interface ReceiptItemDTO {
   key: string;
   loanNo?: string;
+  loanAppId?: string;
   description: string;
   amountDue: number;
   amountReceipted: number;

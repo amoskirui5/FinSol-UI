@@ -55,6 +55,7 @@ const CreateReceiptForm: React.FC = () => {
             key: (index + 1).toString(),
             description: item.description,
             loanNo: item.loanNo,
+            loanAppId :item?.loanAppId,
             amountDue: item.amountDue,
             amountReceipted: autoDistribute ? item.amount : 0,
             accountType: item.accountType,
@@ -112,6 +113,7 @@ const CreateReceiptForm: React.FC = () => {
                 key: item.key,
                 description: item.description,
                 loanNo: item?.loanNo,
+                loanAppId: item?.loanAppId,
                 amountDue: item.amountDue,
                 amountReceipted: item.amountReceipted,
                 accountType: item.accountType
