@@ -5,7 +5,9 @@ import {
     OrderedListOutlined, UsergroupAddOutlined, UserAddOutlined, FileAddOutlined,
     CheckCircleOutlined, WalletOutlined, StockOutlined, ApartmentOutlined,
     TeamOutlined, IdcardOutlined, FileSearchOutlined, MailOutlined, DatabaseOutlined,
-    SafetyOutlined, LockOutlined, MobileOutlined,DashboardOutlined,AccountBookOutlined,BookOutlined
+    SafetyOutlined, LockOutlined, MobileOutlined, DashboardOutlined, AccountBookOutlined, BookOutlined,
+    FilePdfOutlined,
+    FilePdfFilled
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 const { Sider } = Layout;
@@ -24,6 +26,9 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
             case '1-3':
                 navigate('/members/register');
                 break;
+            case '1-4-1':
+                navigate('/member-statement');
+                break;
             case '2-1':
                 navigate('/loan-applications');
                 break;
@@ -41,7 +46,7 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
                 break;
             case '3-3':
                 navigate('/member-receipt');
-                break;    
+                break;
             case '4-1':
                 navigate('/administration');
                 break;
@@ -82,8 +87,8 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
                 navigate('/member-account-settings');
                 break;
             case '4-6-1':
-                    navigate('loan-types');
-                    break;
+                navigate('loan-types');
+                break;
             case '5':
                 navigate('/dashboard');
                 break;
@@ -124,7 +129,7 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
                         key: '5',
                         icon: <DashboardOutlined />,
                         label: 'Dashboard'
-                        
+
                     },
                     {
                         key: '1',
@@ -134,6 +139,13 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
                             { key: '1-1', icon: <OrderedListOutlined />, label: 'Member List' },
                             { key: '1-2', icon: <UsergroupAddOutlined />, label: 'Next Of Kin' },
                             { key: '1-3', icon: <UserAddOutlined />, label: 'Member Registration' },
+                            {
+                                key: '1-4', icon: <FilePdfOutlined />, label: 'Member Statement',
+
+                                children: [
+                                    { key: '1-4-1', icon: <FilePdfFilled />, label: 'Loan & Deposit statement' }
+                                ]
+                            },
                         ],
                     },
                     {

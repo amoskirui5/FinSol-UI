@@ -86,7 +86,7 @@ const LoanApplicationsTable: React.FC = () => {
   };
 
   const handleDisburseLoan = async (loanAppId: string) => {
-    
+
     navigate(`/loan-disbursement/${loanAppId}`);
   };
 
@@ -144,7 +144,7 @@ const LoanApplicationsTable: React.FC = () => {
               type="primary"
               icon={<CheckCircleOutlined />}
               onClick={() => handleApproveLoan(record.loanId, record.memberId, record.loanTypeId, record.amount)}
-              disabled={record.loanStatus !== LoanStatus.Pending ||record.loanStatus !== LoanStatus.Applied}
+              disabled={record.loanStatus !== LoanStatus.Applied}
               style={{ marginRight: 8 }}
             />
           </Tooltip>
@@ -153,8 +153,10 @@ const LoanApplicationsTable: React.FC = () => {
             <Button
               danger
               icon={<CloseCircleOutlined />}
-              onClick={() => handleDeclineLoan(record.loanId)}
-              disabled={record.loanStatus !== LoanStatus.Pending ||record.loanStatus !== LoanStatus.Applied}
+              onClick={() => {
+                handleDeclineLoan(record.loanId);
+              }}
+              disabled={record.loanStatus !== LoanStatus.Applied}
               style={{ marginRight: 8 }}
             />
           </Tooltip>

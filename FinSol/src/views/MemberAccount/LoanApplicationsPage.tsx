@@ -6,7 +6,6 @@ import LoanApplicationsTable from '../../components/LoanApplicationsTable';
 const LoanApplicationsPage: React.FC = () => {
   const navigate = useNavigate(); 
 
-  // Function to handle button click
   const handleCreateLoanApplication = () => {
     navigate('/create-loan-application'); 
   };

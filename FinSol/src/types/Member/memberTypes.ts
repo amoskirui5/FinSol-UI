@@ -95,7 +95,7 @@ export interface MemberDetailsResponse {
     deposits: Deposit[];
   }
   
-  export interface MemberData {
+  export interface MemberStatementData {
     memberId: string;
     loanStatements: LoanStatement[];
     monthlyDeposits: MonthlyDeposit[];

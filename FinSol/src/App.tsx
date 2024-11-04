@@ -83,7 +83,7 @@ const App: React.FC = () => {
           <Route path='/loan-applications' element={<LoanApplicationsPage/>}/>
           <Route path='/loan-approval/:loanApplicationId' element={<LoanApprovalForm />} />
           <Route path='/loan-disbursement/:loanApplicationId' element={<LoanDisbursementForm />} />
-          <Route path='member-statement' element={<MemberStatement/>}/>
+          <Route path='/member-statement' element={<MemberStatement/>}/>
           <Route
             path="/user-accounts"
             element={

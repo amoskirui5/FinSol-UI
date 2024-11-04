@@ -5,7 +5,8 @@ export enum LoanStatus {
     Applied = 1,
     Approved = 2,
     Declined = 3,
-    Disbursed = 4
+    PartiallyDisbursed = 4,
+    Disbursed = 5
 }
 
 export enum InterestRateType {

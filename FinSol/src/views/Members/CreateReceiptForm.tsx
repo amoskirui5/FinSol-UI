@@ -55,7 +55,7 @@ const CreateReceiptForm: React.FC = () => {
             key: (index + 1).toString(),
             description: item.description,
             loanNo: item.loanNo,
-            loanAppId :item?.loanAppId,
+            loanAppId: item?.loanAppId,
             amountDue: item.amountDue,
             amountReceipted: autoDistribute ? item.amount : 0,
             accountType: item.accountType,
@@ -87,7 +87,10 @@ const CreateReceiptForm: React.FC = () => {
         return Modal.confirm({
             title: 'Distribute Amount',
             content: `You are about to distribute ${amount} for ${description}, which exceeds the due amount of ${due}. Do you want to proceed?`,
-            onOk: () => { },
+            onOk: async () => {
+                const values = await form.validateFields();
+                await handleSubmit(values);
+            },
         });
     };
 
@@ -96,6 +99,8 @@ const CreateReceiptForm: React.FC = () => {
     };
 
     const handleSubmit = async (values: any) => {
+        console.log('-------------');
+
         if (totalAmountReceipted !== totalAmount) {
             showAlert('Error', 'The total receipted amount must match the distributed amount.', 'error');
             return;
