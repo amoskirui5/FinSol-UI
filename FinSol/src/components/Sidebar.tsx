@@ -7,7 +7,8 @@ import {
     TeamOutlined, IdcardOutlined, FileSearchOutlined, MailOutlined, DatabaseOutlined,
     SafetyOutlined, LockOutlined, MobileOutlined, DashboardOutlined, AccountBookOutlined, BookOutlined,
     FilePdfOutlined,
-    FilePdfFilled
+    FilePdfFilled,
+    FileDoneOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 const { Sider } = Layout;
@@ -92,6 +93,12 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
             case '5':
                 navigate('/dashboard');
                 break;
+            case '6-1':
+                navigate('/finance/trial-balance');
+                break
+            case '6-2':
+                navigate('/finance/balance-sheet');
+                break
             default:
                 navigate('/dashboard');
                 break;
@@ -129,7 +136,6 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
                         key: '5',
                         icon: <DashboardOutlined />,
                         label: 'Dashboard'
-
                     },
                     {
                         key: '1',
@@ -140,8 +146,9 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
                             { key: '1-2', icon: <UsergroupAddOutlined />, label: 'Next Of Kin' },
                             { key: '1-3', icon: <UserAddOutlined />, label: 'Member Registration' },
                             {
-                                key: '1-4', icon: <FilePdfOutlined />, label: 'Member Statement',
-
+                                key: '1-4',
+                                icon: <FilePdfOutlined />,
+                                label: 'Member Statement',
                                 children: [
                                     { key: '1-4-1', icon: <FilePdfFilled />, label: 'Loan & Deposit statement' }
                                 ]
@@ -224,7 +231,18 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
                             }
                         ],
                     },
+                    {
+                        key: '6',
+                        icon: <AccountBookOutlined />,
+                        label: 'Financial Statement',
+                        children: [
+                            { key: '6-1', icon: <FileDoneOutlined />, label: 'Trial Balance' },
+                            { key: '6-2', icon: <FileDoneOutlined />, label: 'Balance Sheet' },
+                            { key: '6-3', icon: <FileDoneOutlined />, label: 'Profit or Loss' },
+                        ],
+                    },
                 ]}
+
             />
         </Sider>
     );

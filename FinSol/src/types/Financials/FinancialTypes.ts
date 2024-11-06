@@ -17,3 +17,32 @@ export interface TrialBalanceEntry {
     errors: string[];
   }
   
+  type AmountsByYear = {
+    [year: string]: number;
+  };
+
+  export interface Totals {
+    assets: AmountsByYear;
+    liabilities: AmountsByYear;
+    equity: AmountsByYear;
+}
+
+  
+  export interface BalanceSheetEntry {
+    accountName: string;
+    amountsByYear: AmountsByYear;
+  }
+  
+  export interface BalanceSheetResponse {
+    data: {
+      assets: BalanceSheetEntry[];
+      liabilities: BalanceSheetEntry[];
+      equity: BalanceSheetEntry[];
+      totalAssetsByYear: AmountsByYear;
+      totalLiabilitiesByYear: AmountsByYear;
+      totalEquityByYear: AmountsByYear;
+    };
+    success: boolean;
+    message: string;
+    errors: string[];
+  }
