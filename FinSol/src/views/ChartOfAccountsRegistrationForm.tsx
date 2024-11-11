@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, Select } from 'antd';
+import { Form, Input, Button, Select, Switch } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AccountClass, ChartOfAccount, RegisterAccountDTO } from '../types/accountingTypes';
 import { editChartOfAccount, getAccountClass, getChartOfAccountsById, registerChartOfAccount } from '../services/chartOfAccountsService';
@@ -38,6 +38,8 @@ const ChartOfAccountsRegistrationForm: React.FC = () => {
                 AccountName: chartsOfAccount.accountName,
                 ClassId: chartsOfAccount.classId,
                 Description: chartsOfAccount.description,
+                isReceiptable: chartsOfAccount.isReceiptable,
+                isPayable: chartsOfAccount.isPayable
             });
         }
     }, [chartsOfAccount, form]);
@@ -46,7 +48,7 @@ const ChartOfAccountsRegistrationForm: React.FC = () => {
         navigate('/chart-of-accounts');
     };
 
-    
+
 
     const onFinish = async (values: any) => {
         try {
@@ -55,13 +57,15 @@ const ChartOfAccountsRegistrationForm: React.FC = () => {
                 accountName: values.AccountName,
                 classId: values.ClassId,
                 description: values.Description,
-                accountCode: ''
+                accountCode: '',
+                isReceiptable: values.isReceiptable,
+                isPayable: values.isPayable
             };
-            
+
             if (id) {
-                await editChartOfAccount(id,requestDTO);
+                await editChartOfAccount(id, requestDTO);
             }
-            else{
+            else {
                 await registerChartOfAccount(requestDTO);
 
             }
@@ -93,9 +97,7 @@ const ChartOfAccountsRegistrationForm: React.FC = () => {
                 name="ClassId"
                 rules={[{ required: true, message: 'Please select an account class!' }]}
             >
-                <Select
-                    placeholder="Select an account class"
-                >
+                <Select placeholder="Select an account class">
                     {accountClasses.map((accountClass) => (
                         <Select.Option key={accountClass.id} value={accountClass.id}>
                             {accountClass.name}
@@ -112,6 +114,24 @@ const ChartOfAccountsRegistrationForm: React.FC = () => {
                 <Input.TextArea />
             </Form.Item>
 
+            <Form.Item
+                label="Is Receiptable"
+                name="isReceiptable"
+                valuePropName="checked"
+                initialValue={false}
+            >
+                <Switch />
+            </Form.Item>
+
+            <Form.Item
+                label="Is Payable"
+                name="isPayable"
+                valuePropName="checked"
+                initialValue={false}
+            >
+                <Switch />
+            </Form.Item>
+
             <Form.Item>
                 <Button type="primary" htmlType="submit" loading={loading} style={{ marginRight: 8 }}>
                     Submit
@@ -122,6 +142,7 @@ const ChartOfAccountsRegistrationForm: React.FC = () => {
             </Form.Item>
         </Form>
     );
+
 };
 
 export default ChartOfAccountsRegistrationForm;

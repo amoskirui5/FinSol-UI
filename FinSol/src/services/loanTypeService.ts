@@ -21,7 +21,7 @@ export const fetchLoanTypes = async (options: PaginationOptions): Promise<Pagina
     return response.data;
 };
 
-export const fetchLoanTypeById = async (id: UUID): Promise<LoanTypeDetailsResponse> => {
+export const fetchLoanTypeById = async (id: string): Promise<LoanTypeDetailsResponse> => {
     const response = await axiosInstance.get(FETCH_LOAN_TYPE_BY_ID + `/${id}`);
 
     return response.data;

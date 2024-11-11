@@ -30,7 +30,8 @@ const LoanTypeForm: React.FC = () => {
             const response = await fetchLoanTypeById(id);
             if (response.success) {
                 const loanTypeData = response.data;
-
+                console.log(loanTypeData);
+                
                 form.setFieldsValue({
                     loanName: loanTypeData.loanName,
                     accountId: loanTypeData.chartOfAccountId,
@@ -46,6 +47,10 @@ const LoanTypeForm: React.FC = () => {
                     maximumLoanAmount: loanTypeData.maximumLoanAmount,
                     minimumLoanAmount: loanTypeData.minimumLoanAmount,
                     processingFee: loanTypeData.processingFee,
+                    interestAccountId:loanTypeData.interestChartOfAccountId,
+                    penaltyAccountId:loanTypeData.penaltyChartOfAccountId,
+                    depositMultiplier:loanTypeData.depositMultiplier,
+                    penaltyFee: loanTypeData.penaltyFee
                 });
             }
         };
@@ -101,7 +106,35 @@ const LoanTypeForm: React.FC = () => {
                             ))}
                         </Select>
                     </Form.Item>
+                    <Form.Item
+                    label="Interest Account ID"
+                    name="interestAccountId"
+                    rules={[{ required: true, message: 'Please select an interest account ID!' }]}
+                >
+                    <Select placeholder="Select an interest account">
+                        {chartsOfAccount.map(account => (
+                            <Option key={account.id} value={account.id}>
+                                {account.accountName}
+                            </Option>
+                        ))}
+                    </Select>
+                </Form.Item>
 
+                <Form.Item
+                    label="Penalty Account ID"
+                    name="penaltyAccountId"
+                    rules={[{ required: true, message: 'Please select a penalty account ID!' }]}
+                >
+                    <Select placeholder="Select a penalty account">
+                        {chartsOfAccount.map(account => (
+                            <Option key={account.id} value={account.id}>
+                                {account.accountName}
+                            </Option>
+                        ))}
+                    </Select>
+                </Form.Item>
+
+                
                     <Form.Item
                         label="Grace Period (Months)"
                         name="gracePeriodInMonths"
@@ -133,9 +166,9 @@ const LoanTypeForm: React.FC = () => {
                     </Form.Item>
 
                     <Form.Item
-                        label="Late Payment Fee"
-                        name="latePaymentFee"
-                        rules={[{ required: true, message: 'Please input late payment fee!' }]}
+                        label="Penalty Fee"
+                        name="penaltyFee"
+                        rules={[{ required: true, message: 'Please input penalty fee!' }]}
                     >
                         <InputNumber min={0} />
                     </Form.Item>
@@ -211,6 +244,13 @@ const LoanTypeForm: React.FC = () => {
                     >
                         <InputNumber min={0} />
                     </Form.Item>
+                    <Form.Item
+                    label="Deposit Multiplier"
+                    name="depositMultiplier"
+                    rules={[{ required: true, message: 'Please input deposit multiplier!' }]}
+                >
+                    <InputNumber min={0} step={0.1} />
+                </Form.Item>
                 </Col>
             </Row>
 

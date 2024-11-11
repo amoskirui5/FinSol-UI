@@ -40,6 +40,7 @@ export const editChartOfAccount = async (id: string, params: EditChartOfAccountD
 }
 
 export const getChartOfAccounts = async (): Promise<ChartOfAccountResponse> => {
+
     const response = await axiosInstance.get(GET_CHART_OF_ACCOUNT);
     return response.data
 

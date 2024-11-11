@@ -17,7 +17,12 @@ export interface LoanType {
     isCollateralRequired: boolean;
     isGuarantorRequired: boolean;
     chartOfAccountName: string;
-    chartOfAccountId: UUID
+    chartOfAccountId: UUID,
+    interestChartOfAccountId: string;
+    penaltyChartOfAccountId: string;
+    depositMultiplier: number;
+    penaltyFee: number;
+
 }
 
 export interface LoanTypeTableProps {
@@ -46,6 +51,10 @@ export interface LoanTypeCreationRequestDTO {
     maximumLoanAmount: number;
     minimumLoanAmount: number;
     processingFee: number;
+    interestAccountId: string;
+    penaltyAccountId: string;
+    depositMultiplier: number;
+    penaltyFee: number;
 }
 
 export interface LoanTypeDetailsResponse {
@@ -83,16 +92,15 @@ export interface LoanApprovalFormProps {
 }
 
 export interface LoanDisbursementRequestDTO {
-    dateDisbursed: string;  
-    amount: number;        
-    accountNumber: string;  
-    approvalId?: string;     
-    loanAppId?: string;      
-    memberId?: string;      
-    paymentMethod: string;   
-    transactionReference: string; 
-    loanId: string;         
-    debitAccountId: string; 
+    dateDisbursed: string;
+    amount: number;
+    accountNumber: string;
+    approvalId?: string;
+    loanAppId?: string;
+    memberId?: string;
+    paymentMethod: string;
+    transactionReference: string;
+    loanId: string;
+    debitAccountId: string;
     loanTypeId: string
-  }
-  
+}
