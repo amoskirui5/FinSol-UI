@@ -1,5 +1,5 @@
 import { UUID } from "crypto";
-import { DELETE_ACCOUNT_ClASS, DELETE_CHART_OF_ACCOUNT, EDIT_ACCOUNT_CLASS, EDIT_CHARTS_OF_ACCOUNT, GET_ACCOUNT_CLASS, GET_ACCOUNT_CLASS_BY_ID, GET_CHART_OF_ACCOUNT, GET_CHART_OF_ACCOUNT_BY_ID, REGISTER_ACCOUNT_CLASS, REGISTER_CHARTS_OF_ACCOUNT } from "../constants/apiEndpoints";
+import { DELETE_ACCOUNT_ClASS, DELETE_CHART_OF_ACCOUNT, EDIT_ACCOUNT_CLASS, EDIT_CHARTS_OF_ACCOUNT, GET_ACCOUNT_CLASS, GET_ACCOUNT_CLASS_BY_ID, GET_CHART_OF_ACCOUNT, GET_CHART_OF_ACCOUNT_BY_ID, GET_PAYEABLE_CHARTS_OF_ACCOUNT, GET_RECEIPTABLE_CHARTS_OF_ACCOUNT, REGISTER_ACCOUNT_CLASS, REGISTER_CHARTS_OF_ACCOUNT } from "../constants/apiEndpoints";
 import axiosInstance from "../interceptors/globaInterceptor";
 import { AccountClassResponse, AccountClassResponseById, ChartOfAccount, ChartOfAccountResponse, ChartOfAccountResponseById, EditChartOfAccountDTO, RegisterAccountClassDTO, RegisterAccountDTO } from "../types/accountingTypes";
 import { BaseResponseDTO } from "../types/BaseResponseDTO";
@@ -63,4 +63,17 @@ export const deleteAccountClass = async (id: UUID): Promise<BaseResponseDTO> => 
     const response = await axiosInstance.put(DELETE_ACCOUNT_ClASS + `/${id}`);
     return response.data
 
+}
+
+
+export const getReceiptableChartOfAccounts = async (): Promise<ChartOfAccountResponse> => {
+
+    const response = await axiosInstance.get(GET_RECEIPTABLE_CHARTS_OF_ACCOUNT);
+    return response.data
+}
+
+export const getPayeableChartOfAccounts = async (): Promise<ChartOfAccountResponse> => {
+
+    const response = await axiosInstance.get(GET_PAYEABLE_CHARTS_OF_ACCOUNT);
+    return response.data
 }

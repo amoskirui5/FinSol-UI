@@ -4,7 +4,7 @@ import { CreateMemberReceiptRequestDTO, ReceiptItemDTO } from '../../types/Membe
 import { alertService } from '../../services/alertService';
 import { useNavigate } from 'react-router-dom';
 import { MemberListDto } from '../../types/Member/memberTypes';
-import { getChartOfAccounts } from '../../services/chartOfAccountsService';
+import { getChartOfAccounts, getReceiptableChartOfAccounts } from '../../services/chartOfAccountsService';
 import { ChartOfAccount } from '../../types/accountingTypes';
 import moment from 'moment';
 import { createMemberReceipt, fetchMembersItemToReceipt } from '../../services/memberReceiptService';
@@ -183,7 +183,7 @@ const CreateReceiptForm: React.FC = () => {
 
     useEffect(() => {
         const fetchChartsOfAccounts = async () => {
-            const results = await getChartOfAccounts();
+            const results = await getReceiptableChartOfAccounts();
             if (results.success) {
                 setChartsOfAccount(results.data);
             }
