@@ -98,7 +98,13 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
                 break
             case '6-2':
                 navigate('/finance/balance-sheet');
-                break
+                break;
+            case '6-3':
+                navigate('/finance/profit-loss');
+                break;
+            case '6-4':
+                navigate('/finance/cash-book');
+                break;
             default:
                 navigate('/dashboard');
                 break;
@@ -239,6 +245,7 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
                             { key: '6-1', icon: <FileDoneOutlined />, label: 'Trial Balance' },
                             { key: '6-2', icon: <FileDoneOutlined />, label: 'Balance Sheet' },
                             { key: '6-3', icon: <FileDoneOutlined />, label: 'Profit or Loss' },
+                            { key: '6-4', icon: <FileDoneOutlined />, label: 'Cash Book' },
                         ],
                     },
                 ]}

@@ -31,6 +31,7 @@ import LoanDisbursementForm from './views/MemberAccount/LoanDisbursementForm';
 import MemberStatement from './views/MemberAccount/MemberStatement';
 import TrialBalance from './views/Financials/TrialBalance';
 import BalanceSheet from './views/Financials/BalanceSheet';
+import CashbookDisplay from './views/Financials/CashbookDisplay';
 
 const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -88,6 +89,7 @@ const App: React.FC = () => {
           <Route path='/member-statement' element={<MemberStatement/>}/>
           <Route path='/finance/trial-balance' element={<TrialBalance/>}/>
           <Route path='/finance/balance-sheet' element={<BalanceSheet/>}/>
+          <Route path='/finance/cash-book' element={<CashbookDisplay />} />
           <Route
             path="/user-accounts"
             element={

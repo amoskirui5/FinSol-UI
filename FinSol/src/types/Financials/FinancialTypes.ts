@@ -46,3 +46,20 @@ export interface TrialBalanceEntry {
     message: string;
     errors: string[];
   }
+
+  export interface CashbookRecord {
+    transactionId:string;
+    transactionDescription: string;
+    debit: number;
+    credit: number;
+    balance: number;
+    transactionDate:Date
+  }
+
+  
+  export interface CashbookRecordResponse {
+    data:CashbookRecord[],
+    success: boolean;
+    message: string;
+    errors: string[];
+  }
