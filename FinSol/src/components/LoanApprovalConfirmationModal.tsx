@@ -2,11 +2,11 @@ import React from 'react';
 import { Modal, Button } from 'antd';
 
 interface ConfirmationModalProps {
-    visible: boolean; // Controls the visibility of the modal
-    onConfirm: () => void; // Function to call on confirmation
-    onCancel: () => void; // Function to call on cancellation
-    requestedAmount: number; // The amount the member requested
-    maxQualified: number; // The maximum amount the member qualifies for
+    visible: boolean; 
+    onConfirm: () => void; 
+    onCancel: () => void; 
+    requestedAmount: number; 
+    maxQualified: number; 
 }
 
 const LoanApprovalConfirmationModal: React.FC<ConfirmationModalProps> = ({ 

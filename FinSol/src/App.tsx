@@ -24,7 +24,6 @@ import MemberAccountsTable from './views/MemberAccount/MemberAccountsTable';
 import CreateMemberAccountForm from './views/MemberAccount/CreateMemberAccountForm';
 import CreateReceiptForm from './views/Members/CreateReceiptForm';
 import LoanApplicationForm from './views/MemberAccount/LoanApplicationForm';
-import LoanApplicationsTable from './components/LoanApplicationsTable';
 import LoanApplicationsPage from './views/MemberAccount/LoanApplicationsPage';
 import LoanApprovalForm from './views/MemberAccount/LoanApprovalForm';
 import LoanDisbursementForm from './views/MemberAccount/LoanDisbursementForm';

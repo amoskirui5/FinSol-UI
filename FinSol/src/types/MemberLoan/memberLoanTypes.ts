@@ -16,6 +16,7 @@ export interface LoanApplicationList {
   loanType: string;
   loanTypeId: string;
   memberNumber: string;
+  memberName?: string;
   memberId: string;
   repayPeriod: number;
   amount: number;
@@ -69,6 +70,7 @@ export interface LoanApprovalListDTO {
   loanType: string;
   loanTypeId: string;
   memberNumber: string;
+  memberName: string
   memberId: string;
   repayPeriod: number;
   amount: number;

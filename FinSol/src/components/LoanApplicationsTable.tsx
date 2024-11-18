@@ -86,7 +86,6 @@ const LoanApplicationsTable: React.FC = () => {
   };
 
   const handleDisburseLoan = async (loanAppId: string) => {
-
     navigate(`/loan-disbursement/${loanAppId}`);
   };
 
@@ -137,9 +136,9 @@ const LoanApplicationsTable: React.FC = () => {
     {
       title: 'Actions',
       key: 'actions',
-      render: (text: any, record: any) => (
+      render: (text: any, record: LoanApplicationList) => (
         <div>
-          <Tooltip title={record.loanStatus === LoanStatus.Approved ? "Loan Approved" : "Approve Loan"}>
+          <Tooltip title={record.loanStatus === LoanStatus.Applied ? "Approve Loan" : "Loan Past Approval Stage"}>
             <Button
               type="primary"
               icon={<CheckCircleOutlined />}
@@ -148,6 +147,7 @@ const LoanApplicationsTable: React.FC = () => {
               style={{ marginRight: 8 }}
             />
           </Tooltip>
+
 
           <Tooltip title={record.loanStatus === LoanStatus.Approved ? "Loan Approved" : "Decline Loan"}>
             <Button
@@ -161,15 +161,17 @@ const LoanApplicationsTable: React.FC = () => {
             />
           </Tooltip>
 
+          
           {record.loanStatus === LoanStatus.Approved && (
-            <Tooltip title={record.loanStatus === LoanStatus.Disbursed ? "Loan already disbursed" : "Disburse Loan"}>
+            <Tooltip title="Disburse Loan">
               <Button
                 type="primary"
                 icon={<DollarCircleOutlined />}
                 onClick={() => handleDisburseLoan(record.loanId)}
-                disabled={record.loanStatus === LoanStatus.Disbursed}
                 style={{ marginRight: 8 }}
-              />
+              >
+                Disburse
+              </Button>
             </Tooltip>
           )}
 
