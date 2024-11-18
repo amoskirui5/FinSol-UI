@@ -74,7 +74,10 @@ const LoanApprovalForm: React.FC = () => {
 
     return loanData ? (
         <>
-            <Typography.Title level={2}>Loan Approval</Typography.Title>
+            <Typography.Title level={3}>Loan Approval</Typography.Title>
+            <Typography.Title level={4}>
+                {loanData.memberName} - {loanData.memberNumber}
+            </Typography.Title>
             <Form
                 form={form}
                 layout="vertical"

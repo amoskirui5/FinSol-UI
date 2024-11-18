@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, Select, DatePicker, message } from 'antd';
+import { Form, Input, Button, Select, DatePicker, message, Typography } from 'antd';
 import { useParams } from 'react-router-dom';
 import { LoanDisbursementRequestDTO } from '../../types/loanTypeTypes';
 import { fetchLoanApprovalDetailsById, submitLoanDisbursement } from '../../services/memberLoanService';
-import { getChartOfAccounts } from '../../services/chartOfAccountsService';
+import { getPayeableChartOfAccounts } from '../../services/chartOfAccountsService';
 import { ChartOfAccount } from '../../types/accountingTypes';
 import { alertService } from '../../services/alertService';
 import { LoanApprovalListDTO } from '../../types/MemberLoan/memberLoanTypes';
@@ -20,7 +20,7 @@ const LoanDisbursementForm: React.FC = () => {
 
     useEffect(() => {
         const fetchDebitAccounts = async () => {
-            const response = await getChartOfAccounts();
+            const response = await getPayeableChartOfAccounts();
             if (response.success) {
                 setDebitAccounts(response.data);
 
@@ -48,9 +48,9 @@ const LoanDisbursementForm: React.FC = () => {
         const disbursementData: LoanDisbursementRequestDTO = {
             ...values,
             loanAppId: loanApplicationId,
-            memberId:loanApproval?.memberId,
+            memberId: loanApproval?.memberId,
             dateDisbursed: values.dateDisbursed.format(),
-            loanTypeId:loanApproval?.loanTypeId
+            loanTypeId: loanApproval?.loanTypeId
         };
 
         if (disbursementData.amount <= 0) {
@@ -81,74 +81,80 @@ const LoanDisbursementForm: React.FC = () => {
     }, [loanApproval, form]);
 
     return (
-        <Form
-            form={form}
-            layout="vertical"
-            onFinish={handleSubmit}
-        >
-            <Form.Item
-                label="Date Disbursed"
-                name="dateDisbursed"
-                rules={[{ required: true, message: 'Please select the date disbursed' }]}
-            >
-                <DatePicker />
-            </Form.Item>
+        <>
+         <Typography.Title level={4}>
+                {loanApproval?.memberName} - {loanApproval?.memberNumber}
+            </Typography.Title>
 
-            <Form.Item
-                label="Amount"
-                name="amount"
-                rules={[{ required: true, message: 'Please input the amount' }]}
+            <Form
+                form={form}
+                layout="vertical"
+                onFinish={handleSubmit}
             >
-                <Input type="number" />
-            </Form.Item>
+                <Form.Item
+                    label="Date Disbursed"
+                    name="dateDisbursed"
+                    rules={[{ required: true, message: 'Please select the date disbursed' }]}
+                >
+                    <DatePicker />
+                </Form.Item>
 
-            <Form.Item
-                label="Account Number"
-                name="accountNumber"
-                rules={[{ required: true, message: 'Please input the account number' }]}
-            >
-                <Input />
-            </Form.Item>
+                <Form.Item
+                    label="Amount"
+                    name="amount"
+                    rules={[{ required: true, message: 'Please input the amount' }]}
+                >
+                    <Input type="number" />
+                </Form.Item>
 
-            <Form.Item
-                label="Transaction Reference"
-                name="transactionReference"
-                rules={[{ required: true, message: 'Please input the transaction Reference' }]}
-            >
-                <Input />
-            </Form.Item>
-            <Form.Item
-                label="Payment Method"
-                name="paymentMethod"
-                rules={[{ required: true, message: 'Please select a Payment method' }]}
-            >
-                <Select placeholder="Select a payment method" style={{ width: '100%' }}>
-                    <Option value="cash">Cash</Option>
-                    <Option value="bank_transfer">Bank Transfer</Option>
-                    <Option value="cheque">Cheque</Option>
-                </Select>
-            </Form.Item>
+                <Form.Item
+                    label="Account Number"
+                    name="accountNumber"
+                    rules={[{ required: true, message: 'Please input the account number' }]}
+                >
+                    <Input />
+                </Form.Item>
 
-            <Form.Item
-                label="Debit Account"
-                name="debitAccountId"
-                rules={[{ required: true, message: 'Please select a debit account' }]}
-            >
-                <Select placeholder="Select a debit account">
-                    {debitAccounts.map((account) => (
-                        <Option key={account.id} value={account.id}>
-                            {account.accountName}
-                        </Option>
-                    ))}
-                </Select>
-            </Form.Item>
+                <Form.Item
+                    label="Transaction Reference"
+                    name="transactionReference"
+                    rules={[{ required: true, message: 'Please input the transaction Reference' }]}
+                >
+                    <Input />
+                </Form.Item>
+                <Form.Item
+                    label="Payment Method"
+                    name="paymentMethod"
+                    rules={[{ required: true, message: 'Please select a Payment method' }]}
+                >
+                    <Select placeholder="Select a payment method" style={{ width: '100%' }}>
+                        <Option value="cash">Cash</Option>
+                        <Option value="bank_transfer">Bank Transfer</Option>
+                        <Option value="cheque">Cheque</Option>
+                    </Select>
+                </Form.Item>
 
-            <Form.Item>
-                <Button type="primary" htmlType="submit">
-                    Submit Disbursement
-                </Button>
-            </Form.Item>
-        </Form>
+                <Form.Item
+                    label="Debit Account"
+                    name="debitAccountId"
+                    rules={[{ required: true, message: 'Please select a debit account' }]}
+                >
+                    <Select placeholder="Select a debit account">
+                        {debitAccounts.map((account) => (
+                            <Option key={account.id} value={account.id}>
+                                {account.accountName}
+                            </Option>
+                        ))}
+                    </Select>
+                </Form.Item>
+
+                <Form.Item>
+                    <Button type="primary" htmlType="submit">
+                        Submit Disbursement
+                    </Button>
+                </Form.Item>
+            </Form>
+        </>
     );
 };
 

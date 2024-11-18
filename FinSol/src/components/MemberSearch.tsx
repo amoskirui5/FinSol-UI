@@ -5,6 +5,7 @@ import { MemberListDto } from '../types/Member/memberTypes';
 import { PaginationOptions } from '../types/paginationTypes';
 import { fetchAllMembers } from '../services/memberService';
 import { maskData } from '../Utility/maskBioData';
+import { CheckOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 
@@ -56,7 +57,6 @@ const MemberSearch: React.FC<MemberSearchProps> = ({ onMemberSelect }) => {
             key: 'name',
             render: (_: object, record: MemberListDto) => `${record.firstName} ${record.otherName}`,
         },
-
         {
             title: 'Email',
             dataIndex: 'email',
@@ -68,20 +68,34 @@ const MemberSearch: React.FC<MemberSearchProps> = ({ onMemberSelect }) => {
             dataIndex: 'phoneNumber',
             key: 'phoneNumber',
             render: (phone: string) => maskData(phone, 'phone')
-
         },
         {
             title: 'National Id',
             dataIndex: 'nationalID',
             key: 'nationalID',
             render: (nationalID: string) => maskData(nationalID, 'nationalID')
-
         },
         {
             title: 'Action',
             key: 'action',
             render: (text: any, record: MemberListDto) => (
-                <Button type="link" onClick={() => onMemberSelect(record)}>
+                <Button
+                    type="primary"
+                    onClick={() => onMemberSelect(record)}
+                    icon={<CheckOutlined />}
+                    style={{
+                        border: 'none',
+                        backgroundColor: '#1890ff',
+                        color: 'white',
+                        cursor: 'pointer',
+                        padding: '5px 10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                    }}
+                    onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => (e.target as HTMLButtonElement).style.backgroundColor = '#40a9ff'}
+                    onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => (e.target as HTMLButtonElement).style.backgroundColor = '#1890ff'}
+                >
                     Select
                 </Button>
             ),
@@ -115,6 +129,13 @@ const MemberSearch: React.FC<MemberSearchProps> = ({ onMemberSelect }) => {
                 loading={loading}
                 pagination={{ pageSize: 10 }}
                 rowKey="memberId"
+                onRow={(record: MemberListDto) => ({
+                    onClick: () => onMemberSelect(record),
+                    style: {
+                        cursor: 'pointer',
+                        transition: 'background-color 0.3s',
+                    },
+                })}
             />
         </div>
     );
