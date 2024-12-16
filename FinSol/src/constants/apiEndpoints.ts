@@ -56,3 +56,7 @@ export const EXPORT_MEMBER_STATEMENT =`${import.meta.env.VITE_API_BASE_URL}api/M
 export const FETCH_TRIAL_BALANCE = `${import.meta.env.VITE_API_BASE_URL}api/FinancialStatements/trial-balance`
 export const FETCH_BALANCE_SHEET = `${import.meta.env.VITE_API_BASE_URL}api/FinancialStatements/balance-sheet`
 export const FETCH_CASH_BOOK = `${import.meta.env.VITE_API_BASE_URL}api/FinancialStatements/cash-book`
+
+// Member Payments
+export const GET_ITEMS_TO_PAY=`${import.meta.env.VITE_API_BASE_URL}api/MemberPayments/get-member-items-to-pay`
+export const CREATE_MEMBER_PAYMENT = `${import.meta.env.VITE_API_BASE_URL}api/MemberPayments/create`

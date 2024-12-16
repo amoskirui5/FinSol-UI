@@ -31,6 +31,7 @@ import MemberStatement from './views/MemberAccount/MemberStatement';
 import TrialBalance from './views/Financials/TrialBalance';
 import BalanceSheet from './views/Financials/BalanceSheet';
 import CashbookDisplay from './views/Financials/CashbookDisplay';
+import CreatePaymentForm from './views/Members/CreatePaymentForm';
 
 const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -75,20 +76,23 @@ const App: React.FC = () => {
           <Route path="/account-class/edit/:id" element={<AccountClassRegistration />} />
           <Route path="/loan-types/details/:id" element={<LoanTypeDetailsPage />} />
           <Route path='/loan-types' element={<LoanTypesPage />} />
-          <Route path="/members/register" element={<MemberForm isUpdate={false}/>} />
-          <Route path="/members/edit/:id" element={<MemberForm  isUpdate={true} />} />
+          <Route path="/members/register" element={<MemberForm isUpdate={false} />} />
+          <Route path="/members/edit/:id" element={<MemberForm isUpdate={true} />} />
           <Route path="/members/details/:id" element={<MemberDetails />} />
           <Route path="/member-account-settings" element={<MemberAccountsTable />} />
           <Route path="/create-member-account" element={<CreateMemberAccountForm />} />
           <Route path='/member-receipt' element={<CreateReceiptForm />} />
           <Route path='/create-loan-application' element={<LoanApplicationForm />} />
-          <Route path='/loan-applications' element={<LoanApplicationsPage/>}/>
+          <Route path='/loan-applications' element={<LoanApplicationsPage />} />
           <Route path='/loan-approval/:loanApplicationId' element={<LoanApprovalForm />} />
           <Route path='/loan-disbursement/:loanApplicationId' element={<LoanDisbursementForm />} />
-          <Route path='/member-statement' element={<MemberStatement/>}/>
-          <Route path='/finance/trial-balance' element={<TrialBalance/>}/>
-          <Route path='/finance/balance-sheet' element={<BalanceSheet/>}/>
+          <Route path='/member-statement' element={<MemberStatement />} />
+          <Route path='/finance/trial-balance' element={<TrialBalance />} />
+          <Route path='/finance/balance-sheet' element={<BalanceSheet />} />
           <Route path='/finance/cash-book' element={<CashbookDisplay />} />
+          <Route path='/member-payment' element={<CreatePaymentForm />} />
+
+
           <Route
             path="/user-accounts"
             element={

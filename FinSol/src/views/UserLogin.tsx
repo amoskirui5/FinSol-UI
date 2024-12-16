@@ -24,7 +24,6 @@ const LoginPage: React.FC = () => {
                 navigate('/dashboard');
             }
         } catch (error) {
-            message.error('Login failed. Please check your credentials and try again.');
         } finally {
             setLoading(false);
         }
