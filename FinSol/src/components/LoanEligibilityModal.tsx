@@ -1,6 +1,7 @@
 import React from 'react'
 import { LoanInfoResponseDTO } from '../types/MemberLoan/memberLoanTypes';
 import { Button, Modal, Table } from 'antd';
+import { ColumnsType } from 'antd/es/table';
 
 interface LoanEligibilityModalProps {
     visible: boolean;
@@ -9,6 +10,12 @@ interface LoanEligibilityModalProps {
     loanInfo: LoanInfoResponseDTO | null;
     loading: boolean;
 }
+
+interface DataType {
+    key: string;
+    label: string;
+    value: string | number;
+  }
 
 const LoanEligibilityModal: React.FC<LoanEligibilityModalProps> = ({ visible, onClose,continueApproval, loanInfo, loading }) => {
     const dataSource = loanInfo
@@ -23,7 +30,7 @@ const LoanEligibilityModal: React.FC<LoanEligibilityModalProps> = ({ visible, on
         ]
         : [];
 
-    const columns = [
+    const columns: ColumnsType<DataType> = [
         {
             title: 'Description',
             dataIndex: 'label',
@@ -43,7 +50,7 @@ const LoanEligibilityModal: React.FC<LoanEligibilityModalProps> = ({ visible, on
             title="Loan Eligibility Info"
             visible={visible}
             onCancel={onClose}
-            onContinueApproval={continueApproval}
+            // onContinueApproval={continueApproval}
             footer={[
                 <Button key="cancel" onClick={onClose}>
                     Cancel
@@ -59,7 +66,7 @@ const LoanEligibilityModal: React.FC<LoanEligibilityModalProps> = ({ visible, on
                 <Table
                     dataSource={dataSource}
                     columns={columns}
-                    pagination={false} // Disable pagination since we only have a few rows
+                    pagination={false} 
                     bordered
                     size="small"
                     rowKey="key"

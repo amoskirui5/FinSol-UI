@@ -1,7 +1,7 @@
 import { UUID } from "crypto";
 import { DELETE_ACCOUNT_ClASS, DELETE_CHART_OF_ACCOUNT, EDIT_ACCOUNT_CLASS, EDIT_CHARTS_OF_ACCOUNT, GET_ACCOUNT_CLASS, GET_ACCOUNT_CLASS_BY_ID, GET_CHART_OF_ACCOUNT, GET_CHART_OF_ACCOUNT_BY_ID, GET_PAYEABLE_CHARTS_OF_ACCOUNT, GET_RECEIPTABLE_CHARTS_OF_ACCOUNT, REGISTER_ACCOUNT_CLASS, REGISTER_CHARTS_OF_ACCOUNT } from "../constants/apiEndpoints";
 import axiosInstance from "../interceptors/globaInterceptor";
-import { AccountClassResponse, AccountClassResponseById, ChartOfAccount, ChartOfAccountResponse, ChartOfAccountResponseById, EditChartOfAccountDTO, RegisterAccountClassDTO, RegisterAccountDTO } from "../types/accountingTypes";
+import { AccountClassResponse, AccountClassResponseById, ChartOfAccountResponse, ChartOfAccountResponseById, EditChartOfAccountDTO, RegisterAccountClassDTO, RegisterAccountDTO } from "../types/accountingTypes";
 import { BaseResponseDTO } from "../types/BaseResponseDTO";
 
 export const registerAccountClass = async (params: RegisterAccountClassDTO): Promise<BaseResponseDTO> => {
@@ -16,7 +16,7 @@ export const getAccountClass = async (): Promise<AccountClassResponse> => {
 }
 
 
-export const getAccountClassById = async (id: UUID): Promise<AccountClassResponseById> => {
+export const getAccountClassById = async (id: string): Promise<AccountClassResponseById> => {
     const response = await axiosInstance.get(GET_ACCOUNT_CLASS_BY_ID + `/${id}`);
     return response.data
 
@@ -46,7 +46,7 @@ export const getChartOfAccounts = async (): Promise<ChartOfAccountResponse> => {
 
 }
 
-export const getChartOfAccountsById = async (id: UUID): Promise<ChartOfAccountResponseById> => {
+export const getChartOfAccountsById = async (id: string): Promise<ChartOfAccountResponseById> => {
     const response = await axiosInstance.get(GET_CHART_OF_ACCOUNT_BY_ID + `/${id}`);
     return response.data
 

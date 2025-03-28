@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, Select, Checkbox, Switch } from 'antd';
+import { Form, Input, Button, Select, Switch } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { getChartOfAccounts } from '../../services/chartOfAccountsService';
 import { ChartOfAccount } from '../../types/accountingTypes';

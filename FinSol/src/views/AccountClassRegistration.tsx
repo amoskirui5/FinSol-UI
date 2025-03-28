@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Typography } from 'antd';
+import { Form, Input, Button, Typography, message } from 'antd';
 import { editAccountClass, getAccountClassById, registerAccountClass } from '../services/chartOfAccountsService';
 import { AccountClass, RegisterAccountClassDTO } from '../types/accountingTypes';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -14,17 +14,26 @@ const AccountClassRegistration: React.FC = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
 
-    const fetchAccountClassById = async () => {
+    const isValidUUID = (id: string | undefined): id is `${string}-${string}-${string}-${string}-${string}` => {
+        return !!id && /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
+    };
 
+    const fetchAccountClassById = async (id: string) => {
         const results = await getAccountClassById(id);
         if (results) {
-
             setAccountClasses(results.data);
         }
     };
 
     useEffect(() => {
-        fetchAccountClassById();
+        // Only fetch if id exists and is valid (edit mode)
+        if (id && isValidUUID(id)) {
+            fetchAccountClassById(id);
+        } else if (id && !isValidUUID(id)) {
+            message.error("Invalid ID format");
+            navigate('/account-class'); // Redirect if ID is malformed
+        }
+        // If no id, do nothing (create mode)
     }, [id]);
 
     useEffect(() => {
@@ -41,38 +50,33 @@ const AccountClassRegistration: React.FC = () => {
     };
 
     const onFinish = async (values: any) => {
+        setLoading(true); // Set loading true at the start
         try {
-
             const registerAccountClassDTO: RegisterAccountClassDTO = {
                 className: values.ClassName,
-                description: values.Description
+                description: values.Description,
             };
 
-            if (id) {
-                var response = await editAccountClass(id, registerAccountClassDTO);
-                if (response.success) {
-                    navigate('/account-class');
-                }
-            }
-            else {
-                var response =await registerAccountClass(registerAccountClassDTO);
-                if (response.success) {
-                    navigate('/account-class');
-                }
+            let response;
+            if (id && isValidUUID(id)) {
+                response = await editAccountClass(id, registerAccountClassDTO);
+            } else {
+                response = await registerAccountClass(registerAccountClassDTO);
             }
 
+            if (response.success) {
+                navigate('/account-class');
+            }
         } catch (error) {
-            setLoading(false);
+            message.error("An error occurred while saving the account class");
         } finally {
             setLoading(false);
         }
-
     };
-
 
     return (
         <div>
-            <Title level={2}>Register New Account Class</Title>
+            <Title level={2}>{id && isValidUUID(id) ? "Edit Account Class" : "Register New Account Class"}</Title>
             <Form
                 form={form}
                 name="register"
@@ -83,14 +87,14 @@ const AccountClassRegistration: React.FC = () => {
                 <Form.Item
                     name="ClassName"
                     label="Class Name"
-                    rules={[{ required: true, message: 'Please input the class name!' }]}
+                    rules={[{ required: true, message: "Please input the class name!" }]}
                 >
                     <Input />
                 </Form.Item>
                 <Form.Item
                     name="Description"
                     label="Description"
-                    rules={[{ required: true, message: 'Please input the description!' }]}
+                    rules={[{ required: true, message: "Please input the description!" }]}
                 >
                     <Input.TextArea rows={4} />
                 </Form.Item>
@@ -106,5 +110,4 @@ const AccountClassRegistration: React.FC = () => {
         </div>
     );
 };
-
 export default AccountClassRegistration;

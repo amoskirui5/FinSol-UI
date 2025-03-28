@@ -15,12 +15,19 @@ const LoanTypeDetailsPage: React.FC = () => {
         fetchLoanTypeDetails();
     }, [id]);
 
+    const isValidUUID = (id: string | undefined): id is `${string}-${string}-${string}-${string}-${string}` => {
+        return !!id && /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
+    };
     const fetchLoanTypeDetails = async () => {
 
         try {
             setLoading(true);
+            if (!isValidUUID(id)) {
+                console.error("Invalid or missing ID");
+                return;
+            }
             const response = await fetchLoanTypeById(id);
-            
+
             if (response.success) {
                 setLoanType(response.data);
             }
@@ -52,8 +59,8 @@ const LoanTypeDetailsPage: React.FC = () => {
                 <Descriptions.Item label="Processing Fee">{loanType?.processingFee}</Descriptions.Item>
                 <Descriptions.Item label="Max Repayment Period">{loanType?.maxRepayPeriodInMonths} months</Descriptions.Item>
                 <Descriptions.Item label="Membership Duration">{loanType?.membershipDurationRequirementInMonths} months</Descriptions.Item>
-                <Descriptions.Item label="Minimum Loan Amount">{formatCurrency(loanType?.minimumLoanAmount ||0)}</Descriptions.Item>
-                <Descriptions.Item label="Maximum Loan Amount">{formatCurrency(loanType?.maximumLoanAmount ||0)}</Descriptions.Item>
+                <Descriptions.Item label="Minimum Loan Amount">{formatCurrency(loanType?.minimumLoanAmount || 0)}</Descriptions.Item>
+                <Descriptions.Item label="Maximum Loan Amount">{formatCurrency(loanType?.maximumLoanAmount || 0)}</Descriptions.Item>
                 <Descriptions.Item label="Grace Period">{loanType?.gracePeriodInMonths} months</Descriptions.Item>
                 <Descriptions.Item label="Late Payment Fee">{loanType?.latePaymentFee}</Descriptions.Item>
                 <Descriptions.Item label="Collateral Required">{loanType?.isCollateralRequired ? 'Yes' : 'No'}</Descriptions.Item>

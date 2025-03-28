@@ -11,7 +11,7 @@ import { CreateMemberRegistrationRequestDTO, MemberFormProps } from '../../types
 const MemberForm: React.FC<MemberFormProps> = ({ isUpdate = false }) => {
     const [form] = Form.useForm();
     const { id } = useParams();
-    const [loading, setLoading] = useState(false);
+    const [, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const disableFutureDates = (current: Dayjs) => {
@@ -22,20 +22,28 @@ const MemberForm: React.FC<MemberFormProps> = ({ isUpdate = false }) => {
         return current && current.isAfter(dayjs().subtract(18, 'years'));
     };
 
+    const isValidUUID = (id: string | undefined): id is `${string}-${string}-${string}-${string}-${string}` => {
+        return !!id && /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
+    };
+
     useEffect(() => {
         if (isUpdate && id) {
             const fetchMember = async () => {
                 try {
+                    if (!isValidUUID(id)) {
+                        message.error("Invalid or missing ID");
+                        return;
+                    }
                     const response = await fetchMemberById(id); // Fetch member data
                     if (response.success) {
                         const member = response.data
-                        
+
                         form.setFieldsValue({
                             ...member,
                             dateOfBirth: member?.dateOfBirth ? dayjs(member.dateOfBirth) : null,
                             dateJoined: member.dateJoined ? dayjs(member.dateJoined) : null,
                         });
-                        
+
                     }
                 } catch (error) {
                     message.error('Failed to load member data');
@@ -51,6 +59,10 @@ const MemberForm: React.FC<MemberFormProps> = ({ isUpdate = false }) => {
         setLoading(true);
         try {
             if (isUpdate && id) {
+                if (!isValidUUID(id)) {
+                    message.error("Invalid or missing ID");
+                    return;
+                }
                 await updateMember(id, values);
             } else {
                 await registerMember(values);

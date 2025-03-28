@@ -1,29 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, DatePicker, Select, InputNumber, Table, Modal, Alert, Switch, Space } from 'antd';
+import { Form, Button, DatePicker, InputNumber, Table, Modal, Alert, Switch, Space } from 'antd';
 import { alertService } from '../../services/alertService';
 import { useNavigate } from 'react-router-dom';
 import { ChartOfAccount } from '../../types/accountingTypes';
 import moment from 'moment';
-import MemberSearch from '../../components/MemberSearch';
 import { MemberListDto } from '../../types/Member/memberTypes';
 import { CreateMemberPaymentRequestDTO, PaymentItemDTO } from '../../types/MemberAccount/memberAccountTypes';
 import { getPayeableChartOfAccounts } from '../../services/chartOfAccountsService';
 import { createMemberPayment, fetchMembersItemToPay } from '../../services/memberPaymentService';
 import MemberSelectField from '../../components/MemberSelectField';
 
-const { Option } = Select;
-
 const CreatePaymentForm: React.FC = () => {
     const [form] = Form.useForm();
     const [paymentItems, setPaymentItems] = useState<PaymentItemDTO[]>([]);
-    const [totalAmountDue, setTotalAmountDue] = useState<number>(0);
+    const [, setTotalAmountDue] = useState<number>(0);
     const [totalAmountPaid, setTotalAmountPaid] = useState<number>(0);
     const [totalAmount, setTotalAmount] = useState<number>(0);
     const [warningVisible, setWarningVisible] = useState(false);
     const [autoDistribute, setAutoDistribute] = useState(false);
     const [selectedMember, setSelectedMember] = useState<MemberListDto | null>(null);
-    const [chartsOfAccount, setChartsOfAccount] = useState<ChartOfAccount[]>([]);
-    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+    const [, setChartsOfAccount] = useState<ChartOfAccount[]>([]);
+    const [, setIsModalVisible] = useState<boolean>(false);
 
     const navigate = useNavigate();
     const { showAlert } = alertService();
@@ -155,7 +152,7 @@ const CreatePaymentForm: React.FC = () => {
             title: 'Amount Paid',
             dataIndex: 'amountPaid',
             key: 'amountPaid',
-            render: (text: number, record: PaymentItemDTO) => (
+            render: (record: PaymentItemDTO) => (
                 <InputNumber
                     min={0}
                     value={record.amountPaid}
@@ -172,7 +169,7 @@ const CreatePaymentForm: React.FC = () => {
         {
             title: 'Action',
             key: 'action',
-            render: (text: any, record: PaymentItemDTO) => (
+            render: (record: PaymentItemDTO) => (
                 <Button type="link" onClick={() => removePaymentItem(record.key)}>Remove</Button>
             ),
         },

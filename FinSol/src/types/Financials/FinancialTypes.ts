@@ -28,9 +28,14 @@ export interface TrialBalanceEntry {
 }
 
   
-  export interface BalanceSheetEntry {
+  export interface  BalanceSheetEntry {
     accountName: string;
     amountsByYear: AmountsByYear;
+  }
+
+  export interface TotalsDataSourceEntry {
+    accountName: string;
+    [key: number]: number;
   }
   
   export interface BalanceSheetResponse {

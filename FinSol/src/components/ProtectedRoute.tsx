@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { getToken, getUser } from '../helpers/tokenService';
+import { getToken } from '../helpers/tokenService';
 
 interface ProtectedRouteProps {
     children: React.ReactElement;

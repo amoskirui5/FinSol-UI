@@ -21,12 +21,12 @@ const { Option } = Select;
 const MemberList: React.FC = () => {
   const navigate = useNavigate();
   const [memberData, setMemberdata] = useState<MemberListDto[]>([]);
-  const [totalRecords, setTotalRecords] = useState<number>(0);
-  const [pageNumber, setPageNumber] = useState<number>(1);
+  const [, setTotalRecords] = useState<number>(0);
+  const [pageNumber, ] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [searchField, setSearchField] = useState<string>('');
-  const [sortingType, SetSortingType] = useState<boolean>(false);
+  const [sortingType, ] = useState<boolean>(false);
   const options: PaginationOptions = {
     pageNumber,
     pageSize,
@@ -94,7 +94,7 @@ const MemberList: React.FC = () => {
     {
       title: 'Action',
       key: 'action',
-      render: (text: any, record: MemberListDto) => (
+      render: (record: MemberListDto) => (
         <Space size="middle">
           <Tooltip title="View Details">
             <Button type="link" icon={<EyeOutlined />} onClick={() => viewDetails(record.memberId)} />
@@ -128,9 +128,12 @@ const MemberList: React.FC = () => {
   };
 
   const deactivateMember = (id: string) => {
+    navigate(`${id}`);
   };
 
   const addNextOfKin = (id: string) => {
+    navigate(`${id}`);
+
   };
 
 

@@ -19,7 +19,7 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({ onSubmit })
   const [form] = Form.useForm();
   const [roles, setRoles] = useState<SystemRoles[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, ] = useState<string | null>(null);
 
   const onFinish = (values: UserRegistrationFormValues) => {
     onSubmit(values);

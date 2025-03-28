@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Descriptions, Card, Button, Spin, Typography } from 'antd';
+import { Descriptions, Card, Button, Spin, Typography, message } from 'antd';
 import { MemberListDto } from '../../types/Member/memberTypes';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Gender } from '../../enums/enums';
@@ -13,11 +13,18 @@ const MemberDetails: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [member, setMember] = useState<MemberListDto | null>(null);
     const navigate = useNavigate();
+    const isValidUUID = (id: string | undefined): id is `${string}-${string}-${string}-${string}-${string}` => {
+        return !!id && /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
+    };
     useEffect(() => {
 
         const fetchMemberDetails = async () => {
             try {
                 setLoading(true);
+                if (!isValidUUID(id)) {
+                    message.error("Invalid or missing ID");
+                    return;
+                }
                 const response = await fetchMemberById(id);
                 if (response.success) {
                     setMember(response.data);
@@ -50,7 +57,7 @@ const MemberDetails: React.FC = () => {
         <Card>
             <Title level={3}>Member Details</Title>
             <Descriptions bordered layout="vertical">
-                <Descriptions.Item label="Member Name">{member.firstName+' '+ member.otherName}</Descriptions.Item>
+                <Descriptions.Item label="Member Name">{member.firstName + ' ' + member.otherName}</Descriptions.Item>
                 <Descriptions.Item label="Member Number">{member.memberNumber}</Descriptions.Item>
                 <Descriptions.Item label="Email">{member.email}</Descriptions.Item>
                 <Descriptions.Item label="Phone Number">{member.phoneNumber}</Descriptions.Item>
@@ -62,8 +69,8 @@ const MemberDetails: React.FC = () => {
                 <Descriptions.Item label="National ID">{member.nationalID || 'N/A'}</Descriptions.Item>
                 <Descriptions.Item label="Passport Number">{member.passportNumber || 'N/A'}</Descriptions.Item>
                 <Descriptions.Item label="Tax PIN">{member.taxPIN || 'N/A'}</Descriptions.Item>
-                <Descriptions.Item label="Date Joined">{formatDate(member.dateJoined.toString())}</Descriptions.Item>
-                <Descriptions.Item label="Gender">{Gender[member.gender]}</Descriptions.Item>
+                <Descriptions.Item label="Date Joined">{member.dateJoined ? formatDate(member.dateJoined.toString()) : "N/A"}</Descriptions.Item>
+                <Descriptions.Item label="Gender">{member.gender !== undefined ? Gender[member.gender] : "N/A"}</Descriptions.Item>
             </Descriptions>
             <Button type="primary" onClick={handleBackClick} style={{ marginTop: '20px' }}>
                 Back to List
