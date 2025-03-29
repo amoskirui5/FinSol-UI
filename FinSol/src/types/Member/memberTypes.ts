@@ -25,7 +25,7 @@ export interface MemberListDto {
     memberId: string; 
     firstName: string;
     otherName: string;
-    memberNumber?: string;
+    memberNumber: string;
     email?: string;
     phoneNumber?: string;
     bankAccount?: string;
@@ -36,7 +36,7 @@ export interface MemberListDto {
     nationalID?: string;
     passportNumber?: string;
     taxPIN?: string;
-    dateJoined?: Date; 
+    dateJoined: Date; 
     gender?:Gender
   }
   
