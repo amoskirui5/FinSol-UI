@@ -32,6 +32,13 @@ export const GET_ALL_MEMBERS= `${import.meta.env.VITE_API_BASE_URL}api/members`;
 export const GET_ALL_MEMBERS_BY_JOIN_DATE= `${import.meta.env.VITE_API_BASE_URL}api/members/by-join-date`;
 export const UPDATE_MEMBER_DETAILS= `${import.meta.env.VITE_API_BASE_URL}api/members/update`;
 
+//member next of kin
+export const CREATE_MEMBER_NEXT_OF_KIN=`${import.meta.env.VITE_API_BASE_URL}api/MemberNextOfKin/add`
+export const UPDATE_MEMBER_NEXT_OF_KIN=`${import.meta.env.VITE_API_BASE_URL}api/MemberNextOfKin`;
+export const DELETE_MEMBER_NEXT_OF_KIN=`${import.meta.env.VITE_API_BASE_URL}api/MemberNextOfKin`;
+export const GET_MEMBER_NEXT_OF_KIN_BY_ID=`${import.meta.env.VITE_API_BASE_URL}api/MemberNextOfKin`;
+export const GET_MEMBER_NEXT_OF_KIN_BY_MEMBER_ID=`${import.meta.env.VITE_API_BASE_URL}api/MemberNextOfKin/by-member-id`;
+
 // member account
 export const GET_ALL_MEMBER_ACCOUNTS_SETTINGS=`${import.meta.env.VITE_API_BASE_URL}api/MemberAccount`
 
@@ -56,3 +63,7 @@ export const EXPORT_MEMBER_STATEMENT =`${import.meta.env.VITE_API_BASE_URL}api/M
 export const FETCH_TRIAL_BALANCE = `${import.meta.env.VITE_API_BASE_URL}api/FinancialStatements/trial-balance`
 export const FETCH_BALANCE_SHEET = `${import.meta.env.VITE_API_BASE_URL}api/FinancialStatements/balance-sheet`
 export const FETCH_CASH_BOOK = `${import.meta.env.VITE_API_BASE_URL}api/FinancialStatements/cash-book`
+
+// Member Payments
+export const GET_ITEMS_TO_PAY=`${import.meta.env.VITE_API_BASE_URL}api/MemberPayments/get-member-items-to-pay`
+export const CREATE_MEMBER_PAYMENT = `${import.meta.env.VITE_API_BASE_URL}api/MemberPayments/create`

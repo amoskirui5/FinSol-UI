@@ -25,7 +25,7 @@ export interface MemberListDto {
     memberId: string; 
     firstName: string;
     otherName: string;
-    memberNumber?: string;
+    memberNumber: string;
     email?: string;
     phoneNumber?: string;
     bankAccount?: string;
@@ -36,7 +36,7 @@ export interface MemberListDto {
     nationalID?: string;
     passportNumber?: string;
     taxPIN?: string;
-    dateJoined?: Date; 
+    dateJoined: Date; 
     gender?:Gender
   }
   
@@ -124,4 +124,30 @@ export interface MemberDetailsResponse {
   export interface MemberSelectFieldProps {
     selectedMember: MemberListDto | null;
     onMemberSelect: (member: MemberListDto) => void;
+  }
+  export interface MemberNextOfKinDto {
+    kinId: string;
+    memberId: string;
+    firstName: string;
+    otherName: string;
+    email?: string;
+    contact?: string;
+    isActive: boolean;
+  }
+  
+  export interface CreateMemberNextOfKinDto {
+    memberId: string;
+    firstName: string;
+    otherName: string;
+    email?: string;
+    contact?: string;
+  }
+  
+  export interface UpdateMemberNextOfKinDto {
+    firstName: string;
+    otherName: string;
+    email?: string;
+    contact?: string;
+    isActive: boolean;
+    memberId: string;
   }

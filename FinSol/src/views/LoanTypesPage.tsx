@@ -10,10 +10,10 @@ const LoanTypesPage: React.FC = () => {
     const [loanTypes, setLoanTypes] = useState<LoanType[]>([]);
     const navigate = useNavigate();
     const [totalRecords, setTotalRecords] = useState<number>(0);
-    const [pageNumber, setPageNumber] = useState<number>(1);
+    const [pageNumber, ] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(10);
-    const [searchTerm, setSearchTerm] = useState<string>('');
-    const [searchField, setSearchField] = useState<string>('');
+    const [searchTerm, ] = useState<string>('');
+    const [searchField, ] = useState<string>('');
 
     const options: PaginationOptions = {
         pageNumber,

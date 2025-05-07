@@ -78,7 +78,7 @@ const MemberSearch: React.FC<MemberSearchProps> = ({ onMemberSelect }) => {
         {
             title: 'Action',
             key: 'action',
-            render: (text: any, record: MemberListDto) => (
+            render: (record: MemberListDto) => (
                 <Button
                     type="primary"
                     onClick={() => onMemberSelect(record)}

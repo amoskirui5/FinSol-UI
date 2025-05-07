@@ -17,7 +17,7 @@ const MemberSelectField: React.FC<MemberSelectFieldProps> = ({ selectedMember, o
     return (
       <>
         <Form.Item
-          label="Member ID"
+          label="Member Name"
           name="memberId"
           rules={[{ required: true, message: 'Please select a member' }]}
           style={{ flex: 1 }}

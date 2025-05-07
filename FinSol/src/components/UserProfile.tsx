@@ -1,10 +1,11 @@
 import React from 'react';
 import { Menu } from 'antd';
+import type { MenuProps } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { ACCESS_TOKEN } from '../constants/applicationNames';
 
-const menuItems = [
+const menuItems:MenuProps['items']=[
     {
         key: 'profile',
         icon: <UserOutlined />,

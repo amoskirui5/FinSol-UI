@@ -59,3 +59,33 @@ export interface CreateMemberReceiptRequestDTO {
   transactionReference?: string
   receiptItems: ReceiptItemDTO[]
 }
+
+
+export interface CreateMemberPaymentRequestDTO {
+  memberId: string;
+  amount: number;
+  paymentDate: string;
+  paymentMethod?: string;
+  description?: string;
+  transactionReference?: string;
+  creditAccount: string;
+  paymentItems: PaymentItemDTO[];
+}
+
+export interface PaymentItemDTO {
+  key: string;
+  loanNo?: string;
+  loanAppId?: string | null;
+  description?: string;
+  memberAccountType: string;
+  amountPaid: number;
+  amountDue: number;
+  isPartiallyDisbursed?: boolean;
+}
+
+export interface paymentItemsResponse {
+  data: PaymentItemDTO[];
+  success: boolean;
+  message: string;
+  errors: string[];
+}

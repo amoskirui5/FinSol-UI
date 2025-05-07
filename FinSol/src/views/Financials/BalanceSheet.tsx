@@ -13,11 +13,11 @@ const BalanceSheet: React.FC = () => {
     const [equity, setEquity] = useState<BalanceSheetEntry[]>([]);
     const [useFinancialYear, setUseFinancialYear] = useState(true);
     const [selectedYears, setSelectedYears] = useState<number[]>([
-        new Date().getFullYear(), 
-        new Date().getFullYear() - 1, 
+        new Date().getFullYear(),
+        new Date().getFullYear() - 1,
     ]);
 
-    const [totals, setTotals] = useState<Totals>({
+    const [, setTotals] = useState<Totals>({
         assets: {},
         liabilities: {},
         equity: {},
@@ -32,7 +32,7 @@ const BalanceSheet: React.FC = () => {
         const result = await fetchBalanceSheet(years);
 
         if (result.success) {
-            
+
             setAssets(result.data.assets);
             setLiabilities(result.data.liabilities);
             setEquity(result.data.equity);
@@ -52,25 +52,25 @@ const BalanceSheet: React.FC = () => {
         { title: 'Account Name', dataIndex: 'accountName', key: 'accountName' },
         ...selectedYears.map(year => ({
             title: year.toString(),
-            dataIndex: ['amountsByYear', year.toString()],
+            dataIndex: ['amountsByYear', year.toString()] as [string, string],
             key: year.toString(),
         })),
     ];
 
-    const totalsDataSource = [
-        {
-            accountName: 'Total Assets',
-            ...selectedYears.reduce((acc, year) => ({ ...acc, [year]: totals.assets[year] || 0 }), {}),
-        },
-        {
-            accountName: 'Total Liabilities',
-            ...selectedYears.reduce((acc, year) => ({ ...acc, [year]: totals.liabilities[year] || 0 }), {}),
-        },
-        {
-            accountName: 'Total Equity',
-            ...selectedYears.reduce((acc, year) => ({ ...acc, [year]: totals.equity[year] || 0 }), {}),
-        },
-    ];
+    // const totalsDataSource = [
+    //     {
+    //         accountName: 'Total Assets',
+    //         ...selectedYears.reduce((acc, year) => ({ ...acc, [year]: totals.assets[year] || 0 }), {}),
+    //     },
+    //     {
+    //         accountName: 'Total Liabilities',
+    //         ...selectedYears.reduce((acc, year) => ({ ...acc, [year]: totals.liabilities[year] || 0 }), {}),
+    //     },
+    //     {
+    //         accountName: 'Total Equity',
+    //         ...selectedYears.reduce((acc, year) => ({ ...acc, [year]: totals.equity[year] || 0 }), {}),
+    //     },
+    // ];
 
     return (
         <div style={{ padding: '24px' }}>
@@ -109,7 +109,7 @@ const BalanceSheet: React.FC = () => {
             <Title level={4}>Equity</Title>
             <Table columns={columns} dataSource={equity} pagination={false} rowKey="accountName" />
 
-            <Table
+            {/* <Table
                 columns={columns}
                 dataSource={totalsDataSource}
                 pagination={false}
@@ -126,7 +126,7 @@ const BalanceSheet: React.FC = () => {
                         ))}
                     </Table.Summary.Row>
                 )}
-            />
+            /> */}
         </div>
     );
 };

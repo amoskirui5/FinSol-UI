@@ -14,8 +14,8 @@ import { LoanStatus } from '../enums/enums';
 const LoanApplicationsTable: React.FC = () => {
   const [loanApplications, setLoanApplications] = useState<LoanApplicationList[]>([]);
   const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [searchField, setSearchField] = useState<string>('name');
+  const [searchTerm, ] = useState<string>('');
+  const [searchField, ] = useState<string>('name');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loanInfo, setLoanInfo] = useState<LoanInfoResponseDTO | null>(null);
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
@@ -136,7 +136,7 @@ const LoanApplicationsTable: React.FC = () => {
     {
       title: 'Actions',
       key: 'actions',
-      render: (text: any, record: LoanApplicationList) => (
+      render: (record: LoanApplicationList) => (
         <div>
           <Tooltip title={record.loanStatus === LoanStatus.Applied ? "Approve Loan" : "Loan Past Approval Stage"}>
             <Button

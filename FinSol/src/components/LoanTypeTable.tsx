@@ -42,7 +42,7 @@ const LoanTypeTable: React.FC<LoanTypeTableProps> = ({ loanTypes, onViewDetails,
         {
             title: 'Actions',
             key: 'actions',
-            render: (text: any, record: LoanType) => (
+            render: (record: LoanType) => (
                 <Space size="middle">
                     <Button
                         icon={<EyeOutlined />}

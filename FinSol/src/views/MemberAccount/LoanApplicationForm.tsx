@@ -1,27 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, DatePicker, Select, InputNumber, message } from 'antd';
-import moment from 'moment';
+import { Form, Button, DatePicker, Select, InputNumber } from 'antd';
 import { fetchLoanTypes } from '../../services/loanTypeService';
 import { PaginationOptions } from '../../types/paginationTypes';
 import { LoanType } from '../../types/loanTypeTypes';
 import { submitLoanApplication } from '../../services/memberLoanService';
-import { alertService } from '../../services/alertService';
 import dayjs, { Dayjs } from 'dayjs';
 import { CreateLoanApplicationRequest } from '../../types/MemberLoan/memberLoanTypes';
 import { fetchAllMembers } from '../../services/memberService';
 import { MemberListDto } from '../../types/Member/memberTypes';
 
 const { Option } = Select;
-const { showAlert } = alertService();
 
 const LoanApplicationForm: React.FC = () => {
     const [loanTypes, setLoanTypes] = useState<LoanType[]>([]);
     const [loading, setLoading] = useState(false);
-    const [totalRecords, setTotalRecords] = useState<number>(0);
-    const [pageNumber, setPageNumber] = useState<number>(1);
-    const [pageSize, setPageSize] = useState<number>(10);
-    const [searchTerm, setSearchTerm] = useState<string>('');
-    const [searchField, setSearchField] = useState<string>('');
+    const [pageNumber, ] = useState<number>(1);
+    const [pageSize, ] = useState<number>(10);
+    const [searchTerm, ] = useState<string>('');
+    const [searchField, ] = useState<string>('');
     const [members, setMembers] = useState<MemberListDto[]>([]);
     const [sortingType,] = useState<boolean>(false);
 
