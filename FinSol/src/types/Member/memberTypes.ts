@@ -125,3 +125,29 @@ export interface MemberDetailsResponse {
     selectedMember: MemberListDto | null;
     onMemberSelect: (member: MemberListDto) => void;
   }
+  export interface MemberNextOfKinDto {
+    kinId: string;
+    memberId: string;
+    firstName: string;
+    otherName: string;
+    email?: string;
+    contact?: string;
+    isActive: boolean;
+  }
+  
+  export interface CreateMemberNextOfKinDto {
+    memberId: string;
+    firstName: string;
+    otherName: string;
+    email?: string;
+    contact?: string;
+  }
+  
+  export interface UpdateMemberNextOfKinDto {
+    firstName: string;
+    otherName: string;
+    email?: string;
+    contact?: string;
+    isActive: boolean;
+    memberId: string;
+  }

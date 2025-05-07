@@ -32,6 +32,13 @@ export const GET_ALL_MEMBERS= `${import.meta.env.VITE_API_BASE_URL}api/members`;
 export const GET_ALL_MEMBERS_BY_JOIN_DATE= `${import.meta.env.VITE_API_BASE_URL}api/members/by-join-date`;
 export const UPDATE_MEMBER_DETAILS= `${import.meta.env.VITE_API_BASE_URL}api/members/update`;
 
+//member next of kin
+export const CREATE_MEMBER_NEXT_OF_KIN=`${import.meta.env.VITE_API_BASE_URL}api/MemberNextOfKin/add`
+export const UPDATE_MEMBER_NEXT_OF_KIN=`${import.meta.env.VITE_API_BASE_URL}api/MemberNextOfKin`;
+export const DELETE_MEMBER_NEXT_OF_KIN=`${import.meta.env.VITE_API_BASE_URL}api/MemberNextOfKin`;
+export const GET_MEMBER_NEXT_OF_KIN_BY_ID=`${import.meta.env.VITE_API_BASE_URL}api/MemberNextOfKin`;
+export const GET_MEMBER_NEXT_OF_KIN_BY_MEMBER_ID=`${import.meta.env.VITE_API_BASE_URL}api/MemberNextOfKin/by-member-id`;
+
 // member account
 export const GET_ALL_MEMBER_ACCOUNTS_SETTINGS=`${import.meta.env.VITE_API_BASE_URL}api/MemberAccount`
 
