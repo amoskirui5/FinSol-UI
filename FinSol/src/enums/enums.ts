@@ -5,8 +5,10 @@ export enum LoanStatus {
     Applied = 1,
     Approved = 2,
     Declined = 3,
-    PartiallyDisbursed = 4,
-    Disbursed = 5
+    Staged = 4,
+    Disbursed = 5,
+    PartiallyDisbursed = 6,
+
 }
 
 export enum InterestRateType {
@@ -25,9 +27,12 @@ export enum InterestRateMethod {
 
 export const LoanStatusOptions = [
     { label: 'Pending', value: LoanStatus.Pending },
+    { label: 'Applied', value: LoanStatus.Applied },
     { label: 'Approved', value: LoanStatus.Approved },
-    { label: 'Declined', value: LoanStatus.Declined },
+    { label: 'Declined ', value: LoanStatus.Declined },
+    { label: 'Staged', value: LoanStatus.Staged },
     { label: 'Disbursed', value: LoanStatus.Disbursed },
+    { label: 'Partially Disbursed', value: LoanStatus.PartiallyDisbursed },
 ];
 
 export const InterestRateTypeOptions = [

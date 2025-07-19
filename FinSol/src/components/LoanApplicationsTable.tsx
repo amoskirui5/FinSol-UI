@@ -1,61 +1,92 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Table, Tooltip } from 'antd';
-import moment from 'dayjs';
-import { fetchLoanApplications, fetchLoanEligibility } from '../services/memberLoanService';
-import { LoanApplicationList, LoanInfoResponseDTO } from '../types/MemberLoan/memberLoanTypes';
-import { PaginationOptions } from '../types/paginationTypes';
-import { formatCurrency } from '../Utility/formatCurrency';
-import { CheckCircleOutlined, CloseCircleOutlined, DollarCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from 'react';
+import { Table, Button, Tooltip, Tag, Popconfirm, Input, Form, DatePicker, InputNumber, Modal, Space, Select, message, Typography } from 'antd';
+import {
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  DollarCircleOutlined,
+  InfoCircleOutlined,
+  EyeOutlined,
+  PlusOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  HourglassOutlined,
+} from '@ant-design/icons';
+import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
+
 import LoanEligibilityModal from './LoanEligibilityModal';
 import LoanApprovalConfirmationModal from './LoanApprovalConfirmationModal';
-import { useNavigate } from 'react-router-dom';
+import { AddGuarantorRequest, GuarantorList, LoanApplicationList, LoanInfoResponseDTO, LoanStagingRequestDTO, UpdateGuarantorRequest } from '../types/MemberLoan/memberLoanTypes';
+import { PaginationOptions } from '../types/paginationTypes';
+import { fetchLoanApplications, fetchLoanEligibility, StageLoanDisbursement } from '../services/memberLoanService';
 import { LoanStatus } from '../enums/enums';
+import { formatCurrency } from '../Utility/formatCurrency';
+import { ColumnsType } from 'antd/es/table';
+import { MemberListDto } from '../types/Member/memberTypes';
+import { Option } from 'antd/es/mentions';
+import MemberSearch from './MemberSearch';
+import { alertService } from '../services/alertService';
+import { AddGuarantor, DeleteGuarantor, UpdateGuarantor } from '../services/GuarantorService';
+import { StagingForm } from '../views/MemberAccount/StagingForm';
+
 
 const LoanApplicationsTable: React.FC = () => {
   const [loanApplications, setLoanApplications] = useState<LoanApplicationList[]>([]);
   const [loading, setLoading] = useState(false);
-  const [searchTerm, ] = useState<string>('');
-  const [searchField, ] = useState<string>('name');
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isGuarantorModalVisible, setIsGuarantorModalVisible] = useState(false);
+  const [isMemberModalVisible, setIsMemberModalVisible] = useState(false);
   const [loanInfo, setLoanInfo] = useState<LoanInfoResponseDTO | null>(null);
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
   const [requestedLoanAmount, setRequestedLoanAmount] = useState<number>(0);
   const [memLoanId, SetMemLoanId] = useState<string>('');
+  const [selectedLoan, setSelectedLoan] = useState<LoanApplicationList | null>(null);
+  const [form] = Form.useForm();
+  const navigate = useNavigate();
+  const [selectedGuarantorMember, setSelectedGuarantorMember] = useState<MemberListDto | null>(null);
+  const [editingGuarantor, setEditingGuarantor] = useState<GuarantorList | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [isStagingModalVisible, setIsStagingModalVisible] = useState(false);
+
+
   const paginationOptions: PaginationOptions = {
     searchTerm,
-    searchField,
+    searchField: 'name',
   };
 
-  const navigate = useNavigate();
+  const { showAlert } = alertService();
+  const { Text } = Typography;
+
   useEffect(() => {
     const getLoanApplications = async () => {
       setLoading(true);
       const response = await fetchLoanApplications(paginationOptions);
+
       setLoanApplications(response.data.items);
       setLoading(false);
-
     };
     getLoanApplications();
-  }, [searchTerm, searchField]);
+  }, [searchTerm]);
 
-  const handleApproveLoan = async (loanId: string, memberId: string, loanTypeId: string, requestedAmount: number) => {
+  const handleApproveLoan = async (
+    loanId: string,
+    memberId: string,
+    loanTypeId: string,
+    requestedAmount: number
+  ) => {
     setRequestedLoanAmount(requestedAmount);
-    SetMemLoanId(loanId)
-
+    SetMemLoanId(loanId);
     const eligibilityResponse = await fetchLoanEligibility(memberId, loanTypeId);
     if (eligibilityResponse.success) {
       setLoanInfo(eligibilityResponse.data);
       setIsModalVisible(true);
-
-    } else {
-      console.log('Could not fetch eligibility info:', eligibilityResponse.message);
     }
-
   };
 
   const handleConfirmApproval = (loanId: string) => {
-    console.log(`Approved loan: ${loanId}`);
     setIsConfirmModalVisible(false);
+    // Trigger your approval logic here
   };
 
   const handleCancelApproval = () => {
@@ -63,15 +94,18 @@ const LoanApplicationsTable: React.FC = () => {
   };
 
   const handleDeclineLoan = (loanId: string) => {
-    console.log(`Declined loan: ${loanId}`);
+    // Trigger your decline logic here
   };
 
-  const handleCheckMemberInfo = async (memberId: string, loanTypeId: string) => {
-
+  const handleCheckMemberInfo = async (
+    memberId: string,
+    loanTypeId: string,
+    loanId: string
+  ) => {
     setLoading(true);
     const eligibilityResponse = await fetchLoanEligibility(memberId, loanTypeId);
     if (eligibilityResponse.success) {
-      setLoanInfo(eligibilityResponse.data);
+      setLoanInfo({ ...eligibilityResponse.data, loanId });
       setIsModalVisible(true);
     }
     setLoading(false);
@@ -82,14 +116,159 @@ const LoanApplicationsTable: React.FC = () => {
   };
 
   const handleContinueApproval = () => {
-    navigate(`/loan-approval/${memLoanId}`, { state: { loanInfo } });
+    navigate(`/loan-approval/${loanInfo?.loanId}`, { state: { loanInfo } });
   };
 
-  const handleDisburseLoan = async (loanAppId: string) => {
+  const handleDisburseLoan = (loanAppId: string) => {
     navigate(`/loan-disbursement/${loanAppId}`);
   };
 
-  const columns = [
+  const handleViewDetails = (loanId: string) => {
+    navigate(`/loan-applications/${loanId}`);
+  };
+
+  const showAddGuarantorModal = (loan: LoanApplicationList) => {
+    setSelectedLoan(loan);
+    form.resetFields();
+    setIsGuarantorModalVisible(true);
+  };
+
+  const handleAddGuarantor = async () => {
+    try {
+      const values = await form.validateFields();
+      const newGuarantor: AddGuarantorRequest = {
+        guarantorMemberId: values.memberId,
+        guaranteedAmount: values.guaranteedAmount,
+        guaranteeDate: values.guaranteeDate.format("YYYY-MM-DD"),
+        loanId: selectedLoan!.loanId,
+      };
+
+      await AddGuarantor(newGuarantor);
+
+      setIsGuarantorModalVisible(false);
+
+      // Refresh the table data
+      const response = await fetchLoanApplications(paginationOptions);
+      setLoanApplications(response.data.items);
+
+    } catch (error) {
+      console.error("Validation or AddGuarantor failed:", error);
+    }
+  };
+
+
+  const handleGuarantorMemberSelect = (member: MemberListDto) => {
+    if (!member || member.memberId === selectedGuarantorMember?.memberId) return;
+    setSelectedGuarantorMember(member);
+
+    if (selectedLoan?.memberId === member?.memberId) {
+
+      showAlert('A member cannot guarantee their own loan.', 'Please select a different member.', 'error');
+      return;
+    }
+    form.setFieldsValue({ memberId: member.memberId });
+    setIsMemberModalVisible(false);
+  };
+
+  const renderStatusTag = (status: LoanStatus) => {
+    const colorMap: Record<LoanStatus, string> = {
+      [LoanStatus.Applied]: 'blue',
+      [LoanStatus.Approved]: 'green',
+      [LoanStatus.Declined]: 'red',
+      [LoanStatus.Disbursed]: 'gold',
+      [LoanStatus.Pending]: 'gray',
+      [LoanStatus.PartiallyDisbursed]: 'purple',
+      [LoanStatus.Staged]: 'orange',
+    };
+
+    return <Tag color={colorMap[status]}>{LoanStatus[status]}</Tag>;
+  };
+
+  const handleEditGuarantor = (guarantor: GuarantorList) => {
+    setIsEditMode(true);
+    setEditingGuarantor(guarantor);
+    setIsGuarantorModalVisible(true);
+
+    form.setFieldsValue({
+      memberId: guarantor.guarantorMemberId,
+      guaranteedAmount: guarantor.guaranteedAmount,
+      guaranteeDate: guarantor.guaranteeDate ? moment(guarantor.guaranteeDate) : null,
+    });
+
+    const guarantorMemberDto: MemberListDto = {
+      memberId: guarantor.guarantorMemberId,
+      firstName: guarantor.guarantorMemberName?.split(' ')[0] || '',
+      otherName: guarantor.guarantorMemberName?.split(' ').slice(1).join(' ') || '',
+      memberNumber: guarantor.memberNumber || '',
+    };
+
+    setSelectedGuarantorMember(guarantorMemberDto);
+  };
+
+
+  const handleDeleteGuarantor = async (guarantorId: string, loanId: string) => {
+    try {
+
+      await DeleteGuarantor(loanId, guarantorId);
+
+      // Refresh the loan applications data
+      const response = await fetchLoanApplications(paginationOptions);
+      setLoanApplications(response.data.items);
+
+    } catch (error) {
+      console.error('Error deleting guarantor:', error);
+      message.error('Failed to remove guarantor');
+    }
+  };
+
+  const handleModalCancel = () => {
+    setIsGuarantorModalVisible(false);
+    setIsEditMode(false);
+    setEditingGuarantor(null);
+    setSelectedGuarantorMember(null);
+    form.resetFields();
+  };
+
+  const handleGuarantorSubmit = async () => {
+    try {
+      const values = await form.validateFields();
+
+      if (isEditMode && editingGuarantor) {
+        if (!editingGuarantor.loanGuarantorId) {
+          message.error('Guarantor ID is missing, cannot update.');
+          return;
+        }
+
+        const updateDto: UpdateGuarantorRequest = {
+          guaranteedAmount: values.guaranteedAmount,
+          guaranteeDate: values.guaranteeDate.format("YYYY-MM-DD"),
+          guarantorMemberId: values.memberId,
+          loanGuarantorId: editingGuarantor.loanGuarantorId,
+          loanId: editingGuarantor.loanId,
+        };
+
+        await UpdateGuarantor(updateDto.loanGuarantorId, updateDto);
+      } else {
+        await handleAddGuarantor();
+        return;
+      }
+
+      handleModalCancel();
+      const response = await fetchLoanApplications(paginationOptions);
+      setLoanApplications(response.data.items);
+
+    } catch (error) {
+      console.error('Error saving guarantor:', error);
+      message.error(`Failed to ${isEditMode ? 'update' : 'add'} guarantor`);
+    }
+  };
+
+  const handleStageLoan = (record: LoanApplicationList) => {
+    setSelectedLoan(record);
+    setIsStagingModalVisible(true);
+  };
+
+  const loanColumns = [
     {
       title: 'Loan Number',
       dataIndex: 'loanNumber',
@@ -117,7 +296,7 @@ const LoanApplicationsTable: React.FC = () => {
       key: 'memberName',
     },
     {
-      title: 'Repay Period (Months)',
+      title: 'Repayment (Months)',
       dataIndex: 'repayPeriod',
       key: 'repayPeriod',
     },
@@ -125,78 +304,287 @@ const LoanApplicationsTable: React.FC = () => {
       title: 'Status',
       dataIndex: 'loanStatus',
       key: 'loanStatus',
-      render: (value: LoanStatus) => LoanStatus[value],
+      render: renderStatusTag,
     },
     {
-      title: 'Amount',
-      dataIndex: 'amount',
-      key: 'amount',
+      title: 'Applied Amount',
+      dataIndex: 'appliedAmount',
+      key: 'appliedAmount',
       render: (amount: number) => formatCurrency(amount),
+    },
+    {
+      title: 'Approved Amount',
+      key: 'approvedAmount',
+      dataIndex: 'approvedAmount',
+
+      render: (_: any, record: LoanApplicationList) =>
+        record.loanApproval?.approvedAmount != null
+          ? formatCurrency(record.loanApproval.approvedAmount)
+          : '-',
+    },
+    {
+      title: 'Disbursed Amount',
+      dataIndex: 'disbursedAmount',
+      key: 'disbursedAmount',
+      render: (_: any, record: LoanApplicationList) =>
+        record.loanDisbursement?.disbursedAmount != null
+          ? formatCurrency(record.loanDisbursement.disbursedAmount)
+          : '-',
     },
     {
       title: 'Actions',
       key: 'actions',
       render: (record: LoanApplicationList) => (
         <div>
-          <Tooltip title={record.loanStatus === LoanStatus.Applied ? "Approve Loan" : "Loan Past Approval Stage"}>
+          {/* Approve Loan */}
+          <Tooltip title={record.loanStatus === LoanStatus.Pending ? "Approve Loan" : "Loan Past Approval Stage"}>
             <Button
               type="primary"
               icon={<CheckCircleOutlined />}
-              onClick={() => handleApproveLoan(record.loanId, record.memberId, record.loanTypeId, record.amount)}
-              disabled={record.loanStatus !== LoanStatus.Applied}
+              onClick={() =>
+                handleApproveLoan(record.loanId, record.memberId, record.loanTypeId, record.amount)
+              }
+              disabled={record.loanStatus !== LoanStatus.Pending}
               style={{ marginRight: 8 }}
             />
           </Tooltip>
 
+          {/* Decline Loan */}
+          <Popconfirm
+            title="Are you sure you want to decline this loan?"
+            onConfirm={() => handleDeclineLoan(record.loanId)}
+            okText="Yes"
+            cancelText="No"
+            disabled={record.loanStatus !== LoanStatus.Applied && record.loanStatus !== LoanStatus.Pending}
+          >
+            <Tooltip title="Decline Loan">
+              <Button
+                danger
+                icon={<CloseCircleOutlined />}
+                disabled={record.loanStatus !== LoanStatus.Applied && record.loanStatus !== LoanStatus.Pending}
+                style={{ marginRight: 8 }}
+              />
+            </Tooltip>
+          </Popconfirm>
 
-          <Tooltip title={record.loanStatus === LoanStatus.Approved ? "Loan Approved" : "Decline Loan"}>
-            <Button
-              danger
-              icon={<CloseCircleOutlined />}
-              onClick={() => {
-                handleDeclineLoan(record.loanId);
-              }}
-              disabled={record.loanStatus !== LoanStatus.Applied}
-              style={{ marginRight: 8 }}
-            />
-          </Tooltip>
-
-          
+          {/* Stage Loan (only if Approved) */}
           {record.loanStatus === LoanStatus.Approved && (
+            <Tooltip title="Stage Loan for Disbursement">
+              <Button
+                type="default"
+                icon={<HourglassOutlined />}
+                onClick={() => handleStageLoan(record)}
+                style={{ marginRight: 8 }}
+              />
+            </Tooltip>
+          )}
+
+          {/* Disburse Loan (only if already staged) */}
+          {record.loanStatus === LoanStatus.Staged && (
             <Tooltip title="Disburse Loan">
               <Button
                 type="primary"
                 icon={<DollarCircleOutlined />}
                 onClick={() => handleDisburseLoan(record.loanId)}
                 style={{ marginRight: 8 }}
-              >
-                Disburse
-              </Button>
+              />
             </Tooltip>
           )}
 
+          {/* Check Member Info */}
           <Tooltip title="Check Member Info">
             <Button
-              type="default"
               icon={<InfoCircleOutlined />}
-              onClick={() => handleCheckMemberInfo(record.memberId, record.loanTypeId)}
+              onClick={() =>
+                handleCheckMemberInfo(record.memberId, record.loanTypeId, record.loanId)
+              }
+              style={{ marginRight: 8 }}
+            />
+          </Tooltip>
+
+          {/* View Application */}
+          <Tooltip title="View Application">
+            <Button
+              icon={<EyeOutlined />}
+              onClick={() => handleViewDetails(record.loanId)}
             />
           </Tooltip>
         </div>
       ),
+    },
 
+  ];
+
+  // Guarantor columns
+  const guarantorColumns: ColumnsType<GuarantorList> = [
+    {
+      title: "Member Number",
+      dataIndex: "memberNumber",
+      key: "memberNumber",
+    },
+    {
+      title: "Name",
+      dataIndex: "guarantorMemberName",
+      key: "guarantorMemberName",
+    },
+    {
+      title: "Guaranteed Amount",
+      dataIndex: "guaranteedAmount",
+      key: "guaranteedAmount",
+      render: (amount: number) => `KES ${amount.toLocaleString()}`,
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      width: 120,
+      render: (_, record: GuarantorList, index: number) => (
+        <Space size="small">
+          <Tooltip title="Edit Guarantor">
+            <Button
+              type="link"
+              icon={<EditOutlined />}
+              size="small"
+              onClick={() => handleEditGuarantor(record)}
+            />
+          </Tooltip>
+
+          <Popconfirm
+            title="Remove Guarantor"
+            description="Are you sure you want to remove this guarantor?"
+            onConfirm={() => handleDeleteGuarantor(record?.guarantorMemberId, record?.loanId)}
+            okText="Yes"
+            cancelText="No"
+            placement="topRight"
+          >
+            <Tooltip title="Remove Guarantor">
+              <Button
+                type="link"
+                danger
+                icon={<DeleteOutlined />}
+                size="small"
+              />
+            </Tooltip>
+          </Popconfirm>
+        </Space>
+      ),
     },
   ];
 
+  async function handleStagingSubmit(data: LoanStagingRequestDTO) {
+    setLoading(true);
+    try {
+      console.log('Staging data:', data);
+      await StageLoanDisbursement(data);
+      setIsStagingModalVisible(false);
+      // Refresh the loan applications list
+      const response = await fetchLoanApplications(paginationOptions);
+      setLoanApplications(response.data.items);
+    } catch (error) {
+      message.error('Failed to stage loan for disbursement');
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div>
-      <Table
-        columns={columns}
+      <Input.Search
+        placeholder="Search by member name"
+        onSearch={(value) => setSearchTerm(value)}
+        style={{ marginBottom: 16, width: 300 }}
+        allowClear
+      />
+
+      <Table<LoanApplicationList>
+        columns={loanColumns}
         dataSource={loanApplications}
         loading={loading}
         rowKey="loanNumber"
         pagination={{ pageSize: 10 }}
+        expandable={{
+          expandedRowRender: (record) => (
+            <>
+              <div style={{ marginBottom: 12 }}>
+                <Space>
+                  <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    onClick={() => showAddGuarantorModal(record)}
+                  >
+                    Add Guarantor
+                  </Button>
+                  <Text type="secondary">
+                    Total Guarantors: {record?.memberLoanGuarantors?.length || 0}
+                  </Text>
+                </Space>
+              </div>
+
+              <Table
+                columns={guarantorColumns}
+                dataSource={record?.memberLoanGuarantors}
+                rowKey="loanGuarantorId"
+                pagination={false}
+                size="small"
+                locale={{
+                  emptyText: "No guarantors added yet"
+                }}
+              />
+            </>
+          ),
+          rowExpandable: () => true,
+        }}
+        scroll={{ x: 'max-content' }}
       />
+
+      <Modal
+        title={isEditMode ? "Edit Guarantor" : "Add Guarantor"}
+        open={isGuarantorModalVisible}
+        onCancel={handleModalCancel}
+        onOk={handleGuarantorSubmit}
+        okText={isEditMode ? "Update" : "Add"}
+      >
+        <Form form={form} layout="vertical">
+          <Form.Item
+            label="Guarantor ID"
+            name="memberId"
+            rules={[{ required: true, message: 'Please select a Guarantor' }]}
+            style={{ flex: 1 }}
+          >
+            <Select
+              placeholder="Select a Guarantor"
+              value={selectedGuarantorMember?.memberId}
+              onClick={() => setIsMemberModalVisible(true)}
+              allowClear
+              dropdownRender={() => <></>}
+              style={{ width: '100%' }}
+            >
+              {selectedGuarantorMember && (
+                <Option key={selectedGuarantorMember.memberId} value={selectedGuarantorMember.memberId}>
+                  {`${selectedGuarantorMember.firstName} ${selectedGuarantorMember.otherName}`}
+                </Option>
+              )}
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            label="Guaranteed Amount"
+            name="guaranteedAmount"
+            rules={[{ required: true, message: "Enter amount" }]}
+          >
+            <InputNumber style={{ width: "100%" }} min={1000} />
+          </Form.Item>
+
+          <Form.Item
+            label="Guarantee Date"
+            name="guaranteeDate"
+            rules={[{ required: true, message: "Select date" }]}
+          >
+            <DatePicker style={{ width: "100%" }} disabledDate={d => d > moment()} />
+          </Form.Item>
+        </Form>
+      </Modal>
+
       <LoanEligibilityModal
         visible={isModalVisible}
         onClose={handleModalClose}
@@ -210,10 +598,41 @@ const LoanApplicationsTable: React.FC = () => {
         onConfirm={() => handleConfirmApproval(memLoanId)}
         onCancel={handleCancelApproval}
         requestedAmount={requestedLoanAmount}
-        maxQualified={loanInfo?.maxLoanQualified == null ? 0 : loanInfo?.maxLoanQualified}
+        maxQualified={loanInfo?.maxLoanQualified || 0}
       />
-    </div>
 
+      <Modal
+        title="Search Member"
+        open={isMemberModalVisible}
+        onCancel={() => setIsMemberModalVisible(false)}
+        footer={null}
+        width="80%"
+        bodyStyle={{ padding: 0 }}
+      >
+        <MemberSearch onMemberSelect={handleGuarantorMemberSelect} />
+      </Modal>
+
+      <Modal
+        title="Stage Loan Disbursement"
+        open={isStagingModalVisible}
+        onCancel={() => setIsStagingModalVisible(false)}
+        footer={null}
+        destroyOnClose
+      >
+        {selectedLoan && (
+          <StagingForm
+            memberId={selectedLoan.memberId}
+            loanAppId={selectedLoan.loanId}
+            initialAmount={selectedLoan.loanApproval.approvedAmount}
+            onSubmit={(data) => {
+              handleStagingSubmit(data);
+              setIsStagingModalVisible(false);
+            }}
+          />
+        )}
+      </Modal>
+
+    </div>
   );
 };
 

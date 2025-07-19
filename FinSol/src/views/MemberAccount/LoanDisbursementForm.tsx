@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, Select, DatePicker, message, Typography } from 'antd';
+import { Form, Input, Button, Select, DatePicker, message, Card, Row, Col } from 'antd';
 import { useParams } from 'react-router-dom';
 import { LoanDisbursementRequestDTO } from '../../types/loanTypeTypes';
 import { fetchLoanApprovalDetailsById, submitLoanDisbursement } from '../../services/memberLoanService';
@@ -8,6 +8,8 @@ import { ChartOfAccount } from '../../types/accountingTypes';
 import { alertService } from '../../services/alertService';
 import { LoanApprovalListDTO } from '../../types/MemberLoan/memberLoanTypes';
 import { formatDate } from '../../helpers/dateFormater';
+import Title from 'antd/es/typography/Title';
+import moment from 'moment';
 
 const { Option } = Select;
 
@@ -17,6 +19,7 @@ const LoanDisbursementForm: React.FC = () => {
     const [debitAccounts, setDebitAccounts] = useState<ChartOfAccount[]>([]);
     const { showAlert } = alertService();
     const [loanApproval, setLoanApproval] = useState<LoanApprovalListDTO | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         const fetchDebitAccounts = async () => {
@@ -45,6 +48,8 @@ const LoanDisbursementForm: React.FC = () => {
     }, [loanApplicationId]);
 
     const handleSubmit = async (values: any) => {
+        if (isSubmitting) return; // prevent double-click
+
         const disbursementData: LoanDisbursementRequestDTO = {
             ...values,
             loanAppId: loanApplicationId,
@@ -58,103 +63,140 @@ const LoanDisbursementForm: React.FC = () => {
         }
 
         if (loanApproval) {
-
-            if (disbursementData.amount > loanApproval?.amount) {
-                return showAlert('Error', `Disbursed amount ${disbursementData.amount} cannot be more than approved amount ${loanApproval?.amount}`, 'error');
+            if (disbursementData.amount > loanApproval.approvedAmount) {
+                return showAlert(
+                    'Error',
+                    `Disbursed amount ${disbursementData.amount} cannot be more than approved amount ${loanApproval.amount}`,
+                    'error'
+                );
             }
 
             if (disbursementData.dateDisbursed < loanApproval.approvalDate) {
-                return showAlert('Error', `Disbursement date ${formatDate(disbursementData.dateDisbursed)} cannot be beofre approval date ${formatDate(loanApproval?.approvalDate)}`, 'error');
+                return showAlert(
+                    'Error',
+                    `Disbursement date ${formatDate(disbursementData.dateDisbursed)} cannot be before approval date ${formatDate(loanApproval.approvalDate)}`,
+                    'error'
+                );
             }
         }
 
-        await submitLoanDisbursement(disbursementData);
-
-        form.resetFields();
-
+        try {
+            setIsSubmitting(true);
+            await submitLoanDisbursement(disbursementData);
+            showAlert('Success', 'Disbursement submitted successfully', 'success');
+            form.resetFields();
+        } catch (error) {
+            console.error(error);
+            showAlert('Error', 'Something went wrong during disbursement', 'error');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     useEffect(() => {
         if (loanApproval) {
-            form.setFieldsValue({ amount: loanApproval.amount });
+            form.setFieldsValue({ amount: loanApproval.approvedAmount });
         }
     }, [loanApproval, form]);
 
     return (
-        <>
-         <Typography.Title level={4}>
+        <Card bordered style={{ maxWidth: 800, margin: '0 auto' }}>
+            <Title level={4} style={{ marginBottom: 24 }}>
                 {loanApproval?.memberName} - {loanApproval?.memberNumber}
-            </Typography.Title>
+            </Title>
 
             <Form
                 form={form}
                 layout="vertical"
                 onFinish={handleSubmit}
             >
-                <Form.Item
-                    label="Date Disbursed"
-                    name="dateDisbursed"
-                    rules={[{ required: true, message: 'Please select the date disbursed' }]}
-                >
-                    <DatePicker />
-                </Form.Item>
+                <Row gutter={16}>
+                    <Col span={12}>
+                        <Form.Item
+                            label="Date Disbursed"
+                            name="dateDisbursed"
+                            rules={[{ required: true, message: 'Please select the disbursement date' }]}
+                        >
+                            <DatePicker
+                                style={{ width: '100%' }}
+                                disabledDate={(current) => current && current > moment().endOf('day')}
+                            />
+                        </Form.Item>
+                    </Col>
 
-                <Form.Item
-                    label="Amount"
-                    name="amount"
-                    rules={[{ required: true, message: 'Please input the amount' }]}
-                >
-                    <Input type="number" />
-                </Form.Item>
 
-                <Form.Item
-                    label="Account Number"
-                    name="accountNumber"
-                    rules={[{ required: true, message: 'Please input the account number' }]}
-                >
-                    <Input />
-                </Form.Item>
+                    <Col span={12}>
+                        <Form.Item
+                            label="Amount"
+                            name="amount"
+                            rules={[{ required: true, message: 'Please enter the amount' }]}
+                        >
+                            <Input type="number" placeholder="e.g. 50000" />
+                        </Form.Item>
+                    </Col>
+                </Row>
 
-                <Form.Item
-                    label="Transaction Reference"
-                    name="transactionReference"
-                    rules={[{ required: true, message: 'Please input the transaction Reference' }]}
-                >
-                    <Input />
-                </Form.Item>
-                <Form.Item
-                    label="Payment Method"
-                    name="paymentMethod"
-                    rules={[{ required: true, message: 'Please select a Payment method' }]}
-                >
-                    <Select placeholder="Select a payment method" style={{ width: '100%' }}>
-                        <Option value="cash">Cash</Option>
-                        <Option value="bank_transfer">Bank Transfer</Option>
-                        <Option value="cheque">Cheque</Option>
-                    </Select>
-                </Form.Item>
+                <Row gutter={16}>
+                    <Col span={12}>
+                        <Form.Item
+                            label="Account Number"
+                            name="accountNumber"
+                            rules={[{ required: true, message: 'Please enter the account number' }]}
+                        >
+                            <Input placeholder="e.g. 0123456789" autoComplete="off" />
+                        </Form.Item>
+                    </Col>
 
-                <Form.Item
-                    label="Debit Account"
-                    name="debitAccountId"
-                    rules={[{ required: true, message: 'Please select a debit account' }]}
-                >
-                    <Select placeholder="Select a debit account">
-                        {debitAccounts.map((account) => (
-                            <Option key={account.id} value={account.id}>
-                                {account.accountName}
-                            </Option>
-                        ))}
-                    </Select>
-                </Form.Item>
+                    <Col span={12}>
+                        <Form.Item
+                            label="Transaction Reference"
+                            name="transactionReference"
+                            rules={[{ required: true, message: 'Please enter the transaction reference' }]}
+                        >
+                            <Input placeholder="e.g. TXN123456" autoComplete="off" />
+                        </Form.Item>
+                    </Col>
+                </Row>
 
-                <Form.Item>
-                    <Button type="primary" htmlType="submit">
+                <Row gutter={16}>
+                    <Col span={12}>
+                        <Form.Item
+                            label="Payment Method"
+                            name="paymentMethod"
+                            rules={[{ required: true, message: 'Please select a payment method' }]}
+                        >
+                            <Select placeholder="Select payment method">
+                                <Option value="cash">Cash</Option>
+                                <Option value="bank_transfer">Bank Transfer</Option>
+                                <Option value="cheque">Cheque</Option>
+                            </Select>
+                        </Form.Item>
+                    </Col>
+
+                    <Col span={12}>
+                        <Form.Item
+                            label="Debit Account"
+                            name="debitAccountId"
+                            rules={[{ required: true, message: 'Please select a debit account' }]}
+                        >
+                            <Select placeholder="Select debit account">
+                                {debitAccounts.map((account) => (
+                                    <Option key={account.id} value={account.id}>
+                                        {account.accountName}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                </Row>
+
+                <Form.Item style={{ textAlign: 'right', marginTop: 24 }}>
+                    <Button type="primary" htmlType="submit" loading={isSubmitting}>
                         Submit Disbursement
                     </Button>
                 </Form.Item>
             </Form>
-        </>
+        </Card>
     );
 };
 
