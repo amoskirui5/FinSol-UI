@@ -20,7 +20,10 @@ export interface LoanApplicationList {
   memberId: string;
   repayPeriod: number;
   amount: number;
-  loanStatus: LoanStatus
+  loanStatus: LoanStatus;
+  memberLoanGuarantors: GuarantorList[];
+  loanApproval: LoanApprovalListDTO;
+  loanDisbursement: LoanDisbursementListDTO;
 }
 
 export interface PaginatedLoanApplicationList {
@@ -46,6 +49,7 @@ export interface LoanInfoResponseDTO {
   loanBalance: number;
   hasExistingLoan: boolean
   status: string;
+  loanId?: string;
 }
 
 export interface LoanElegibilityResponse {
@@ -73,7 +77,7 @@ export interface LoanApprovalListDTO {
   memberName: string
   memberId: string;
   repayPeriod: number;
-  amount: number;
+  approvedAmount: number;
   loanStatus?: LoanStatus
 }
 
@@ -82,4 +86,52 @@ export interface LoanApprovalByIdResponse {
   success: boolean;
   message: string;
   errors: string[];
+}
+
+export interface Guarantor {
+  loanGuarantorId: string;
+  memberNumber?: string;
+  name?: string;
+  guaranteedAmount: number;
+  guarantorMemberId: string;
+  guaranteeDate: string;
+}
+
+export interface AddGuarantorRequest {
+  loanId: string;
+  guarantorMemberId: string;
+  guaranteedAmount: number;
+  guaranteeDate: string;
+}
+
+export interface GuarantorList {
+  guarantorMemberId: string;
+  loanGuarantorId?: string;
+  guarantorMemberName: string;
+  memberNumber?: string;
+  guaranteedAmount: number;
+  guaranteeDate: string;
+  loanId: string;
+}
+
+export interface UpdateGuarantorRequest {
+  loanId: string;
+  loanGuarantorId: string;
+  guarantorMemberId: string;
+  guaranteedAmount: number;
+  guaranteeDate: string;
+}
+
+export interface LoanDisbursementListDTO {
+  loanId: string;
+  disbursementDate: string;
+  disbursedAmount: number;
+}
+
+export interface LoanStagingRequestDTO {
+  memberId: string;
+  loanApplicationId: string;
+  amount: number;
+  transactionDate: string;
+  description?: string;
 }

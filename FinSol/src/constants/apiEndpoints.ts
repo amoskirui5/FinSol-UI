@@ -54,6 +54,7 @@ export const FETCH_LOAN_APPLICATION_BY_ID = `${import.meta.env.VITE_API_BASE_URL
 export const CREATE_MEMBER_LOAN_APPROVAL = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoan/CreateApproval`
 export const CREATE_MEMBER_LOAN_DISBURSEMENT = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoan/CreateDisbursement`
 export const FETCH_LOAN_APPROVAL_BY_ID = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoan/LoanApproval`
+export const CREATE_MEMBER_LOAN_STAGE = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoan/StageLoanDisbursement`
 
 // member statement
 export const FETCH_MEMBER_GENERAL_STATEMENT =`${import.meta.env.VITE_API_BASE_URL}api/MemberStatement/loans-deposits?memberId`
@@ -67,3 +68,9 @@ export const FETCH_CASH_BOOK = `${import.meta.env.VITE_API_BASE_URL}api/Financia
 // Member Payments
 export const GET_ITEMS_TO_PAY=`${import.meta.env.VITE_API_BASE_URL}api/MemberPayments/get-member-items-to-pay`
 export const CREATE_MEMBER_PAYMENT = `${import.meta.env.VITE_API_BASE_URL}api/MemberPayments/create`
+
+//Guarantor
+export const ADD_GUARANTOR = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoanGuarantor`
+export const GET_GUARANTORS_BY_LOAN_ID = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoan/GetGuarantorsByLoanId`
+export const DELETE_GUARANTOR = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoanGuarantor`
+export const UPDATE_GUARANTOR = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoanGuarantor`
