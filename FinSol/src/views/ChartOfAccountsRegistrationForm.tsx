@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, Select, Switch, message } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
-import { AccountClass, ChartOfAccount, RegisterAccountDTO } from '../types/accountingTypes';
-import { editChartOfAccount, getAccountClass, getChartOfAccountsById, registerChartOfAccount } from '../services/chartOfAccountsService';
+import { AccountClass, ChartOfAccount, RegisterAccountDTO, SubAccountClass } from '../types/accountingTypes';
+import { editChartOfAccount, getAccountClass, getChartOfAccountsById, getSubAccountClassByClassId, registerChartOfAccount } from '../services/chartOfAccountsService';
 import Title from 'antd/es/typography/Title';
 
 const ChartOfAccountsRegistrationForm: React.FC = () => {
     const [accountClasses, setAccountClasses] = useState<AccountClass[]>([]);
+    const [subAccountClasses, setSubAccountClasses] = useState<SubAccountClass[]>([]);
     const [chartsOfAccount, setChartsOfAccount] = useState<ChartOfAccount | null>(null);
     const [loading, setLoading] = useState(false);
+    const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
     const [form] = Form.useForm();
@@ -24,23 +26,32 @@ const ChartOfAccountsRegistrationForm: React.FC = () => {
         }
     };
 
+    const fetchSubAccountClasses = async (classId: string) => {
+        const results = await getSubAccountClassByClassId(classId);
+        if (results.success) {
+            setSubAccountClasses(results.data);
+        } else {
+            setSubAccountClasses([]);
+        }
+    };
+
     const fetchChartsOfAccountById = async (id: string) => {
         const results = await getChartOfAccountsById(id);
         if (results) {
             setChartsOfAccount(results.data);
+            setSelectedClassId(results.data.classId);
+            fetchSubAccountClasses(results.data.classId);
         }
     };
 
     useEffect(() => {
-        fetchAccountClasses(); // Always fetch account classes for the dropdown
-        // Only fetch chart of accounts if id exists and is valid (edit mode)
+        fetchAccountClasses();
         if (id && isValidUUID(id)) {
             fetchChartsOfAccountById(id);
         } else if (id && !isValidUUID(id)) {
             message.error("Invalid ID format");
-            navigate('/chart-of-accounts'); // Redirect if ID is malformed
+            navigate('/chart-of-accounts');
         }
-        // If no id, do nothing (create mode)
     }, [id]);
 
     useEffect(() => {
@@ -48,6 +59,7 @@ const ChartOfAccountsRegistrationForm: React.FC = () => {
             form.setFieldsValue({
                 AccountName: chartsOfAccount.accountName,
                 ClassId: chartsOfAccount.classId,
+                SubClassId: chartsOfAccount.subClassId,
                 Description: chartsOfAccount.description,
                 isReceiptable: chartsOfAccount.isReceiptable,
                 isPayable: chartsOfAccount.isPayable,
@@ -55,18 +67,26 @@ const ChartOfAccountsRegistrationForm: React.FC = () => {
         }
     }, [chartsOfAccount, form]);
 
+    useEffect(() => {
+        if (selectedClassId) {
+            fetchSubAccountClasses(selectedClassId);
+            form.setFieldsValue({ SubClassId: undefined });
+        }
+    }, [selectedClassId]);
+
     const handleBack = () => {
         navigate('/chart-of-accounts');
     };
 
     const onFinish = async (values: any) => {
-        setLoading(true); // Set loading at the start
+        setLoading(true);
         try {
             const requestDTO: RegisterAccountDTO = {
                 accountName: values.AccountName,
                 classId: values.ClassId,
+                subClassId: values.SubClassId,
                 description: values.Description,
-                accountCode: '', // Consider if this should be user-editable
+                accountCode: '',
                 isReceiptable: values.isReceiptable,
                 isPayable: values.isPayable,
             };
@@ -108,10 +128,38 @@ const ChartOfAccountsRegistrationForm: React.FC = () => {
                     name="ClassId"
                     rules={[{ required: true, message: "Please select an account class!" }]}
                 >
-                    <Select placeholder="Select an account class" loading={!accountClasses.length}>
+                    <Select
+                        placeholder="Select an account class"
+                        loading={!accountClasses.length}
+                        onChange={(value) => setSelectedClassId(value)}
+                    >
                         {accountClasses.map((accountClass) => (
                             <Select.Option key={accountClass.id} value={accountClass.id}>
                                 {accountClass.name}
+                            </Select.Option>
+                        ))}
+                    </Select>
+                </Form.Item>
+
+                <Form.Item
+                    label="Sub Account Class"
+                    name="SubClassId"
+                    rules={[{ required: true, message: "Please select a sub account class!" }]}
+                >
+                    <Select
+                        placeholder={
+                            selectedClassId
+                                ? subAccountClasses.length
+                                    ? "Select a sub account class"
+                                    : "No sub classes found"
+                                : "Select account class first"
+                        }
+                        disabled={!selectedClassId}
+                        loading={!subAccountClasses.length && !!selectedClassId}
+                    >
+                        {subAccountClasses.map((subClass) => (
+                            <Select.Option key={subClass.subClassId} value={subClass.subClassId}>
+                                {subClass.subClassName}
                             </Select.Option>
                         ))}
                     </Select>
@@ -157,3 +205,4 @@ const ChartOfAccountsRegistrationForm: React.FC = () => {
 };
 
 export default ChartOfAccountsRegistrationForm;
+

@@ -17,6 +17,7 @@ export const DELETE_ACCOUNT_ClASS=`${import.meta.env.VITE_API_BASE_URL}api/Chart
 //chart of account
 export const GET_RECEIPTABLE_CHARTS_OF_ACCOUNT =`${import.meta.env.VITE_API_BASE_URL}api/ChartsOfAccounts/ReceiptableChartsOfAccount`
 export const GET_PAYEABLE_CHARTS_OF_ACCOUNT =`${import.meta.env.VITE_API_BASE_URL}api/ChartsOfAccounts/GetPayeableChartsOfAccount`
+export const GET_SUB_ACCOUNT_CLASS_BY_CLASS_ID =`${import.meta.env.VITE_API_BASE_URL}api/ChartsOfAccounts/list-subaccounts-by-class`;
 
 //Loans
 export const REGISTER_LOAN_TYPE=`${import.meta.env.VITE_API_BASE_URL}api/loantypes/createLoanType`
