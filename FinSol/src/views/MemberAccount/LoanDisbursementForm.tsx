@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, Select, DatePicker, message, Card, Row, Col } from 'antd';
 import { useParams } from 'react-router-dom';
-import { LoanDisbursementRequestDTO } from '../../types/loanTypeTypes';
+import { LoanDisbursementRequestDTO, LoanToMemberDisbursementRequest } from '../../types/loanTypeTypes';
 import { fetchLoanApprovalDetailsById, submitLoanDisbursement } from '../../services/memberLoanService';
 import { getPayeableChartOfAccounts } from '../../services/chartOfAccountsService';
 import { ChartOfAccount } from '../../types/accountingTypes';
@@ -10,6 +10,7 @@ import { LoanApprovalListDTO } from '../../types/MemberLoan/memberLoanTypes';
 import { formatDate } from '../../helpers/dateFormater';
 import Title from 'antd/es/typography/Title';
 import moment from 'moment';
+import { MemberAccountType } from '../../enums/enums';
 
 const { Option } = Select;
 
@@ -48,14 +49,21 @@ const LoanDisbursementForm: React.FC = () => {
     }, [loanApplicationId]);
 
     const handleSubmit = async (values: any) => {
-        if (isSubmitting) return; // prevent double-click
+        if (isSubmitting) return;
 
-        const disbursementData: LoanDisbursementRequestDTO = {
-            ...values,
-            loanAppId: loanApplicationId,
-            memberId: loanApproval?.memberId,
-            dateDisbursed: values.dateDisbursed.format(),
-            loanTypeId: loanApproval?.loanTypeId
+        const disbursementData: LoanToMemberDisbursementRequest = {
+            dateDisbursed: values.dateDisbursed.format(), // ISO string
+            amount: values.amount,
+            accountNumber: values.debitAccountId,
+            approvalId: loanApproval?.id ,
+            memberId: loanApproval?.memberId ?? '',
+            loanTypeId: loanApproval?.loanTypeId ?? '', 
+            paymentMethod: values.paymentMethod,
+            transactionReference: values.transactionReference,
+            creditAccountId: values.debitAccountId,
+            loanAppId: loanApplicationId ?? '',
+            isPartiallyDisbursed: false,
+            
         };
 
         if (disbursementData.amount <= 0) {
@@ -66,7 +74,7 @@ const LoanDisbursementForm: React.FC = () => {
             if (disbursementData.amount > loanApproval.approvedAmount) {
                 return showAlert(
                     'Error',
-                    `Disbursed amount ${disbursementData.amount} cannot be more than approved amount ${loanApproval.amount}`,
+                    `Disbursed amount ${disbursementData.amount} cannot be more than approved amount ${loanApproval.approvedAmount}`,
                     'error'
                 );
             }

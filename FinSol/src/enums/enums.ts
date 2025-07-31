@@ -69,3 +69,4 @@ export enum MemberAccountType {
     Loan = 3,
     RegistrationFee = 4,
 }
+

@@ -36,7 +36,7 @@ export interface MemberListDto {
     nationalID?: string;
     passportNumber?: string;
     taxPIN?: string;
-    dateJoined: Date; 
+    dateJoined?: Date; 
     gender?:Gender
   }
   

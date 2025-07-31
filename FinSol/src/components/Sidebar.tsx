@@ -8,7 +8,8 @@ import {
     SafetyOutlined, LockOutlined, MobileOutlined, DashboardOutlined, AccountBookOutlined, BookOutlined,
     FilePdfOutlined,
     FilePdfFilled,
-    FileDoneOutlined
+    FileDoneOutlined,
+    CalendarOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 const { Sider } = Layout;
@@ -68,6 +69,9 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
                 break;
             case '4-3-3':
                 navigate('/backup-restore');
+                break;
+            case '4-3-4':
+                navigate('/financial-year');    
                 break;
             case '4-4-1':
                 navigate('/password-policy');
@@ -179,6 +183,8 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
                             { key: '3-1', icon: <WalletOutlined />, label: 'Member Deposits' },
                             { key: '3-2', icon: <StockOutlined />, label: 'Member Share Capital' },
                             { key: '3-3', icon: <AccountBookOutlined />, label: 'Member Receipting' },
+                            { key: '3-4', icon: <AccountBookOutlined />, label: 'Member Payments' },
+
                         ],
                     },
                     {
@@ -205,6 +211,7 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
                                     { key: '4-3-1', icon: <SettingOutlined />, label: 'General Settings' },
                                     { key: '4-3-2', icon: <MailOutlined />, label: 'Email Settings' },
                                     { key: '4-3-3', icon: <DatabaseOutlined />, label: 'Backup & Restore' },
+                                    { key: '4-3-4', icon: <CalendarOutlined />, label: 'Financial Year' },
                                 ],
                             },
                             {

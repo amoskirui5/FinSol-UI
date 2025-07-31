@@ -200,6 +200,7 @@ const LoanApplicationsTable: React.FC = () => {
       firstName: guarantor.guarantorMemberName?.split(' ')[0] || '',
       otherName: guarantor.guarantorMemberName?.split(' ').slice(1).join(' ') || '',
       memberNumber: guarantor.memberNumber || '',
+      
     };
 
     setSelectedGuarantorMember(guarantorMemberDto);
@@ -486,6 +487,7 @@ const LoanApplicationsTable: React.FC = () => {
       setLoading(false);
     }
   }
+
 
   return (
     <div>

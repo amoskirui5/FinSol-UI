@@ -1,7 +1,7 @@
 import { CREATE_MEMBER_LOAN_APPLICATION, CREATE_MEMBER_LOAN_APPROVAL, CREATE_MEMBER_LOAN_DISBURSEMENT, CREATE_MEMBER_LOAN_STAGE, FETCH_LOAN_APPLICATION_BY_ID, FETCH_LOAN_APPROVAL_BY_ID, FETCH_LOAN_ELIGIBILITY, FETCH_MEMBER_LOAN_APPLICATION } from "../constants/apiEndpoints";
 import axiosInstance from "../interceptors/globaInterceptor";
 import { BaseResponseDTO } from "../types/BaseResponseDTO";
-import { LoanApprovalRequest, LoanDisbursementRequestDTO } from "../types/loanTypeTypes";
+import { LoanApprovalRequest, LoanDisbursementRequestDTO, LoanToMemberDisbursementRequest } from "../types/loanTypeTypes";
 import { CreateLoanApplicationRequest, LoanApplicationByIdResponse, LoanApprovalByIdResponse, LoanElegibilityResponse, LoanStagingRequestDTO, PaginatedLoanApplicationList } from "../types/MemberLoan/memberLoanTypes";
 import { PaginationOptions } from "../types/paginationTypes";
 
@@ -42,7 +42,7 @@ export const submitLoanApproval = async (data: LoanApprovalRequest):Promise<Base
 };
 
 
-export const submitLoanDisbursement = async (data: LoanDisbursementRequestDTO):Promise<BaseResponseDTO> => {
+export const submitLoanDisbursement = async (data: LoanToMemberDisbursementRequest):Promise<BaseResponseDTO> => {
   const response = await axiosInstance.post(CREATE_MEMBER_LOAN_DISBURSEMENT, data);
   return response.data;
 };

@@ -78,7 +78,8 @@ export interface LoanApprovalListDTO {
   memberId: string;
   repayPeriod: number;
   approvedAmount: number;
-  loanStatus?: LoanStatus
+  loanStatus?: LoanStatus;
+  id ?: string;
 }
 
 export interface LoanApprovalByIdResponse {

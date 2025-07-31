@@ -53,9 +53,10 @@ export const FETCH_MEMBER_LOAN_APPLICATION = `${import.meta.env.VITE_API_BASE_UR
 export const FETCH_LOAN_ELIGIBILITY = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoan/eligibility`
 export const FETCH_LOAN_APPLICATION_BY_ID = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoan/LoanApplication`
 export const CREATE_MEMBER_LOAN_APPROVAL = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoan/CreateApproval`
-export const CREATE_MEMBER_LOAN_DISBURSEMENT = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoan/CreateDisbursement`
+export const CREATE_MEMBER_LOAN_DISBURSEMENT1 = `${import.meta.env.VITE_API_BASE_URL}api/MemberPayment/add-payment`
 export const FETCH_LOAN_APPROVAL_BY_ID = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoan/LoanApproval`
 export const CREATE_MEMBER_LOAN_STAGE = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoan/StageLoanDisbursement`
+export const CREATE_MEMBER_LOAN_DISBURSEMENT = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoan/CreateDisbursement`
 
 // member statement
 export const FETCH_MEMBER_GENERAL_STATEMENT =`${import.meta.env.VITE_API_BASE_URL}api/MemberStatement/loans-deposits?memberId`
@@ -75,3 +76,9 @@ export const ADD_GUARANTOR = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoan
 export const GET_GUARANTORS_BY_LOAN_ID = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoan/GetGuarantorsByLoanId`
 export const DELETE_GUARANTOR = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoanGuarantor`
 export const UPDATE_GUARANTOR = `${import.meta.env.VITE_API_BASE_URL}api/MemberLoanGuarantor`
+
+//Settings
+export const GET_FINANCIAL_YEARS = `${import.meta.env.VITE_API_BASE_URL}api/FinancialYear`;
+export const CREATE_FINANCIAL_YEAR = `${import.meta.env.VITE_API_BASE_URL}api/FinancialYear/create`;
+export const UPDATE_FINANCIAL_YEAR = `${import.meta.env.VITE_API_BASE_URL}api/FinancialYear/update`;
+export const DELETE_FINANCIAL_YEAR = `${import.meta.env.VITE_API_BASE_URL}api/FinancialYear/delete`;
