@@ -82,3 +82,11 @@ export const GET_FINANCIAL_YEARS = `${import.meta.env.VITE_API_BASE_URL}api/Fina
 export const CREATE_FINANCIAL_YEAR = `${import.meta.env.VITE_API_BASE_URL}api/FinancialYear/create`;
 export const UPDATE_FINANCIAL_YEAR = `${import.meta.env.VITE_API_BASE_URL}api/FinancialYear/update`;
 export const DELETE_FINANCIAL_YEAR = `${import.meta.env.VITE_API_BASE_URL}api/FinancialYear/delete`;
+
+//Organizations
+export const CREATE_ORGANIZATION = `${import.meta.env.VITE_API_BASE_URL}api/Organizations`;
+export const GET_ORGANIZATIONS = `${import.meta.env.VITE_API_BASE_URL}api/Organizations`;
+export const GET_ORGANIZATION_BY_ID = `${import.meta.env.VITE_API_BASE_URL}api/Organizations`;
+export const UPDATE_ORGANIZATION = `${import.meta.env.VITE_API_BASE_URL}api/Organizations`;
+export const DELETE_ORGANIZATION = `${import.meta.env.VITE_API_BASE_URL}api/Organizations`;
+export const REACTIVATE_ORGANIZATION = `${import.meta.env.VITE_API_BASE_URL}api/Organizations`;

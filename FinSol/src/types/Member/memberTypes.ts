@@ -3,7 +3,7 @@ import { Gender } from "../../enums/enums";
 export interface CreateMemberRegistrationRequestDTO {
     firstName: string;
     otherName: string;
-    memberNumber: string;
+    memberNumber?: string;
     email: string;
     phoneNumber: string;
     bankAccount: string;
@@ -15,6 +15,7 @@ export interface CreateMemberRegistrationRequestDTO {
     nationalID?: string;
     passportNumber?: string;
     taxPIN?: string;
+    gender?: Gender;
 }
 
 export interface MemberFormProps {
@@ -37,8 +38,9 @@ export interface MemberListDto {
     passportNumber?: string;
     taxPIN?: string;
     dateJoined?: Date; 
-    gender?:Gender
-  }
+    gender?: Gender;
+    isInactive?: boolean;
+}
   
   export interface PaginatedMemberListResponse {
     data: {

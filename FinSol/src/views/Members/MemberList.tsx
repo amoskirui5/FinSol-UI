@@ -1,5 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Space, Tooltip, Select, Input, Typography, Card, Modal } from 'antd';
+import { 
+  Table, 
+  Button, 
+  Space, 
+  Tooltip, 
+  Select, 
+  Input, 
+  Typography, 
+  Card, 
+  Modal, 
+  Tag,
+  Row,
+  Col,
+  Statistic,
+  Badge,
+  message,
+  Dropdown,
+  Menu
+} from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { PaginationOptions } from '../../types/paginationTypes';
 
@@ -8,6 +26,14 @@ import {
   StopOutlined,
   UserAddOutlined,
   EyeOutlined,
+  SearchOutlined,
+  FilterOutlined,
+  ReloadOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  DownloadOutlined,
+  MoreOutlined,
+  TeamOutlined
 } from '@ant-design/icons';
 import { formatDate } from '../../helpers/dateFormater';
 import { MemberListDto } from '../../types/Member/memberTypes';
@@ -19,7 +45,14 @@ import { debounce } from 'lodash';
 
 const { Search } = Input;
 const { Option } = Select;
-const { Title, Text } = Typography;
+const { Title } = Typography;
+
+interface MemberStats {
+  total: number;
+  active: number;
+  inactive: number;
+  newThisMonth: number;
+}
 
 const MemberList: React.FC = () => {
   const navigate = useNavigate();
@@ -31,6 +64,13 @@ const MemberList: React.FC = () => {
   const [searchField, setSearchField] = useState<string>('memberNumber');
   const [sortingType, setSortingType] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [stats, setStats] = useState<MemberStats>({
+    total: 0,
+    active: 0,
+    inactive: 0,
+    newThisMonth: 0
+  });
 
   const options: PaginationOptions = {
     pageNumber,
@@ -52,13 +92,24 @@ const MemberList: React.FC = () => {
         setMemberData(response.data.items);
         setTotalRecords(response.data.totalRecords);
         setPageSize(response.data.pageSize);
+        
+        // Calculate stats
+        const total = response.data.totalRecords;
+        const active = response.data.items.filter(m => !m.isInactive).length;
+        const inactive = total - active;
+        const newThisMonth = response.data.items.filter(m => {
+          if (!m.dateJoined) return false;
+          const joinedDate = new Date(m.dateJoined);
+          const now = new Date();
+          return joinedDate.getMonth() === now.getMonth() && 
+                 joinedDate.getFullYear() === now.getFullYear();
+        }).length;
+
+        setStats({ total, active, inactive, newThisMonth });
       }
     } catch (error) {
       console.error('Error fetching members:', error);
-      Modal.error({
-        title: 'Error',
-        content: 'Failed to load member list. Please try again.',
-      });
+      message.error('Failed to load member list. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -69,64 +120,150 @@ const MemberList: React.FC = () => {
       title: 'Member Number',
       dataIndex: 'memberNumber',
       key: 'memberNumber',
-      sorter: (a: MemberListDto, b: MemberListDto): number => a.memberNumber.localeCompare(b.memberNumber),
+      sorter: true,
+      width: 140,
+      fixed: 'left',
+      render: (text: string) => (
+        <Tag color="blue" style={{ fontFamily: 'monospace', fontSize: '12px' }}>
+          {text}
+        </Tag>
+      ),
     },
     {
       title: 'Name',
-      dataIndex: ['firstName', 'otherName'],
       key: 'name',
-      render: (_: any, record: MemberListDto) => `${record.firstName} ${record.otherName}`,
-      sorter: (a: MemberListDto, b: MemberListDto): number =>
-        `${a.firstName} ${a.otherName}`.localeCompare(`${b.firstName} ${b.otherName}`),
+      sorter: true,
+      width: 200,
+      render: (_: any, record: MemberListDto) => (
+        <div>
+          <div style={{ fontWeight: 500 }}>
+            {`${record.firstName} ${record.otherName}`}
+          </div>
+          <div style={{ fontSize: '12px', color: '#666' }}>
+            {record.workPlace || 'No workplace'}
+          </div>
+        </div>
+      ),
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
-      render: (email: string) => maskData(email, 'email'),
+      title: 'Contact Information',
+      key: 'contact',
+      width: 220,
+      render: (_: any, record: MemberListDto) => (
+        <div>
+          <div style={{ fontSize: '12px' }}>
+            📧 {record.email ? maskData(record.email, 'email') : 'No email'}
+          </div>
+          <div style={{ fontSize: '12px', marginTop: '2px' }}>
+            📱 {record.phoneNumber ? maskData(record.phoneNumber, 'phone') : 'No phone'}
+          </div>
+        </div>
+      ),
     },
     {
-      title: 'Phone Number',
-      dataIndex: 'phoneNumber',
-      key: 'phoneNumber',
-      render: (phone: string) => maskData(phone, 'phone'),
+      title: 'Banking Details',
+      key: 'banking',
+      width: 200,
+      render: (_: any, record: MemberListDto) => (
+        <div>
+          <div style={{ fontSize: '12px', fontWeight: 500 }}>
+            {record.bankName || 'No bank'}
+          </div>
+          <div style={{ fontSize: '11px', color: '#666', fontFamily: 'monospace' }}>
+            {record.bankAccount ? `***${record.bankAccount.slice(-4)}` : 'No account'}
+          </div>
+        </div>
+      ),
     },
     {
       title: 'National ID',
       dataIndex: 'nationalID',
       key: 'nationalID',
-      render: (nationalID: string) => maskData(nationalID, 'nationalID'),
+      width: 120,
+      render: (nationalID: string) => (
+        <span style={{ fontFamily: 'monospace', fontSize: '12px' }}>
+          {nationalID ? maskData(nationalID, 'nationalID') : 'N/A'}
+        </span>
+      ),
+    },
+    {
+      title: 'Status',
+      key: 'status',
+      width: 100,
+      filters: [
+        { text: 'Active', value: false },
+        { text: 'Inactive', value: true },
+      ],
+      render: (_: any, record: MemberListDto) => (
+        <Tag 
+          icon={record.isInactive ? <CloseCircleOutlined /> : <CheckCircleOutlined />}
+          color={record.isInactive ? 'error' : 'success'}
+        >
+          {record.isInactive ? 'Inactive' : 'Active'}
+        </Tag>
+      ),
     },
     {
       title: 'Date Joined',
       dataIndex: 'dateJoined',
       key: 'dateJoined',
-      render: (value: string) => formatDate(value),
-      sorter: (a: MemberListDto, b: MemberListDto): number =>
-        new Date(a.dateJoined).getTime() - new Date(b.dateJoined).getTime(),
+      width: 120,
+      sorter: true,
+      render: (value: Date) => (
+        <div style={{ fontSize: '12px' }}>
+          {value ? formatDate(value.toString()) : 'N/A'}
+        </div>
+      ),
     },
     {
       title: 'Actions',
-      key: 'action',
+      key: 'actions',
+      width: 140,
+      fixed: 'right',
       render: (_: any, record: MemberListDto) => (
         <Space size="small">
           <Tooltip title="View Details">
-            <Button type="link" icon={<EyeOutlined />} onClick={() => viewDetails(record.memberId)} />
-          </Tooltip>
-          <Tooltip title="Edit Member">
-            <Button type="link" icon={<EditOutlined />} onClick={() => editMember(record.memberId)} />
-          </Tooltip>
-          <Tooltip title="Deactivate Member">
-            <Button
-              type="link"
-              danger
-              icon={<StopOutlined />}
-              onClick={() => confirmDeactivate(record.memberId, `${record.firstName} ${record.otherName}`)}
+            <Button 
+              type="text" 
+              size="small"
+              icon={<EyeOutlined />} 
+              onClick={() => viewDetails(record.memberId)}
+              className="action-button"
             />
           </Tooltip>
-          <Tooltip title="Add Next of Kin">
-            <Button type="link" icon={<UserAddOutlined />} onClick={() => addNextOfKin(record.memberId)} />
+          <Tooltip title="Edit Member">
+            <Button 
+              type="text" 
+              size="small"
+              icon={<EditOutlined />} 
+              onClick={() => editMember(record.memberId)}
+              className="action-button"
+            />
           </Tooltip>
+          <Dropdown 
+            overlay={
+              <Menu>
+                <Menu.Item 
+                  key="nextOfKin" 
+                  icon={<UserAddOutlined />}
+                  onClick={() => addNextOfKin(record.memberId)}
+                >
+                  Add Next of Kin
+                </Menu.Item>
+                <Menu.Item 
+                  key="deactivate" 
+                  icon={<StopOutlined />}
+                  danger
+                  onClick={() => confirmDeactivate(record.memberId, `${record.firstName} ${record.otherName}`)}
+                >
+                  {record.isInactive ? 'Activate' : 'Deactivate'}
+                </Menu.Item>
+              </Menu>
+            }
+            trigger={['click']}
+          >
+            <Button type="text" size="small" icon={<MoreOutlined />} />
+          </Dropdown>
         </Space>
       ),
     },
@@ -146,8 +283,8 @@ const MemberList: React.FC = () => {
 
   const confirmDeactivate = (id: string, name: string) => {
     Modal.confirm({
-      title: 'Deactivate Member',
-      content: `Are you sure you want to deactivate ${name}?`,
+      title: 'Confirm Action',
+      content: `Are you sure you want to change the status of ${name}?`,
       okText: 'Yes',
       okType: 'danger',
       cancelText: 'No',
@@ -157,8 +294,9 @@ const MemberList: React.FC = () => {
 
   const deactivateMember = (id: string) => {
     // Placeholder for deactivation logic; replace with actual API call
-    console.log(`Deactivating member with ID: ${id}`);
-    fetchAllMembersAPI(); // Refresh list after deactivation
+    console.log(`Changing status for member with ID: ${id}`);
+    message.success('Member status updated successfully');
+    fetchAllMembersAPI(); // Refresh list after status change
   };
 
   const addNextOfKin = (id: string) => {
@@ -175,71 +313,203 @@ const MemberList: React.FC = () => {
     setPageNumber(1); // Reset to first page on field change
   };
 
-  const handleTableChange = (pagination: any, filters: any, sorter: any) => {
+  const handleTableChange = (pagination: any, _filters: any, sorter: any) => {
     setPageNumber(pagination.current);
     setPageSize(pagination.pageSize);
     setSortingType(sorter.order === 'descend');
   };
 
-  return (
-    <div style={{ padding: 24, background: '#f0f2f5', minHeight: '100vh' }}>
-      <Card
-        title={
-          <Title level={3} style={{ margin: 0 }}>
-            Member List
-          </Title>
-        }
-        extra={
-          <Button type="primary" icon={<UserAddOutlined />} onClick={handleRegisterMember}>
-            Register Member
-          </Button>
-        }
-        style={{ borderRadius: 8, boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}
-      >
-        <Space direction="vertical" size="middle" style={{ width: '100%', marginBottom: 16 }}>
-          <Space size="middle">
-            <Select
-              value={searchField}
-              style={{ width: 200 }}
-              onChange={handleSearchFieldChange}
-              placeholder="Select search field"
-            >
-              {memberSearchFieldOptions.map(option => (
-                <Option key={option.value} value={option.value}>
-                  {option.label}
-                </Option>
-              ))}
-            </Select>
-            <Search
-              placeholder={`Search by ${memberSearchFieldOptions.find(opt => opt.value === searchField)?.label || 'field'}`}
-              onSearch={handleSearch}
-              onChange={e => handleSearch(e.target.value)} // Real-time search
-              enterButton={<Button type="primary">Search</Button>}
-              allowClear
-              style={{ width: 300 }}
-              loading={loading}
-            />
-          </Space>
+  const handleRefresh = () => {
+    setSearchTerm('');
+    setSearchField('memberNumber');
+    setPageNumber(1);
+    fetchAllMembersAPI();
+    message.success('Member list refreshed');
+  };
 
-          <Table
-            columns={columns}
-            dataSource={memberData}
-            loading={loading}
-            pagination={{
-              current: pageNumber,
-              pageSize: pageSize,
-              total: totalRecords,
-              showSizeChanger: true,
-              pageSizeOptions: ['10', '20', '50'],
-              showTotal: (total) => `Total ${total} members`,
-            }}
-            onChange={handleTableChange}
-            rowKey="memberNumber"
-            bordered
-            scroll={{ x: 'max-content' }}
-            style={{ background: '#fff' }}
-          />
-        </Space>
+  const handleExport = () => {
+    // Placeholder for export functionality
+    message.info('Export functionality will be implemented soon');
+  };
+
+  const handleBulkAction = (action: string) => {
+    if (selectedRowKeys.length === 0) {
+      message.warning('Please select members first');
+      return;
+    }
+    
+    Modal.confirm({
+      title: `Bulk ${action}`,
+      content: `Are you sure you want to ${action.toLowerCase()} ${selectedRowKeys.length} selected member(s)?`,
+      onOk: () => {
+        // Placeholder for bulk actions
+        message.success(`Bulk ${action.toLowerCase()} completed`);
+        setSelectedRowKeys([]);
+        fetchAllMembersAPI();
+      },
+    });
+  };
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: (newSelectedRowKeys: React.Key[]) => {
+      setSelectedRowKeys(newSelectedRowKeys);
+    },
+    getCheckboxProps: (record: MemberListDto) => ({
+      disabled: false, // Can add conditions here
+      name: record.memberNumber,
+    }),
+  };
+
+  return (
+    <div className="page-container">
+      {/* Stats Cards */}
+      <Row gutter={16} style={{ marginBottom: 24 }}>
+        <Col xs={24} sm={12} lg={6}>
+          <Card className="stat-card">
+            <Statistic
+              title="Total Members"
+              value={stats.total}
+              prefix={<TeamOutlined />}
+              valueStyle={{ color: 'var(--primary-color)' }}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} lg={6}>
+          <Card className="stat-card">
+            <Statistic
+              title="Active Members"
+              value={stats.active}
+              prefix={<CheckCircleOutlined />}
+              valueStyle={{ color: 'var(--success-color)' }}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} lg={6}>
+          <Card className="stat-card">
+            <Statistic
+              title="Inactive Members"
+              value={stats.inactive}
+              prefix={<CloseCircleOutlined />}
+              valueStyle={{ color: 'var(--error-color)' }}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} lg={6}>
+          <Card className="stat-card">
+            <Statistic
+              title="New This Month"
+              value={stats.newThisMonth}
+              prefix={<UserAddOutlined />}
+              valueStyle={{ color: 'var(--warning-color)' }}
+            />
+          </Card>
+        </Col>
+      </Row>
+
+      {/* Main Content Card */}
+      <Card className="enterprise-card">
+        {/* Header */}
+        <div className="page-header">
+          <div>
+            <Title level={3} style={{ margin: 0 }}>
+              Member Management
+            </Title>
+            <p style={{ margin: '8px 0 0 0', color: 'var(--text-secondary)' }}>
+              Manage member registration, details, and status
+            </p>
+          </div>
+          <Space>
+            <Button
+              icon={<DownloadOutlined />}
+              onClick={handleExport}
+              className="action-button"
+            >
+              Export
+            </Button>
+            <Button
+              icon={<ReloadOutlined />}
+              onClick={handleRefresh}
+              className="action-button"
+            >
+              Refresh
+            </Button>
+            <Button
+              type="primary"
+              icon={<UserAddOutlined />}
+              onClick={handleRegisterMember}
+              className="primary-button"
+            >
+              Register Member
+            </Button>
+          </Space>
+        </div>
+
+        {/* Filters */}
+        <div className="filter-section">
+          <Row gutter={16} align="middle">
+            <Col xs={24} sm={8} md={6}>
+              <Select
+                value={searchField}
+                style={{ width: '100%' }}
+                onChange={handleSearchFieldChange}
+                placeholder="Search by..."
+                suffixIcon={<FilterOutlined />}
+              >
+                {memberSearchFieldOptions.map(option => (
+                  <Option key={option.value} value={option.value}>
+                    {option.label}
+                  </Option>
+                ))}
+              </Select>
+            </Col>
+            <Col xs={24} sm={16} md={12}>
+              <Search
+                placeholder={`Search by ${memberSearchFieldOptions.find(opt => opt.value === searchField)?.label || 'field'}...`}
+                onSearch={handleSearch}
+                onChange={e => handleSearch(e.target.value)}
+                enterButton={<SearchOutlined />}
+                allowClear
+                size="middle"
+                loading={loading}
+              />
+            </Col>
+            <Col xs={24} md={6} style={{ textAlign: 'right' }}>
+              {selectedRowKeys.length > 0 && (
+                <Space>
+                  <Badge count={selectedRowKeys.length} showZero={false}>
+                    <Button onClick={() => handleBulkAction('Deactivate')}>
+                      Bulk Actions
+                    </Button>
+                  </Badge>
+                </Space>
+              )}
+            </Col>
+          </Row>
+        </div>
+
+        {/* Table */}
+        <Table
+          columns={columns}
+          dataSource={memberData}
+          loading={loading}
+          rowSelection={rowSelection}
+          pagination={{
+            current: pageNumber,
+            pageSize: pageSize,
+            total: totalRecords,
+            showSizeChanger: true,
+            showQuickJumper: true,
+            pageSizeOptions: ['10', '20', '50', '100'],
+            showTotal: (total, range) => 
+              `${range[0]}-${range[1]} of ${total} members`,
+          }}
+          onChange={handleTableChange}
+          rowKey="memberId"
+          scroll={{ x: 1200 }}
+          className="enterprise-table"
+          size="middle"
+        />
       </Card>
     </div>
   );

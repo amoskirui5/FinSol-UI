@@ -1,265 +1,245 @@
 import React from 'react';
 import { Layout, Menu } from 'antd';
 import {
-    UserOutlined, MoneyCollectOutlined, AuditOutlined, SettingOutlined,
-    OrderedListOutlined, UsergroupAddOutlined, UserAddOutlined, FileAddOutlined,
-    CheckCircleOutlined, WalletOutlined, StockOutlined, ApartmentOutlined,
-    TeamOutlined, IdcardOutlined, FileSearchOutlined, MailOutlined, DatabaseOutlined,
-    SafetyOutlined, LockOutlined, MobileOutlined, DashboardOutlined, AccountBookOutlined, BookOutlined,
-    FilePdfOutlined,
-    FilePdfFilled,
-    FileDoneOutlined,
-    CalendarOutlined
+  DashboardOutlined, UserOutlined, MoneyCollectOutlined, AuditOutlined, SettingOutlined,
+  OrderedListOutlined, UsergroupAddOutlined, UserAddOutlined, FileAddOutlined,
+  CheckCircleOutlined, WalletOutlined, StockOutlined, ApartmentOutlined,
+  TeamOutlined, IdcardOutlined, FileSearchOutlined, MailOutlined, DatabaseOutlined,
+  SafetyOutlined, LockOutlined, MobileOutlined, FilePdfOutlined, FilePdfFilled,
+  FileDoneOutlined, AccountBookOutlined, BookOutlined, CalendarOutlined
 } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+
 const { Sider } = Layout;
 
-const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) => void; }> = ({ collapsed, onCollapse }) => {
+const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) => void }> = ({
+  collapsed,
+  onCollapse,
+}) => {
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    const navigate = useNavigate();
-    const handleMenuClick = (e: { key: string }) => {
-        switch (e.key) {
-            case '1-1':
-                navigate('/members-list');
-                break;
-            case '1-2':
-                navigate('/next-of-kin');
-                break;
-            case '1-3':
-                navigate('/members/register');
-                break;
-            case '1-4-1':
-                navigate('/member-statement');
-                break;
-            case '2-1':
-                navigate('/loan-applications');
-                break;
-            case '2-2':
-                navigate('/loan-approvals');
-                break;
-            case '2-3':
-                navigate('/loan-disbursements');
-                break;
-            case '3-1':
-                navigate('/member-deposits');
-                break;
-            case '3-2':
-                navigate('/member-share-capital');
-                break;
-            case '3-3':
-                navigate('/member-receipt');
-                break;
-            case '4-1':
-                navigate('/administration');
-                break;
-            case '4-2-1':
-                navigate('/user-roles');
-                break;
-            case '4-2-2':
-                navigate('/user-accounts');
-                break;
-            case '4-2-3':
-                navigate('/access-logs');
-                break;
-            case '4-3-1':
-                navigate('/general-settings');
-                break;
-            case '4-3-2':
-                navigate('/email-settings');
-                break;
-            case '4-3-3':
-                navigate('/backup-restore');
-                break;
-            case '4-3-4':
-                navigate('/financial-year');    
-                break;
-            case '4-4-1':
-                navigate('/password-policy');
-                break;
-            case '4-4-2':
-                navigate('/two-factor-authentication');
-                break;
-            case '4-4-3':
-                navigate('/audit-trail');
-                break;
-            case '4-5-1':
-                navigate('/account-class');
-                break;
-            case '4-5-2':
-                navigate('/chart-of-accounts');
-                break;
-            case '4-5-3':
-                navigate('/member-account-settings');
-                break;
-            case '4-6-1':
-                navigate('loan-types');
-                break;
-            case '5':
-                navigate('/dashboard');
-                break;
-            case '6-1':
-                navigate('/finance/trial-balance');
-                break
-            case '6-2':
-                navigate('/finance/balance-sheet');
-                break;
-            case '6-3':
-                navigate('/finance/profit-loss');
-                break;
-            case '6-4':
-                navigate('/finance/cash-book');
-                break;
-            default:
-                navigate('/dashboard');
-                break;
-        }
-    };
-    return (
-        <Sider
-            trigger={null}
-            collapsible
-            collapsed={collapsed}
-            onCollapse={onCollapse}
-            style={{
-                borderRight: '1px solid lightgray',
-                overflow: 'hidden',
-                position: 'sticky',
-                top: '0px',
-                backgroundColor: 'white',
-                minWidth: '550px',
-            }}
-            width={collapsed ? 80 : 'auto'}
-        >
-            <div className="demo-logo-vertical" />
-            <Menu
-                style={{
-                    backgroundColor: 'white',
-                    fontWeight: 700,
-                    overflowY: 'auto',
-                    overflowX: 'hidden',
-                }}
-                mode="inline"
-                defaultSelectedKeys={['5']}
-                onClick={handleMenuClick}
-                items={[
-                    {
-                        key: '5',
-                        icon: <DashboardOutlined />,
-                        label: 'Dashboard'
-                    },
-                    {
-                        key: '1',
-                        icon: <UserOutlined />,
-                        label: 'Members',
-                        children: [
-                            { key: '1-1', icon: <OrderedListOutlined />, label: 'Member List' },
-                            { key: '1-2', icon: <UsergroupAddOutlined />, label: 'Next Of Kin' },
-                            { key: '1-3', icon: <UserAddOutlined />, label: 'Member Registration' },
-                            {
-                                key: '1-4',
-                                icon: <FilePdfOutlined />,
-                                label: 'Member Statement',
-                                children: [
-                                    { key: '1-4-1', icon: <FilePdfFilled />, label: 'Loan & Deposit statement' }
-                                ]
-                            },
-                        ],
-                    },
-                    {
-                        key: '2',
-                        icon: <MoneyCollectOutlined />,
-                        label: 'Loans',
-                        children: [
-                            { key: '2-1', icon: <FileAddOutlined />, label: 'Loan Applications' },
-                            { key: '2-2', icon: <CheckCircleOutlined />, label: 'Loan Approvals' },
-                            { key: '2-3', icon: <WalletOutlined />, label: 'Loan Disbursements' },
-                        ],
-                    },
-                    {
-                        key: '3',
-                        icon: <AuditOutlined />,
-                        label: 'Member Funds',
-                        children: [
-                            { key: '3-1', icon: <WalletOutlined />, label: 'Member Deposits' },
-                            { key: '3-2', icon: <StockOutlined />, label: 'Member Share Capital' },
-                            { key: '3-3', icon: <AccountBookOutlined />, label: 'Member Receipting' },
-                            { key: '3-4', icon: <AccountBookOutlined />, label: 'Member Payments' },
+  const routes: Record<string, string> = {
+    'dashboard': '/dashboard',
 
-                        ],
-                    },
-                    {
-                        key: '4',
-                        icon: <SettingOutlined />,
-                        label: 'Settings',
-                        children: [
-                            { key: '4-1', icon: <ApartmentOutlined />, label: 'Administration' },
-                            {
-                                key: '4-2',
-                                icon: <TeamOutlined />,
-                                label: 'User Management',
-                                children: [
-                                    { key: '4-2-1', icon: <IdcardOutlined />, label: 'User Roles' },
-                                    { key: '4-2-2', icon: <UserOutlined />, label: 'User Accounts' },
-                                    { key: '4-2-3', icon: <FileSearchOutlined />, label: 'Access Logs' },
-                                ],
-                            },
-                            {
-                                key: '4-3',
-                                icon: <SettingOutlined />,
-                                label: 'System Settings',
-                                children: [
-                                    { key: '4-3-1', icon: <SettingOutlined />, label: 'General Settings' },
-                                    { key: '4-3-2', icon: <MailOutlined />, label: 'Email Settings' },
-                                    { key: '4-3-3', icon: <DatabaseOutlined />, label: 'Backup & Restore' },
-                                    { key: '4-3-4', icon: <CalendarOutlined />, label: 'Financial Year' },
-                                ],
-                            },
-                            {
-                                key: '4-4',
-                                icon: <SafetyOutlined />,
-                                label: 'Security',
-                                children: [
-                                    { key: '4-4-1', icon: <LockOutlined />, label: 'Password Policy' },
-                                    { key: '4-4-2', icon: <MobileOutlined />, label: 'Two-Factor Authentication' },
-                                    { key: '4-4-3', icon: <AuditOutlined />, label: 'Audit Trail' },
-                                ],
-                            },
-                            {
-                                key: '4-5',
-                                icon: <AccountBookOutlined />,
-                                label: 'Accounts',
-                                children: [
-                                    { key: '4-5-1', icon: <WalletOutlined />, label: 'Account Class' },
-                                    { key: '4-5-2', icon: <BookOutlined />, label: 'Charts Of Accounts' },
-                                    { key: '4-5-3', icon: <BookOutlined />, label: 'Member Accounts Settings' },
-                                ],
-                            },
-                            {
-                                key: '4-6',
-                                icon: <AccountBookOutlined />,
-                                label: 'Loan',
-                                children: [
-                                    { key: '4-6-1', icon: <WalletOutlined />, label: 'Loan Settings' },
-                                ],
-                            }
-                        ],
-                    },
-                    {
-                        key: '6',
-                        icon: <AccountBookOutlined />,
-                        label: 'Financial Statement',
-                        children: [
-                            { key: '6-1', icon: <FileDoneOutlined />, label: 'Trial Balance' },
-                            { key: '6-2', icon: <FileDoneOutlined />, label: 'Balance Sheet' },
-                            { key: '6-3', icon: <FileDoneOutlined />, label: 'Profit or Loss' },
-                            { key: '6-4', icon: <FileDoneOutlined />, label: 'Cash Book' },
-                        ],
-                    },
-                ]}
+    // Organizations
+    'organizations': '/organizations',
 
-            />
-        </Sider>
-    );
+    // Members
+    'member-list': '/members-list',
+    'next-of-kin': '/next-of-kin',
+    'member-registration': '/members/register',
+    'member-statement': '/member-statement',
+
+    // Loans
+    'loan-applications': '/loan-applications',
+    'loan-approvals': '/loan-approvals',
+    'loan-disbursements': '/loan-disbursements',
+
+    // Funds
+    'member-deposits': '/member-deposits',
+    'member-share-capital': '/member-share-capital',
+    'member-receipt': '/member-receipt',
+    'member-payments': '/member-payments',
+
+    // Settings
+    'administration': '/administration',
+    'user-roles': '/user-roles',
+    'user-accounts': '/user-accounts',
+    'access-logs': '/access-logs',
+    'general-settings': '/general-settings',
+    'email-settings': '/email-settings',
+    'backup-restore': '/backup-restore',
+    'financial-year': '/financial-year',
+    'password-policy': '/password-policy',
+    'two-factor-auth': '/two-factor-authentication',
+    'audit-trail': '/audit-trail',
+    'account-class': '/account-class',
+    'chart-of-accounts': '/chart-of-accounts',
+    'member-account-settings': '/member-account-settings',
+    'loan-settings': '/loan-types',
+
+    // Finance
+    'trial-balance': '/finance/trial-balance',
+    'balance-sheet': '/finance/balance-sheet',
+    'profit-loss': '/finance/profit-loss',
+    'cash-book': '/finance/cash-book',
+  };
+
+  const handleMenuClick = ({ key }: { key: string }) => {
+    const path = routes[key] || '/dashboard';
+    navigate(path);
+  };
+
+  return (
+    <Sider
+      trigger={null}
+      collapsible
+      collapsed={collapsed}
+      onCollapse={onCollapse}
+      width={280}
+      className="enterprise-sidebar"
+      style={{
+        position: 'sticky',
+        top: 0,
+        height: '100vh',
+        overflow: 'auto',
+      }}
+    >
+      <div 
+        className="logo-container"
+        style={{ 
+          height: 64, 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          fontWeight: 'bold',
+          fontSize: '20px',
+          color: 'var(--primary-color)',
+          borderBottom: '1px solid var(--border-light)',
+          margin: '0 16px',
+          background: 'linear-gradient(135deg, var(--primary-color), var(--accent-color))',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+        }}
+      >
+        {!collapsed ? 'FinSol Enterprise' : 'FS'}
+      </div>
+      <Menu
+        mode="inline"
+        theme="light"
+        defaultSelectedKeys={['dashboard']}
+        selectedKeys={[Object.entries(routes).find(([, path]) => location.pathname.startsWith(path))?.[0] || 'dashboard']}
+        onClick={handleMenuClick}
+        style={{ 
+          fontWeight: 600, 
+          height: 'calc(100vh - 64px)', 
+          overflowY: 'auto',
+          padding: '8px'
+        }}
+        items={[
+          {
+            key: 'dashboard',
+            icon: <DashboardOutlined />,
+            label: 'Dashboard',
+          },
+          {
+            key: 'organizations',
+            icon: <ApartmentOutlined />,
+            label: 'Organizations',
+          },
+          {
+            key: 'members',
+            icon: <UserOutlined />,
+            label: 'Members',
+            children: [
+              { key: 'member-list', icon: <OrderedListOutlined />, label: 'Member List' },
+              { key: 'next-of-kin', icon: <UsergroupAddOutlined />, label: 'Next Of Kin' },
+              { key: 'member-registration', icon: <UserAddOutlined />, label: 'Member Registration' },
+              {
+                key: 'member-statement',
+                icon: <FilePdfOutlined />,
+                label: 'Member Statement',
+                children: [
+                  { key: 'member-statement', icon: <FilePdfFilled />, label: 'Loan & Deposit Statement' },
+                ],
+              },
+            ],
+          },
+          {
+            key: 'loans',
+            icon: <MoneyCollectOutlined />,
+            label: 'Loans',
+            children: [
+              { key: 'loan-applications', icon: <FileAddOutlined />, label: 'Loan Applications' },
+              { key: 'loan-approvals', icon: <CheckCircleOutlined />, label: 'Loan Approvals' },
+              { key: 'loan-disbursements', icon: <WalletOutlined />, label: 'Loan Disbursements' },
+            ],
+          },
+          {
+            key: 'member-funds',
+            icon: <AuditOutlined />,
+            label: 'Member Funds',
+            children: [
+              { key: 'member-deposits', icon: <WalletOutlined />, label: 'Member Deposits' },
+              { key: 'member-share-capital', icon: <StockOutlined />, label: 'Member Share Capital' },
+              { key: 'member-receipt', icon: <AccountBookOutlined />, label: 'Member Receipting' },
+              { key: 'member-payments', icon: <AccountBookOutlined />, label: 'Member Payments' },
+            ],
+          },
+          {
+            key: 'settings',
+            icon: <SettingOutlined />,
+            label: 'Settings',
+            children: [
+              { key: 'administration', icon: <ApartmentOutlined />, label: 'Administration' },
+              {
+                key: 'user-management',
+                icon: <TeamOutlined />,
+                label: 'User Management',
+                children: [
+                  { key: 'user-roles', icon: <IdcardOutlined />, label: 'User Roles' },
+                  { key: 'user-accounts', icon: <UserOutlined />, label: 'User Accounts' },
+                  { key: 'access-logs', icon: <FileSearchOutlined />, label: 'Access Logs' },
+                ],
+              },
+              {
+                key: 'system-settings',
+                icon: <SettingOutlined />,
+                label: 'System Settings',
+                children: [
+                  { key: 'general-settings', icon: <SettingOutlined />, label: 'General Settings' },
+                  { key: 'email-settings', icon: <MailOutlined />, label: 'Email Settings' },
+                  { key: 'backup-restore', icon: <DatabaseOutlined />, label: 'Backup & Restore' },
+                  { key: 'financial-year', icon: <CalendarOutlined />, label: 'Financial Year' },
+                ],
+              },
+              {
+                key: 'security',
+                icon: <SafetyOutlined />,
+                label: 'Security',
+                children: [
+                  { key: 'password-policy', icon: <LockOutlined />, label: 'Password Policy' },
+                  { key: 'two-factor-auth', icon: <MobileOutlined />, label: 'Two-Factor Authentication' },
+                  { key: 'audit-trail', icon: <AuditOutlined />, label: 'Audit Trail' },
+                ],
+              },
+              {
+                key: 'accounts',
+                icon: <AccountBookOutlined />,
+                label: 'Accounts',
+                children: [
+                  { key: 'account-class', icon: <WalletOutlined />, label: 'Account Class' },
+                  { key: 'chart-of-accounts', icon: <BookOutlined />, label: 'Chart of Accounts' },
+                  { key: 'member-account-settings', icon: <BookOutlined />, label: 'Member Account Settings' },
+                ],
+              },
+              {
+                key: 'loan-settings',
+                icon: <AccountBookOutlined />,
+                label: 'Loan',
+                children: [
+                  { key: 'loan-settings', icon: <WalletOutlined />, label: 'Loan Settings' },
+                ],
+              },
+            ],
+          },
+          {
+            key: 'financial-statement',
+            icon: <AccountBookOutlined />,
+            label: 'Financial Statement',
+            children: [
+              { key: 'trial-balance', icon: <FileDoneOutlined />, label: 'Trial Balance' },
+              { key: 'balance-sheet', icon: <FileDoneOutlined />, label: 'Balance Sheet' },
+              { key: 'profit-loss', icon: <FileDoneOutlined />, label: 'Profit or Loss' },
+              { key: 'cash-book', icon: <FileDoneOutlined />, label: 'Cash Book' },
+            ],
+          },
+        ]}
+      />
+    </Sider>
+  );
 };
 
 export default Sidebar;

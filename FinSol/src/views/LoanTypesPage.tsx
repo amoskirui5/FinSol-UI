@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { message } from 'antd';
 import { LoanType } from '../types/loanTypeTypes';
 import { useNavigate } from 'react-router-dom';
 import LoanTypeTable from '../components/LoanTypeTable';
@@ -8,12 +9,13 @@ import { UUID } from 'crypto';
 
 const LoanTypesPage: React.FC = () => {
     const [loanTypes, setLoanTypes] = useState<LoanType[]>([]);
+    const [_loading, setLoading] = useState<boolean>(false);
     const navigate = useNavigate();
     const [totalRecords, setTotalRecords] = useState<number>(0);
-    const [pageNumber, ] = useState<number>(1);
+    const [pageNumber] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(10);
-    const [searchTerm, ] = useState<string>('');
-    const [searchField, ] = useState<string>('');
+    const [searchTerm] = useState<string>('');
+    const [searchField] = useState<string>('loanName');
 
     const options: PaginationOptions = {
         pageNumber,
@@ -21,18 +23,28 @@ const LoanTypesPage: React.FC = () => {
         searchTerm,
         searchField,
     };
+
     useEffect(() => {
         fetchLoanTypesAPI();
-    }, []);
+    }, [pageNumber, pageSize, searchTerm, searchField]);
 
     const fetchLoanTypesAPI = async () => {
-        const response = await fetchLoanTypes(options);
-        if (response.success) {
-            setLoanTypes(response.data.items);
-            setTotalRecords(response.data.totalRecords);
-            setPageSize(response.data.pageSize);
+        setLoading(true);
+        try {
+            const response = await fetchLoanTypes(options);
+            if (response.success) {
+                setLoanTypes(response.data.items);
+                setTotalRecords(response.data.totalRecords);
+                setPageSize(response.data.pageSize);
+            } else {
+                message.error('Failed to fetch loan types');
+            }
+        } catch (error) {
+            console.error('Error fetching loan types:', error);
+            message.error('An error occurred while fetching loan types');
+        } finally {
+            setLoading(false);
         }
-
     };
 
     const handleViewDetails = (id: UUID) => {
@@ -44,25 +56,36 @@ const LoanTypesPage: React.FC = () => {
     };
 
     const handleDelete = async (id: string) => {
-        await deleteLoanType(id);
+        try {
+            setLoading(true);
+            await deleteLoanType(id);
+            message.success('Loan type deleted successfully');
+            fetchLoanTypesAPI(); // Refresh the list
+        } catch (error) {
+            console.error('Error deleting loan type:', error);
+            message.error('An error occurred while deleting the loan type');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleRegister = () => {
-        navigate(`/loan-type/register`);
-
+        navigate('/loan-type/register');
     };
 
     return (
-        <LoanTypeTable
-            loanTypes={loanTypes}
-            onViewDetails={handleViewDetails}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            onRegister={handleRegister}
-            totalRecords={totalRecords}
-            pageNumber={pageNumber}
-            pageSize={pageSize}
-        />
+        <div>
+            <LoanTypeTable
+                loanTypes={loanTypes}
+                onViewDetails={handleViewDetails}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onRegister={handleRegister}
+                totalRecords={totalRecords}
+                pageNumber={pageNumber}
+                pageSize={pageSize}
+            />
+        </div>
     );
 };
 

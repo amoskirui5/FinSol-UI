@@ -34,6 +34,7 @@ import CashbookDisplay from './views/Financials/CashbookDisplay';
 import CreatePaymentForm from './views/Members/CreatePaymentForm';
 import NextOfKinForm from './views/Members/NextOfKinForm';
 import FinancialYearTable from './components/FinancialYearPage';
+import OrganizationManagementPage from './views/OrganizationManagementPage';
 
 const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -92,8 +93,9 @@ const App: React.FC = () => {
           <Route path='/finance/trial-balance' element={<TrialBalance />} />
           <Route path='/finance/balance-sheet' element={<BalanceSheet />} />
           <Route path='/finance/cash-book' element={<CashbookDisplay />} />
-          <Route path='/member-payment' element={<CreatePaymentForm />} />
+          <Route path='/member-payments' element={<CreatePaymentForm />} />
           <Route path='/financial-year' element={<FinancialYearTable />} />
+          <Route path='/organizations' element={<OrganizationManagementPage />} />
 
 
           <Route
