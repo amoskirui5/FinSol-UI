@@ -51,8 +51,10 @@ const LoanApplicationsTable: React.FC = () => {
 
 
   const paginationOptions: PaginationOptions = {
-    searchTerm,
-    searchField: 'name',
+    ...(searchTerm && searchTerm.trim() !== '' && {
+      searchTerm,
+      searchField: 'name',
+    }),
   };
 
   const { showAlert } = alertService();
@@ -79,12 +81,12 @@ const LoanApplicationsTable: React.FC = () => {
     SetMemLoanId(loanId);
     const eligibilityResponse = await fetchLoanEligibility(memberId, loanTypeId);
     if (eligibilityResponse.success) {
-      setLoanInfo(eligibilityResponse.data);
+      setLoanInfo({ ...eligibilityResponse.data, loanId });
       setIsModalVisible(true);
     }
   };
 
-  const handleConfirmApproval = (loanId: string) => {
+  const handleConfirmApproval = (_loanId: string) => {
     setIsConfirmModalVisible(false);
     // Trigger your approval logic here
   };
@@ -93,7 +95,7 @@ const LoanApplicationsTable: React.FC = () => {
     setIsConfirmModalVisible(false);
   };
 
-  const handleDeclineLoan = (loanId: string) => {
+  const handleDeclineLoan = (_loanId: string) => {
     // Trigger your decline logic here
   };
 
@@ -438,7 +440,7 @@ const LoanApplicationsTable: React.FC = () => {
       title: "Actions",
       key: "actions",
       width: 120,
-      render: (_, record: GuarantorList, index: number) => (
+      render: (_, record: GuarantorList, _index: number) => (
         <Space size="small">
           <Tooltip title="Edit Guarantor">
             <Button

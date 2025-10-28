@@ -30,7 +30,7 @@ import {
   OrganizationFilters,
   INDUSTRIES,
   COUNTRIES
-} from '../types/organizationTypes';
+} from '../types/Organizations/organizationTypes';
 import { 
   getOrganizations, 
   deleteOrganization, 

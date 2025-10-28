@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, Select, DatePicker, message, Card, Row, Col } from 'antd';
 import { useParams } from 'react-router-dom';
-import { LoanDisbursementRequestDTO, LoanToMemberDisbursementRequest } from '../../types/loanTypeTypes';
+import { LoanToMemberDisbursementRequest } from '../../types/LoanTypesSettings/loanTypeTypes';
 import { fetchLoanApprovalDetailsById, submitLoanDisbursement } from '../../services/memberLoanService';
 import { getPayeableChartOfAccounts } from '../../services/chartOfAccountsService';
-import { ChartOfAccount } from '../../types/accountingTypes';
+import { ChartOfAccount } from '../../types/Accounting/accountingTypes';
 import { alertService } from '../../services/alertService';
 import { LoanApprovalListDTO } from '../../types/MemberLoan/memberLoanTypes';
 import { formatDate } from '../../helpers/dateFormater';
 import Title from 'antd/es/typography/Title';
 import moment from 'moment';
-import { MemberAccountType } from '../../enums/enums';
 
 const { Option } = Select;
 

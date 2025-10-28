@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { LoanInfoResponseDTO } from '../types/MemberLoan/memberLoanTypes';
 import { Badge, Button, Modal, Spin, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';

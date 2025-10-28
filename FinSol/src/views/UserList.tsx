@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Switch, Button } from 'antd';
 import UserRegistrationForm from './UserRegistrationForm';
-import { User, UserListProps, UserRegistrationFormValues, UserRole } from '../types/systemUsersTypes';
+import { User, UserListProps, UserRegistrationFormValues, UserRole } from '../types/System/systemUsersTypes';
 import { getAllSystemUsers, registerSystemUser } from '../services/userService';
 
 const UserList: React.FC<UserListProps> = ({ onStatusChange }) => {

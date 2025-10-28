@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Descriptions, Card, Spin } from 'antd';
 import { fetchLoanTypeById } from '../services/loanTypeService';
-import { LoanType } from '../types/loanTypeTypes';
+import { LoanType } from '../types/LoanTypesSettings/loanTypeTypes';
 import { formatCurrency } from '../Utility/formatCurrency';
 import { getInterestRateTypeName } from '../helpers/enumConversion';
 

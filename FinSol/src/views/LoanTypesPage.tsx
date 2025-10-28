@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { message } from 'antd';
-import { LoanType } from '../types/loanTypeTypes';
+import { LoanType } from '../types/LoanTypesSettings/loanTypeTypes';
 import { useNavigate } from 'react-router-dom';
 import LoanTypeTable from '../components/LoanTypeTable';
 import { deleteLoanType, fetchLoanTypes } from '../services/loanTypeService';

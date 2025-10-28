@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Form, Input, Button, Col, Row, Card, Select, message } from 'antd';
-import { UserRegistrationFormProps, UserRegistrationFormValues } from '../types/systemUsersTypes';
+import { UserRegistrationFormProps, UserRegistrationFormValues } from '../types/System/systemUsersTypes';
 import { getAllSystemRoles } from '../services/applicationRolesService';
-import { SystemRoles } from '../types/systemRolesTypes';
+import { SystemRoles } from '../types/System/systemRolesTypes';
 import { debounce } from 'lodash';
 
 const { Option } = Select;
@@ -41,7 +41,7 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({ onSubmit })
 
   // Debounced email validation
   const checkEmailAvailability = useCallback(
-    debounce(async (email: string) => {
+    debounce(async (_email: string) => {
       try {
         setEmailStatus('validating');
         // Add your API call to check email availability here

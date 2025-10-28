@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MemberSelectFieldProps } from "../types/Member/memberTypes";
+import { MemberSelectFieldProps, MemberListDto } from "../types/Member/memberTypes";
 import { Form, Select } from "antd";
 import MemberSelectionModal from "./MemberSelectionModal";
 
@@ -44,7 +44,14 @@ const MemberSelectField: React.FC<MemberSelectFieldProps> = ({ selectedMember, o
           isVisible={isModalVisible}
           onClose={handleCloseModal}
           onMemberSelect={(member) => {
-            onMemberSelect(member);
+            // Ensure all required properties are present
+            const completeMember: MemberListDto = {
+              memberId: member.memberId,
+              firstName: member.firstName,
+              otherName: member.otherName,
+              memberNumber: (member as any).memberNumber || `MEM${member.memberId}` // fallback if missing
+            };
+            onMemberSelect(completeMember);
             handleCloseModal();
           }}
         />

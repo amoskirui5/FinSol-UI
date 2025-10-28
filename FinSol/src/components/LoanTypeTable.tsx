@@ -18,10 +18,9 @@ import {
   EyeOutlined,
   SearchOutlined,
   PlusOutlined,
-  PercentageOutlined,
-  DollarOutlined
+  PercentageOutlined
 } from '@ant-design/icons';
-import { LoanType, LoanTypeTableProps } from '../types/loanTypeTypes';
+import { LoanType, LoanTypeTableProps } from '../types/LoanTypesSettings/loanTypeTypes';
 import { formatCurrency } from '../Utility/formatCurrency';
 
 const { Title } = Typography;

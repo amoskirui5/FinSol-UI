@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Form, Button, DatePicker, InputNumber, Table, Modal, Alert, Switch, Space } from 'antd';
 import { alertService } from '../../services/alertService';
 import { useNavigate } from 'react-router-dom';
-import { ChartOfAccount } from '../../types/accountingTypes';
+import { ChartOfAccount } from '../../types/Accounting/accountingTypes';
 import moment from 'moment';
 import { MemberListDto } from '../../types/Member/memberTypes';
 import { CreateMemberPaymentRequestDTO, PaymentItemDTO } from '../../types/MemberAccount/memberAccountTypes';

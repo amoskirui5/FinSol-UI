@@ -1,8 +1,8 @@
 import { CREATE_MEMBER_LOAN_APPLICATION, CREATE_MEMBER_LOAN_APPROVAL, CREATE_MEMBER_LOAN_DISBURSEMENT, CREATE_MEMBER_LOAN_STAGE, FETCH_LOAN_APPLICATION_BY_ID, FETCH_LOAN_APPROVAL_BY_ID, FETCH_LOAN_ELIGIBILITY, FETCH_MEMBER_LOAN_APPLICATION } from "../constants/apiEndpoints";
 import axiosInstance from "../interceptors/globaInterceptor";
 import { BaseResponseDTO } from "../types/BaseResponseDTO";
-import { LoanApprovalRequest, LoanDisbursementRequestDTO, LoanToMemberDisbursementRequest } from "../types/loanTypeTypes";
-import { CreateLoanApplicationRequest, LoanApplicationByIdResponse, LoanApprovalByIdResponse, LoanElegibilityResponse, LoanStagingRequestDTO, PaginatedLoanApplicationList } from "../types/MemberLoan/memberLoanTypes";
+import { LoanApprovalRequest, LoanToMemberDisbursementRequest } from "../types/LoanTypesSettings/loanTypeTypes";
+import { CreateLoanApplicationRequest, LoanApplicationByIdResponse, LoanApprovalByIdResponse, LoanElegibilityResponse, LoanStagingRequestDTO, PaginatedLoanApplicationList, MemberLoanBalanceResponse, LoanBalanceByIdResponse } from "../types/MemberLoan/memberLoanTypes";
 import { PaginationOptions } from "../types/paginationTypes";
 
 export const submitLoanApplication = async (data: CreateLoanApplicationRequest):Promise<BaseResponseDTO> => {
@@ -11,13 +11,33 @@ export const submitLoanApplication = async (data: CreateLoanApplicationRequest):
   };
   
 export const fetchLoanApplications = async (options: PaginationOptions): Promise<PaginatedLoanApplicationList> => {
+  // Build params object conditionally
+  const params: any = {};
+  
+  if (options.pageNumber !== undefined) {
+    params.pageNumber = options.pageNumber;
+  }
+  
+  if (options.pageSize !== undefined) {
+    params.pageSize = options.pageSize;
+  }
+  
+  // Only include search parameters if searchTerm is provided and not empty
+  if (options.searchTerm && options.searchTerm.trim() !== '') {
+    params.searchTerm = options.searchTerm;
+    params.searchField = options.searchField;
+  }
+  
+  if (options.sortBy) {
+    params.sortBy = options.sortBy;
+  }
+  
+  if (options.sortDescending !== undefined) {
+    params.sortDescending = options.sortDescending;
+  }
+
   const response = await axiosInstance.get(FETCH_MEMBER_LOAN_APPLICATION, {
-      params: {
-          pageNumber: options.pageNumber,
-          pageSize: options.pageSize,
-          searchTerm: options.searchTerm,
-          searchField: options.searchField,
-      },
+      params,
   });
   return response.data;
 };
@@ -57,5 +77,26 @@ export const fetchLoanApprovalDetailsById = async (loanId: string): Promise<Loan
 
 export const StageLoanDisbursement = async (data: LoanStagingRequestDTO): Promise<BaseResponseDTO> => {
   const response = await axiosInstance.post(CREATE_MEMBER_LOAN_STAGE, data);
+  return response.data;
+}
+
+// Additional loan management functions for new endpoints
+export const getMemberLoanBalance = async (memberId: string): Promise<MemberLoanBalanceResponse> => {
+  const response = await axiosInstance.get(`${import.meta.env.VITE_API_BASE_URL}api/LoanManagement/member/${memberId}/balance`);
+  return response.data;
+}
+
+export const getMemberLoanBalanceByNumber = async (memberNumber: string): Promise<MemberLoanBalanceResponse> => {
+  const response = await axiosInstance.get(`${import.meta.env.VITE_API_BASE_URL}api/LoanManagement/member/balance/by-number/${memberNumber}`);
+  return response.data;
+}
+
+export const getLoanBalanceById = async (loanId: string): Promise<LoanBalanceByIdResponse> => {
+  const response = await axiosInstance.get(`${import.meta.env.VITE_API_BASE_URL}api/LoanManagement/balance/by-loan/${loanId}`);
+  return response.data;
+}
+
+export const getMemberLoanBalanceAsAt = async (memberId: string, asAtDate: string): Promise<MemberLoanBalanceResponse> => {
+  const response = await axiosInstance.get(`${import.meta.env.VITE_API_BASE_URL}api/LoanManagement/member/${memberId}/balance/as-at/${asAtDate}`);
   return response.data;
 }

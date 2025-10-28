@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, message } from 'antd';
 import OrganizationListPage from './OrganizationListPage';
 import OrganizationForm from './OrganizationForm';
-import { Organization } from '../types/organizationTypes';
+import { Organization } from '../types/Organizations/organizationTypes';
 
 type ViewMode = 'list' | 'create' | 'edit' | 'view';
 

@@ -136,3 +136,40 @@ export interface LoanStagingRequestDTO {
   transactionDate: string;
   description?: string;
 }
+
+// New interfaces for loan balance operations
+export interface MemberLoanBalanceResponse {
+  success: boolean;
+  data: MemberLoanBalance;
+  message?: string;
+}
+
+export interface MemberLoanBalance {
+  memberId: string;
+  memberNumber: string;
+  memberName: string;
+  totalLoansAmount: number;
+  totalAmountPaid: number;
+  outstandingBalance: number;
+  loans: LoanBalanceDetail[];
+}
+
+export interface LoanBalanceDetail {
+  loanId: string;
+  loanNumber: string;
+  loanType: string;
+  principalAmount: number;
+  interestAmount: number;
+  totalAmount: number;
+  amountPaid: number;
+  outstandingBalance: number;
+  loanStatus: LoanStatus;
+  disbursementDate?: string;
+  maturityDate?: string;
+}
+
+export interface LoanBalanceByIdResponse {
+  success: boolean;
+  data: LoanBalanceDetail;
+  message?: string;
+}

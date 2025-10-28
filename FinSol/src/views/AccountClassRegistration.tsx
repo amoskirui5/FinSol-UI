@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Typography, message } from 'antd';
 import { editAccountClass, getAccountClassById, registerAccountClass } from '../services/chartOfAccountsService';
-import { AccountClass, RegisterAccountClassDTO } from '../types/accountingTypes';
+import { AccountClass, RegisterAccountClassDTO } from '../types/Accounting/accountingTypes';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const { Title } = Typography;

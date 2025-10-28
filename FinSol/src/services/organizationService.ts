@@ -14,7 +14,7 @@ import {
   OrganizationFilters,
   OrganizationResponse,
   PaginatedOrganizationResponse
-} from '../types/organizationTypes';
+} from '../types/Organizations/organizationTypes';
 
 // Create Organization
 export const createOrganization = async (data: CreateOrganizationRequest): Promise<BaseResponseDTO> => {

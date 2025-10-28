@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Form, Input, Button, DatePicker, Select, InputNumber, Table, Modal, Alert, Switch, Space, Typography, Statistic } from 'antd';
 import { CreateMemberReceiptRequestDTO, ReceiptItemDTO } from '../../types/MemberAccount/memberAccountTypes';
 import { alertService } from '../../services/alertService';
 import { useNavigate } from 'react-router-dom';
 import { MemberListDto } from '../../types/Member/memberTypes';
 import { getReceiptableChartOfAccounts } from '../../services/chartOfAccountsService';
-import { ChartOfAccount } from '../../types/accountingTypes';
+import { ChartOfAccount } from '../../types/Accounting/accountingTypes';
 import moment from 'moment';
 import { createMemberReceipt, fetchMembersItemToReceipt } from '../../services/memberReceiptService';
 import MemberSearch from '../../components/MemberSearch';
@@ -182,7 +182,7 @@ export default function CreateReceiptForm() {
             title: 'Amount Receipted',
             dataIndex: 'amountReceipted',
             key: 'amountReceipted',
-            render: (text: number, record: ReceiptItemDTO) => (
+            render: (_text: number, record: ReceiptItemDTO) => (
                 <InputNumber
                     min={0}
                     value={record.amountReceipted}

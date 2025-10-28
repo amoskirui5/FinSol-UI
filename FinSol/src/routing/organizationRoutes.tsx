@@ -1,6 +1,6 @@
 // Add this route to your main routing configuration
 
-import { Routes, Route } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import OrganizationManagementPage from '../views/OrganizationManagementPage';
 
 // In your main App.tsx or routing file, add:

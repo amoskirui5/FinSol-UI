@@ -1,7 +1,7 @@
 import { UUID } from "crypto";
 import { DELETE_ACCOUNT_ClASS, DELETE_CHART_OF_ACCOUNT, EDIT_ACCOUNT_CLASS, EDIT_CHARTS_OF_ACCOUNT, GET_ACCOUNT_CLASS, GET_ACCOUNT_CLASS_BY_ID, GET_CHART_OF_ACCOUNT, GET_CHART_OF_ACCOUNT_BY_ID, GET_PAYEABLE_CHARTS_OF_ACCOUNT, GET_RECEIPTABLE_CHARTS_OF_ACCOUNT, GET_SUB_ACCOUNT_CLASS_BY_CLASS_ID, REGISTER_ACCOUNT_CLASS, REGISTER_CHARTS_OF_ACCOUNT } from "../constants/apiEndpoints";
 import axiosInstance from "../interceptors/globaInterceptor";
-import { AccountClassResponse, AccountClassResponseById, ChartOfAccountResponse, ChartOfAccountResponseById, EditChartOfAccountDTO, RegisterAccountClassDTO, RegisterAccountDTO, SubAccountClassResponse } from "../types/accountingTypes";
+import { AccountClassResponse, AccountClassResponseById, ChartOfAccountResponse, ChartOfAccountResponseById, EditChartOfAccountDTO, RegisterAccountClassDTO, RegisterAccountDTO, SubAccountClassResponse } from "../types/Accounting/accountingTypes";
 import { BaseResponseDTO } from "../types/BaseResponseDTO";
 
 export const registerAccountClass = async (params: RegisterAccountClassDTO): Promise<BaseResponseDTO> => {

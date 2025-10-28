@@ -17,7 +17,7 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { LoanApplicationList } from '../../types/MemberLoan/memberLoanTypes';
 import { fetchLoanDetailsById, submitLoanApproval } from '../../services/memberLoanService';
-import { LoanApprovalRequest } from '../../types/loanTypeTypes';
+import { LoanApprovalRequest } from '../../types/LoanTypesSettings/loanTypeTypes';
 
 const LoanApprovalForm: React.FC = () => {
     const [form] = Form.useForm();

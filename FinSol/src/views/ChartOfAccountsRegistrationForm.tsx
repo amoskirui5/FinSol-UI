@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, Select, Switch, message } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
-import { AccountClass, ChartOfAccount, RegisterAccountDTO, SubAccountClass } from '../types/accountingTypes';
+import { AccountClass, ChartOfAccount, RegisterAccountDTO, SubAccountClass } from '../types/Accounting/accountingTypes';
 import { editChartOfAccount, getAccountClass, getChartOfAccountsById, getSubAccountClassByClassId, registerChartOfAccount } from '../services/chartOfAccountsService';
 import Title from 'antd/es/typography/Title';
 

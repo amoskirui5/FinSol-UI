@@ -24,7 +24,7 @@ import {
   INDUSTRIES,
   COUNTRIES,
   KENYAN_CITIES
-} from '../types/organizationTypes';
+} from '../types/Organizations/organizationTypes';
 import {
   createOrganization,
   updateOrganization,

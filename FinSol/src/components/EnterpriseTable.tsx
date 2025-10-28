@@ -1,6 +1,6 @@
-import React from 'react';
+
 import { Table, Card, Input, Button, Space, Typography, Tag } from 'antd';
-import { SearchOutlined, FilterOutlined, ExportOutlined, PlusOutlined } from '@ant-design/icons';
+import { FilterOutlined, ExportOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 
 const { Title } = Typography;
@@ -48,7 +48,7 @@ function EnterpriseTable<T extends Record<string, any>>({
           </Tag>
         );
       }
-      if (typeof value === 'number' && col.dataIndex?.toString().toLowerCase().includes('amount')) {
+      if (typeof value === 'number' && 'dataIndex' in col && col.dataIndex?.toString().toLowerCase().includes('amount')) {
         return `KSH ${value.toLocaleString()}`;
       }
       return value;
@@ -137,7 +137,7 @@ function EnterpriseTable<T extends Record<string, any>>({
         className="enterprise-table"
         scroll={{ x: 'max-content' }}
         size="middle"
-        rowClassName={(record, index) => 
+        rowClassName={(_record, index) => 
           index % 2 === 0 ? 'table-row-light' : 'table-row-dark'
         }
         style={{
