@@ -84,7 +84,7 @@ const LoanApplicationsTable: React.FC = () => {
 
     const eligibilityResponse = await fetchLoanEligibility(memberId, loanTypeId);
     // store the full eligibility response for debugging/consumption by the modal if needed
-    setEligibilityResponseState(eligibilityResponse);
+    setEligibilityResponseState(eligibilityResponse as LoanElegibilityResponse);
     if (eligibilityResponse.success) {
       // attach the applied/requested amount directly to the loanInfo object so it is available
       // to the modal immediately (avoids timing issues with separate state updates)
@@ -118,7 +118,7 @@ const LoanApplicationsTable: React.FC = () => {
     setLoading(true);
     const eligibilityResponse = await fetchLoanEligibility(memberId, loanTypeId);
     // store full response for modal
-    setEligibilityResponseState(eligibilityResponse);
+    setEligibilityResponseState(eligibilityResponse as LoanElegibilityResponse);
     if (eligibilityResponse.success) {
       setLoanInfo({ ...eligibilityResponse.data, loanId });
       setIsModalVisible(true);
@@ -216,7 +216,6 @@ const LoanApplicationsTable: React.FC = () => {
       firstName: guarantor.guarantorMemberName?.split(' ')[0] || '',
       otherName: guarantor.guarantorMemberName?.split(' ').slice(1).join(' ') || '',
       memberNumber: guarantor.memberNumber || '',
-      
     };
 
     setSelectedGuarantorMember(guarantorMemberDto);
@@ -324,8 +323,8 @@ const LoanApplicationsTable: React.FC = () => {
       render: renderStatusTag,
     },
     {
-      title: 'Applied Amount',
       // The API/type uses `amount` for the applied/requested amount. Use the record's amount to be safe.
+      title: 'Applied Amount',
       dataIndex: 'amount',
       key: 'appliedAmount',
       render: (_: unknown, record: LoanApplicationList) =>
@@ -507,7 +506,6 @@ const LoanApplicationsTable: React.FC = () => {
     }
   }
 
-
   return (
     <div>
       <Input.Search
@@ -660,3 +658,4 @@ const LoanApplicationsTable: React.FC = () => {
 };
 
 export default LoanApplicationsTable;
+
