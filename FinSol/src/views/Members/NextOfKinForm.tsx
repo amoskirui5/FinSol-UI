@@ -45,7 +45,7 @@ const NextOfKinForm: React.FC<NextOfKinFormProps> = ({ kinId, onSuccess }) => {
             };
             fetchKin();
         }
-    }, [kinId, form]);
+    }, [kinId, form, editingKinId]);
 
     // Fetch next-of-kin records when selectedMember changes
     useEffect(() => {

@@ -10,8 +10,8 @@ export interface CreateMemberRegistrationRequestDTO {
     bankName: string;
     workPlace?: string;
     workType?: string;
-    dateOfBirth?: Date;
-    dateJoined: Date;
+    dateOfBirth?: string; // ISO string for API
+    dateJoined: string; // ISO string for API
     nationalID?: string;
     passportNumber?: string;
     taxPIN?: string;
@@ -33,11 +33,11 @@ export interface MemberListDto {
     bankName?: string;
     workPlace?: string; 
     workType?: string;
-    dateOfBirth?: Date | null; 
+    dateOfBirth?: string | null; // ISO string from API
     nationalID?: string;
     passportNumber?: string;
     taxPIN?: string;
-    dateJoined?: Date; 
+    dateJoined?: string; // ISO string from API
     gender?: Gender;
     isInactive?: boolean;
 }

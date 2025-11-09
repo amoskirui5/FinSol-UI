@@ -26,42 +26,43 @@ const BalanceSheet: React.FC = () => {
     });
 
     useEffect(() => {
+        const fetchBalanceSheetItems = async () => {
+            setLoading(true);
+            try {
+                const years = useFinancialYear ? null : selectedYears;
+                const result = await fetchBalanceSheet(years);
+
+                if (result.success) {
+                    setAssets(result.data.assets);
+                    setLiabilities(result.data.liabilities);
+                    setEquity(result.data.equity);
+                    setTotals({
+                        assets: result.data.totalAssetsByYear,
+                        liabilities: result.data.totalLiabilitiesByYear,
+                        equity: result.data.totalEquityByYear,
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching balance sheet:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
         fetchBalanceSheetItems();
     }, [useFinancialYear, selectedYears]);
-
-    const fetchBalanceSheetItems = async () => {
-        setLoading(true);
-        try {
-            const years = useFinancialYear ? null : selectedYears;
-            const result = await fetchBalanceSheet(years);
-
-            if (result.success) {
-                setAssets(result.data.assets);
-                setLiabilities(result.data.liabilities);
-                setEquity(result.data.equity);
-                setTotals({
-                    assets: result.data.totalAssetsByYear,
-                    liabilities: result.data.totalLiabilitiesByYear,
-                    equity: result.data.totalEquityByYear,
-                });
-            }
-        } catch (error) {
-            console.error('Error fetching balance sheet:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const onYearChange = (years: number[]) => {
         setSelectedYears(years);
     };
 
     const handleExport = (format: 'excel' | 'pdf') => {
-        console.log(`Exporting balance sheet as ${format}`);
-        // Implement export functionality
+        // Minimal debug logging — replace with real export implementation when ready
+        console.debug(`Exporting balance sheet as ${format}`);
+        // TODO: implement export functionality (call export service or generate file client-side)
     };
 
-    const formatCurrency = (amount: number) => {
+    const formatCurrency = (amount?: number) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: 'USD',

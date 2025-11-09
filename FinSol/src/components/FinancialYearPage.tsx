@@ -17,10 +17,11 @@ const FinancialYearTable: React.FC = () => {
         setLoading(true);
         try {
             const response = await fetchFinancialYears();
-            console.log("Financial Years Data:", response);
-            
+            // keep non-noisy debug information using console.debug
+            console.debug("Financial Years Data:", response);
             setData(response);
         } catch (error) {
+            console.error('Error fetching financial years:', error);
         } finally {
             setLoading(false);
         }
@@ -36,6 +37,7 @@ const FinancialYearTable: React.FC = () => {
             message.success("Deleted successfully");
             // setData((prev) => prev.filter((fy) => fy.financialYearId !== id));
         } catch (error) {
+            console.error('Delete financial year failed:', error);
             message.error("Delete failed");
         }
     };
@@ -56,6 +58,7 @@ const FinancialYearTable: React.FC = () => {
             setModalVisible(false);
             setSelectedYear(null);
         } catch (error) {
+            console.error('Failed to save financial year:', error);
             message.error("Failed to save");
         } finally {
             setSaving(false);

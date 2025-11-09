@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Form, Input, Button, DatePicker, Select, InputNumber, Table, Modal, Alert, Switch, Space, Typography, Statistic } from 'antd';
+import { Form, Input, Button, DatePicker, Select, InputNumber, Table, Modal, Alert, Switch, Space, Typography, Statistic, message } from 'antd';
 import { CreateMemberReceiptRequestDTO, ReceiptItemDTO } from '../../types/MemberAccount/memberAccountTypes';
 import { alertService } from '../../services/alertService';
 import { useNavigate } from 'react-router-dom';
@@ -60,7 +60,7 @@ export default function CreateReceiptForm() {
 
         setReceiptItems(updatedItems);
         calculateTotalReceipted(updatedItems);
-    }, [autoDistribute, totalAmount]);
+    }, [autoDistribute, totalAmount, receiptItems]);
 
     const fetchMemberItems = async (memberId: string) => {
         const response = await fetchMembersItemToReceipt(memberId);
@@ -114,9 +114,9 @@ export default function CreateReceiptForm() {
             content: `You are distributing ${amount} for ${description}, exceeding the due amount of ${due}. Proceed?`,
             okText: 'Yes',
             cancelText: 'No',
-            onOk: async () => {
-                const values = await form.validateFields();
-                await handleSubmit(values);
+            onOk: () => {
+                // Just close the modal, validation will happen on form submit
+                message.info('Please submit the form to proceed with the distribution.');
             },
         });
     };
@@ -125,18 +125,25 @@ export default function CreateReceiptForm() {
         setTotalAmount(value || 0);
     };
 
-    const handleSubmit = async (values: any) => {
+    const handleSubmit = async (values: {
+        memberId: string;
+        receiptDate: moment.Moment;
+        receiptMethod: string;
+        debitAccountId: string;
+        transactionReference: string;
+        description: string;
+    }) => {
         if (totalAmountReceipted !== totalAmount) {
             showAlert('Error', 'Total receipted amount must match the total amount.', 'error');
             return;
         }
 
         const receiptData: CreateMemberReceiptRequestDTO = {
-            memberId: values.memberId,
+            memberId: values.memberId as any, // UUID type from crypto
             amount: totalAmount,
             receiptDate: moment(values.receiptDate).format('YYYY-MM-DDTHH:mm:ss'),
             receiptMethod: values.receiptMethod,
-            debitAccountId: values.debitAccountId,
+            debitAccountId: values.debitAccountId as any, // UUID type from crypto
             transactionReference: values.transactionReference,
             description: values.description,
             receiptItems: receiptItems.map(item => ({
@@ -150,7 +157,14 @@ export default function CreateReceiptForm() {
             })),
         };
 
-        await createMemberReceipt(receiptData);
+        try {
+            await createMemberReceipt(receiptData);
+            showAlert('Success', 'Receipt created successfully!', 'success');
+            navigate('/receipt-list');
+        } catch (error) {
+            console.error('Failed to create receipt:', error);
+            showAlert('Error', 'Failed to create receipt. Please try again.', 'error');
+        }
     };
 
     const handleBack = () => {
@@ -202,7 +216,7 @@ export default function CreateReceiptForm() {
         {
             title: 'Action',
             key: 'action',
-            render: (_: any, record: ReceiptItemDTO) => (
+            render: (_value: unknown, record: ReceiptItemDTO) => (
                 <Button type="link" danger onClick={() => removeReceiptItem(record.key)}>
                     Remove
                 </Button>

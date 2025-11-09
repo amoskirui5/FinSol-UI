@@ -39,7 +39,7 @@ const LoanDisbursementForm: React.FC = () => {
                 message.error("Loan application ID is missing.");
                 return;
             }
-            var approvalData = await fetchLoanApprovalDetailsById(loanApplicationId);
+            const approvalData = await fetchLoanApprovalDetailsById(loanApplicationId);
             if (approvalData.success) {
                 setLoanApproval(approvalData.data);
             }

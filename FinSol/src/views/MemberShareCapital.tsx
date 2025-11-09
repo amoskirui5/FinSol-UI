@@ -40,7 +40,25 @@ const MemberShareCapital: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    filterData();
+    let filtered = [...data];
+
+    if (searchText) {
+      filtered = filtered.filter(item =>
+        item.memberName.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.memberNumber.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.transactionId.toLowerCase().includes(searchText.toLowerCase())
+      );
+    }
+
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(item => item.status === statusFilter);
+    }
+
+    if (typeFilter !== 'all') {
+      filtered = filtered.filter(item => item.transactionType === typeFilter);
+    }
+
+    setFilteredData(filtered);
   }, [data, searchText, statusFilter, typeFilter]);
 
   const fetchShareCapital = async () => {
@@ -108,27 +126,7 @@ const MemberShareCapital: React.FC = () => {
     }
   };
 
-  const filterData = () => {
-    let filtered = [...data];
-    
-    if (searchText) {
-      filtered = filtered.filter(item =>
-        item.memberName.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.memberNumber.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.transactionId.toLowerCase().includes(searchText.toLowerCase())
-      );
-    }
-    
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(item => item.status === statusFilter);
-    }
-    
-    if (typeFilter !== 'all') {
-      filtered = filtered.filter(item => item.transactionType === typeFilter);
-    }
-    
-    setFilteredData(filtered);
-  };
+  
 
   const handleCreate = () => {
     setSelectedShare(null);

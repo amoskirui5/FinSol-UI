@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { 
   Table, 
   Button, 
@@ -19,7 +19,6 @@ import {
   Menu
 } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { PaginationOptions } from '../../types/paginationTypes';
 
 import {
   EditOutlined,
@@ -72,27 +71,23 @@ const MemberList: React.FC = () => {
     newThisMonth: 0
   });
 
-  const options: PaginationOptions = {
-    pageNumber,
-    pageSize,
-    searchTerm,
-    searchField,
-    sortDescending: sortingType,
-  };
+  // Build pagination/options inline when calling the API to avoid stale references
 
-  useEffect(() => {
-    fetchAllMembersAPI();
-  }, [pageNumber, pageSize, searchTerm, searchField, sortingType]);
-
-  const fetchAllMembersAPI = async () => {
+  const fetchAllMembersAPI = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetchAllMembers(options);
+        const response = await fetchAllMembers({
+          pageNumber,
+          pageSize,
+          searchTerm,
+          searchField,
+          sortDescending: sortingType,
+        });
       if (response.success) {
         setMemberData(response.data.items);
         setTotalRecords(response.data.totalRecords);
         setPageSize(response.data.pageSize);
-        
+
         // Calculate stats
         const total = response.data.totalRecords;
         const active = response.data.items.filter(m => !m.isInactive).length;
@@ -113,7 +108,11 @@ const MemberList: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [pageNumber, pageSize, searchTerm, searchField, sortingType]);
+
+  useEffect(() => {
+    fetchAllMembersAPI();
+  }, [fetchAllMembersAPI]);
 
   const columns: ColumnsType<MemberListDto> = [
     {
@@ -292,11 +291,28 @@ const MemberList: React.FC = () => {
     });
   };
 
-  const deactivateMember = (id: string) => {
-    // Placeholder for deactivation logic; replace with actual API call
-    console.log(`Changing status for member with ID: ${id}`);
-    message.success('Member status updated successfully');
-    fetchAllMembersAPI(); // Refresh list after status change
+  const deactivateMember = async (id: string) => {
+    try {
+      setLoading(true);
+      // TODO: Implement actual API call to toggle member status
+      // const response = await toggleMemberStatus(id);
+      // if (response.success) {
+      //   message.success('Member status updated successfully');
+      //   fetchAllMembersAPI();
+      // } else {
+      //   message.error(response.message || 'Failed to update member status');
+      // }
+      
+      // Placeholder implementation
+      console.log(`Changing status for member with ID: ${id}`);
+      message.success('Member status updated successfully');
+      fetchAllMembersAPI();
+    } catch (error) {
+      console.error('Error updating member status:', error);
+      message.error('Failed to update member status. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const addNextOfKin = (id: string) => {
@@ -332,20 +348,45 @@ const MemberList: React.FC = () => {
     message.info('Export functionality will be implemented soon');
   };
 
-  const handleBulkAction = (action: string) => {
+  const handleBulkAction = async (action: string) => {
     if (selectedRowKeys.length === 0) {
       message.warning('Please select members first');
       return;
     }
     
+    const actionText = action.toLowerCase();
+    const confirmMessage = `Are you sure you want to ${actionText} ${selectedRowKeys.length} selected member(s)?`;
+    
     Modal.confirm({
       title: `Bulk ${action}`,
-      content: `Are you sure you want to ${action.toLowerCase()} ${selectedRowKeys.length} selected member(s)?`,
-      onOk: () => {
-        // Placeholder for bulk actions
-        message.success(`Bulk ${action.toLowerCase()} completed`);
-        setSelectedRowKeys([]);
-        fetchAllMembersAPI();
+      content: confirmMessage,
+      okText: 'Yes',
+      okType: action === 'Deactivate' ? 'danger' : 'primary',
+      cancelText: 'No',
+      onOk: async () => {
+        try {
+          setLoading(true);
+          // TODO: Implement actual bulk API call
+          // const response = await bulkUpdateMembers(selectedRowKeys, action);
+          // if (response.success) {
+          //   message.success(`Bulk ${actionText} completed successfully`);
+          //   setSelectedRowKeys([]);
+          //   fetchAllMembersAPI();
+          // } else {
+          //   message.error(response.message || `Failed to ${actionText} members`);
+          // }
+          
+          // Placeholder implementation
+          console.log(`Bulk ${actionText} for members:`, selectedRowKeys);
+          message.success(`Bulk ${actionText} completed successfully`);
+          setSelectedRowKeys([]);
+          fetchAllMembersAPI();
+        } catch (error) {
+          console.error(`Error during bulk ${actionText}:`, error);
+          message.error(`Failed to ${actionText} members. Please try again.`);
+        } finally {
+          setLoading(false);
+        }
       },
     });
   };

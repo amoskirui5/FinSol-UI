@@ -34,7 +34,7 @@ const AccountClassRegistration: React.FC = () => {
             navigate('/account-class'); // Redirect if ID is malformed
         }
         // If no id, do nothing (create mode)
-    }, [id]);
+    }, [id, navigate]);
 
     useEffect(() => {
         if (accountClasses) {
@@ -68,6 +68,7 @@ const AccountClassRegistration: React.FC = () => {
                 navigate('/account-class');
             }
         } catch (error) {
+            console.error('Account class save failed:', error);
             message.error("An error occurred while saving the account class");
         } finally {
             setLoading(false);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Table, 
   Button, 
@@ -63,7 +63,7 @@ const OrganizationListPage: React.FC<OrganizationListPageProps> = ({
   });
   const [totalCount, setTotalCount] = useState(0);
 
-  const fetchOrganizations = async () => {
+  const fetchOrganizations = useCallback(async () => {
     setLoading(true);
     try {
       const response = await getOrganizations(filters);
@@ -78,11 +78,11 @@ const OrganizationListPage: React.FC<OrganizationListPageProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
 
   useEffect(() => {
     fetchOrganizations();
-  }, [filters]);
+  }, [fetchOrganizations]);
 
   const handleDelete = async (id: string) => {
     try {

@@ -18,7 +18,7 @@ const AccountClassTableListPage: React.FC = () => {
     const fetchAccountClasses = async () => {
         setLoading(true);
         try {
-            var results = await getAccountClass();
+            const results = await getAccountClass();
             if (results.success) {
                 setData(results.data);
             }

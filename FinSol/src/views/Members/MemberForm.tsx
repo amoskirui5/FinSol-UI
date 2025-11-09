@@ -76,7 +76,7 @@ const MemberForm: React.FC<MemberFormProps> = ({ isUpdate = false }) => {
                             dateJoined: member.dateJoined ? dayjs(member.dateJoined) : null,
                         });
                     } else {
-                        message.error('Failed to load member data');
+                        message.error(response.message || 'Failed to load member data');
                     }
                 } catch (error) {
                     message.error('An error occurred while fetching member data');
@@ -90,15 +90,15 @@ const MemberForm: React.FC<MemberFormProps> = ({ isUpdate = false }) => {
 
     const validateAllSteps = async () => {
         try {
-            // Get all required fields across all steps
-            const allRequiredFields = [
+            // Validate all required fields across all steps
+            const requiredFields = [
                 'firstName', 'otherName', 'gender', 'dateOfBirth',
                 'email', 'phoneNumber',
                 'bankAccount', 'bankName',
                 'dateJoined'
             ];
             
-            await form.validateFields(allRequiredFields);
+            await form.validateFields(requiredFields);
             return true;
         } catch (error) {
             console.error('Validation failed:', error);
@@ -112,35 +112,29 @@ const MemberForm: React.FC<MemberFormProps> = ({ isUpdate = false }) => {
             // Get all form values
             const allFormValues = form.getFieldsValue();
             
-            // Filter out undefined/null values for cleaner logging
-            const cleanedValues = Object.entries(allFormValues).reduce((acc, [key, value]) => {
-                if (value !== undefined && value !== null && value !== '') {
-                    acc[key] = value;
-                }
-                return acc;
-            }, {} as any);
-            
-            // Debug: Log all form values to see what's being collected
-            console.log('All form values being submitted:', allFormValues);
-            console.log('Cleaned form values (non-empty only):', cleanedValues);
-            console.log('Total fields with values:', Object.keys(cleanedValues).length);
-            
+            // Convert dayjs objects to ISO strings for API
+            const processedValues = {
+                ...allFormValues,
+                dateOfBirth: allFormValues.dateOfBirth?.toISOString(),
+                dateJoined: allFormValues.dateJoined?.toISOString(),
+            };
+
             if (isUpdate && id) {
                 if (!isValidUUID(id)) {
                     message.error('Invalid or missing ID');
                     return;
                 }
-                await updateMember(id, allFormValues);
+                await updateMember(id, processedValues);
                 message.success('Member updated successfully');
             } else {
-                await registerMember(allFormValues);
+                await registerMember(processedValues);
                 message.success('Member registered successfully');
             }
             form.resetFields();
             navigate('/members-list');
         } catch (error) {
             console.error('Submission error:', error);
-            message.error('An error occurred during submission');
+            message.error('An error occurred during submission. Please try again.');
         } finally {
             setLoading(false);
         }

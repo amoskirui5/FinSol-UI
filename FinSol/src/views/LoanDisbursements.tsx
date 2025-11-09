@@ -35,7 +35,17 @@ const LoanDisbursements: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    filterData();
+    let filtered = [...data];
+
+    if (searchText) {
+      filtered = filtered.filter(item =>
+        item.memberName.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.memberNumber.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.applicationId.toLowerCase().includes(searchText.toLowerCase())
+      );
+    }
+
+    setFilteredData(filtered);
   }, [data, searchText]);
 
   const fetchLoanDisbursements = async () => {
@@ -98,19 +108,7 @@ const LoanDisbursements: React.FC = () => {
     }
   };
 
-  const filterData = () => {
-    let filtered = [...data];
-    
-    if (searchText) {
-      filtered = filtered.filter(item =>
-        item.memberName.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.memberNumber.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.applicationId.toLowerCase().includes(searchText.toLowerCase())
-      );
-    }
-    
-    setFilteredData(filtered);
-  };
+  
 
   const handleDisburse = (record: LoanDisbursement) => {
     setSelectedLoan(record);

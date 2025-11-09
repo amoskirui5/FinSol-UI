@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Table, Button, Tooltip, Tag, Popconfirm, Input, Form, DatePicker, InputNumber, Modal, Space, Select, message, Typography } from 'antd';
 import {
   CheckCircleOutlined,
@@ -16,7 +16,7 @@ import { useNavigate } from 'react-router-dom';
 
 import LoanEligibilityModal from './LoanEligibilityModal';
 import LoanApprovalConfirmationModal from './LoanApprovalConfirmationModal';
-import { AddGuarantorRequest, GuarantorList, LoanApplicationList, LoanInfoResponseDTO, LoanStagingRequestDTO, UpdateGuarantorRequest } from '../types/MemberLoan/memberLoanTypes';
+import { AddGuarantorRequest, GuarantorList, LoanApplicationList, LoanInfoResponseDTO, LoanStagingRequestDTO, UpdateGuarantorRequest, LoanElegibilityResponse } from '../types/MemberLoan/memberLoanTypes';
 import { PaginationOptions } from '../types/paginationTypes';
 import { fetchLoanApplications, fetchLoanEligibility, StageLoanDisbursement } from '../services/memberLoanService';
 import { LoanStatus } from '../enums/enums';
@@ -38,6 +38,7 @@ const LoanApplicationsTable: React.FC = () => {
   const [isGuarantorModalVisible, setIsGuarantorModalVisible] = useState(false);
   const [isMemberModalVisible, setIsMemberModalVisible] = useState(false);
   const [loanInfo, setLoanInfo] = useState<LoanInfoResponseDTO | null>(null);
+  const [eligibilityResponseState, setEligibilityResponseState] = useState<LoanElegibilityResponse | null>(null);
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
   const [requestedLoanAmount, setRequestedLoanAmount] = useState<number>(0);
   const [memLoanId, SetMemLoanId] = useState<string>('');
@@ -50,12 +51,12 @@ const LoanApplicationsTable: React.FC = () => {
   const [isStagingModalVisible, setIsStagingModalVisible] = useState(false);
 
 
-  const paginationOptions: PaginationOptions = {
+  const paginationOptions: PaginationOptions = useMemo(() => ({
     ...(searchTerm && searchTerm.trim() !== '' && {
       searchTerm,
       searchField: 'name',
     }),
-  };
+  }), [searchTerm]);
 
   const { showAlert } = alertService();
   const { Text } = Typography;
@@ -69,7 +70,7 @@ const LoanApplicationsTable: React.FC = () => {
       setLoading(false);
     };
     getLoanApplications();
-  }, [searchTerm]);
+  }, [paginationOptions]);
 
   const handleApproveLoan = async (
     loanId: string,
@@ -77,16 +78,24 @@ const LoanApplicationsTable: React.FC = () => {
     loanTypeId: string,
     requestedAmount: number
   ) => {
+    // store the requested amount and loan id
     setRequestedLoanAmount(requestedAmount);
     SetMemLoanId(loanId);
+
     const eligibilityResponse = await fetchLoanEligibility(memberId, loanTypeId);
+    // store the full eligibility response for debugging/consumption by the modal if needed
+    setEligibilityResponseState(eligibilityResponse);
     if (eligibilityResponse.success) {
-      setLoanInfo({ ...eligibilityResponse.data, loanId });
+      // attach the applied/requested amount directly to the loanInfo object so it is available
+      // to the modal immediately (avoids timing issues with separate state updates)
+      setLoanInfo({ ...eligibilityResponse.data, loanId, appliedAmount: requestedAmount } as any);
       setIsModalVisible(true);
     }
   };
 
-  const handleConfirmApproval = (_loanId: string) => {
+  const handleConfirmApproval = (_loanId?: string) => {
+    // mark param as used to avoid unused-var lint
+    void _loanId;
     setIsConfirmModalVisible(false);
     // Trigger your approval logic here
   };
@@ -95,7 +104,9 @@ const LoanApplicationsTable: React.FC = () => {
     setIsConfirmModalVisible(false);
   };
 
-  const handleDeclineLoan = (_loanId: string) => {
+  const handleDeclineLoan = (_loanId?: string) => {
+    // mark param as used to avoid unused-var lint
+    void _loanId;
     // Trigger your decline logic here
   };
 
@@ -106,6 +117,8 @@ const LoanApplicationsTable: React.FC = () => {
   ) => {
     setLoading(true);
     const eligibilityResponse = await fetchLoanEligibility(memberId, loanTypeId);
+    // store full response for modal
+    setEligibilityResponseState(eligibilityResponse);
     if (eligibilityResponse.success) {
       setLoanInfo({ ...eligibilityResponse.data, loanId });
       setIsModalVisible(true);
@@ -118,7 +131,8 @@ const LoanApplicationsTable: React.FC = () => {
   };
 
   const handleContinueApproval = () => {
-    navigate(`/loan-approval/${loanInfo?.loanId}`, { state: { loanInfo } });
+    // Pass the applied/requested amount along so the approval form can prefill the approved amount
+    navigate(`/loan-approval/${loanInfo?.loanId}`, { state: { loanInfo, appliedAmount: requestedLoanAmount } });
   };
 
   const handleDisburseLoan = (loanAppId: string) => {
@@ -311,16 +325,18 @@ const LoanApplicationsTable: React.FC = () => {
     },
     {
       title: 'Applied Amount',
-      dataIndex: 'appliedAmount',
+      // The API/type uses `amount` for the applied/requested amount. Use the record's amount to be safe.
+      dataIndex: 'amount',
       key: 'appliedAmount',
-      render: (amount: number) => formatCurrency(amount),
+      render: (_: unknown, record: LoanApplicationList) =>
+        formatCurrency(record.amount ?? (record as Partial<LoanApplicationList> & { appliedAmount?: number }).appliedAmount ?? 0),
     },
     {
       title: 'Approved Amount',
       key: 'approvedAmount',
       dataIndex: 'approvedAmount',
 
-      render: (_: any, record: LoanApplicationList) =>
+      render: (_: unknown, record: LoanApplicationList) =>
         record.loanApproval?.approvedAmount != null
           ? formatCurrency(record.loanApproval.approvedAmount)
           : '-',
@@ -329,7 +345,7 @@ const LoanApplicationsTable: React.FC = () => {
       title: 'Disbursed Amount',
       dataIndex: 'disbursedAmount',
       key: 'disbursedAmount',
-      render: (_: any, record: LoanApplicationList) =>
+      render: (_: unknown, record: LoanApplicationList) =>
         record.loanDisbursement?.disbursedAmount != null
           ? formatCurrency(record.loanDisbursement.disbursedAmount)
           : '-',
@@ -344,9 +360,11 @@ const LoanApplicationsTable: React.FC = () => {
             <Button
               type="primary"
               icon={<CheckCircleOutlined />}
-              onClick={() =>
-                handleApproveLoan(record.loanId, record.memberId, record.loanTypeId, record.amount)
-              }
+              onClick={() => {
+                // derive applied/requested amount defensively: prefer record.amount, then record.appliedAmount
+                const applied = record.amount ?? (record as any).appliedAmount ?? 0;
+                handleApproveLoan(record.loanId, record.memberId, record.loanTypeId, applied);
+              }}
               disabled={record.loanStatus !== LoanStatus.Pending}
               style={{ marginRight: 8 }}
             />
@@ -440,7 +458,7 @@ const LoanApplicationsTable: React.FC = () => {
       title: "Actions",
       key: "actions",
       width: 120,
-      render: (_, record: GuarantorList, _index: number) => (
+      render: (_: unknown, record: GuarantorList) => (
         <Space size="small">
           <Tooltip title="Edit Guarantor">
             <Button
@@ -476,7 +494,6 @@ const LoanApplicationsTable: React.FC = () => {
   async function handleStagingSubmit(data: LoanStagingRequestDTO) {
     setLoading(true);
     try {
-      console.log('Staging data:', data);
       await StageLoanDisbursement(data);
       setIsStagingModalVisible(false);
       // Refresh the loan applications list
@@ -595,6 +612,8 @@ const LoanApplicationsTable: React.FC = () => {
         continueApproval={handleContinueApproval}
         loanInfo={loanInfo}
         loading={loading}
+        appliedAmount={requestedLoanAmount || (loanInfo as any)?.appliedAmount}
+        eligibilityResponse={eligibilityResponseState}
       />
 
       <LoanApprovalConfirmationModal

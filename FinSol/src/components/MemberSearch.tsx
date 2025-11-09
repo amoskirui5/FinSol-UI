@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Input, Select, Table, Button } from 'antd';
 import { memberSearchFieldOptions } from '../constants/searchFieldOptions';
 import { MemberListDto } from '../types/Member/memberTypes';
-import { PaginationOptions } from '../types/paginationTypes';
+// PaginationOptions import kept for reference, but not required after refactor
+// import { PaginationOptions } from '../types/paginationTypes';
 import { fetchAllMembers } from '../services/memberService';
 import { maskData } from '../Utility/maskBioData';
 import { CheckOutlined } from '@ant-design/icons';
+import { debounce } from 'lodash';
 
 const { Option } = Select;
 
@@ -19,23 +21,42 @@ const MemberSearch: React.FC<MemberSearchProps> = ({ onMemberSelect }) => {
     const [membersList, setMembersList] = useState<MemberListDto[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
 
-    const options: PaginationOptions = {
-        searchTerm,
-        searchField,
-    };
+    // build options inline when calling the API to avoid stale closure
 
     useEffect(() => {
-        fetchMembers();
-    }, [searchTerm, searchField]);
+        const handler = debounce(async (term: string, field: string) => {
+            if (!term.trim()) {
+                setMembersList([]);
+                return;
+            }
 
-    const fetchMembers = async () => {
-        setLoading(true);
-        const response = await fetchAllMembers(options);
-        if (response.success) {
-            setMembersList(response.data.items);
-        }
-        setLoading(false);
-    };
+            setLoading(true);
+            try {
+                const response = await fetchAllMembers({
+                    searchTerm: term,
+                    searchField: field,
+                    pageNumber: 1,
+                    pageSize: 50,
+                });
+                if (response.success) {
+                    setMembersList(response.data.items);
+                } else {
+                    setMembersList([]);
+                }
+            } catch (error) {
+                console.error('Error fetching members:', error);
+                setMembersList([]);
+            } finally {
+                setLoading(false);
+            }
+        }, 300);
+
+        handler(searchTerm, searchField);
+
+        return () => {
+            handler.cancel();
+        };
+    }, [searchTerm, searchField]);
 
     const handleSearchTermChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
@@ -83,18 +104,7 @@ const MemberSearch: React.FC<MemberSearchProps> = ({ onMemberSelect }) => {
                     type="primary"
                     onClick={() => onMemberSelect(record)}
                     icon={<CheckOutlined />}
-                    style={{
-                        border: 'none',
-                        backgroundColor: '#1890ff',
-                        color: 'white',
-                        cursor: 'pointer',
-                        padding: '5px 10px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                    }}
-                    onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => (e.target as HTMLButtonElement).style.backgroundColor = '#40a9ff'}
-                    onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => (e.target as HTMLButtonElement).style.backgroundColor = '#1890ff'}
+                    className="member-select-button"
                 >
                     Select
                 </Button>
@@ -131,10 +141,7 @@ const MemberSearch: React.FC<MemberSearchProps> = ({ onMemberSelect }) => {
                 rowKey="memberId"
                 onRow={(record: MemberListDto) => ({
                     onClick: () => onMemberSelect(record),
-                    style: {
-                        cursor: 'pointer',
-                        transition: 'background-color 0.3s',
-                    },
+                    className: 'member-search-row',
                 })}
             />
         </div>

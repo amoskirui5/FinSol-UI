@@ -8,7 +8,8 @@ const PasswordPolicy: React.FC = () => {
   const [form] = Form.useForm();
 
   const handleSubmit = (values: any) => {
-    console.log('Password policy updated:', values);
+    // debug during development
+    console.debug('Password policy updated:', values);
   };
 
   return (

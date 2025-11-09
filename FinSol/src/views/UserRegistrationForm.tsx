@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { Form, Input, Button, Col, Row, Card, Select, message } from 'antd';
 import { UserRegistrationFormProps, UserRegistrationFormValues } from '../types/System/systemUsersTypes';
 import { getAllSystemRoles } from '../services/applicationRolesService';
@@ -39,14 +39,12 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({ onSubmit })
     fetchRoles();
   }, [fetchRoles]);
 
-  // Debounced email validation
-  const checkEmailAvailability = useCallback(
+  // Debounced email validation using ref to avoid hook dependency issues
+  const checkEmailRef = useRef(
     debounce(async (_email: string) => {
       try {
         setEmailStatus('validating');
         // Add your API call to check email availability here
-        // const response = await checkEmail(email);
-        // Simulation of API call
         await new Promise(resolve => setTimeout(resolve, 500));
         setEmailStatus('');
       } catch (error) {
@@ -58,14 +56,21 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({ onSubmit })
           },
         ]);
       }
-    }, 300),
-    [form]
+    }, 300)
   );
+
+  useEffect(() => {
+    const ref = checkEmailRef.current;
+    return () => {
+      // cleanup debounce on unmount
+      ref.cancel();
+    };
+  }, []);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const email = e.target.value;
     if (email) {
-      checkEmailAvailability(email);
+      checkEmailRef.current(email);
     }
   };
 

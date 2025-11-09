@@ -8,7 +8,8 @@ const TwoFactorAuth: React.FC = () => {
   const [form] = Form.useForm();
 
   const handleSubmit = (values: any) => {
-    console.log('2FA settings updated:', values);
+    // non-critical debug information
+    console.debug('2FA settings updated:', values);
   };
 
   return (

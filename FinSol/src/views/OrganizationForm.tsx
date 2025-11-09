@@ -54,33 +54,31 @@ const OrganizationForm: React.FC<OrganizationFormProps> = ({
 
   // Load organization data if editing
   useEffect(() => {
-    if (organizationId) {
-      loadOrganization();
-    }
-  }, [organizationId]);
-
-  const loadOrganization = async () => {
     if (!organizationId) return;
-    
-    setLoading(true);
-    try {
-      const response = await getOrganizationById(organizationId);
-      if (response.success && response.data) {
-        const org = response.data;
-        form.setFieldsValue({
-          ...org,
-          establishedDate: org.establishedDate ? moment(org.establishedDate) : null,
-          licenseExpiryDate: org.licenseExpiryDate ? moment(org.licenseExpiryDate) : null
-        });
-      } else {
-        message.error(response.message || 'Failed to load organization');
+
+    const load = async () => {
+      setLoading(true);
+      try {
+        const response = await getOrganizationById(organizationId);
+        if (response.success && response.data) {
+          const org = response.data;
+          form.setFieldsValue({
+            ...org,
+            establishedDate: org.establishedDate ? moment(org.establishedDate) : null,
+            licenseExpiryDate: org.licenseExpiryDate ? moment(org.licenseExpiryDate) : null
+          });
+        } else {
+          message.error(response.message || 'Failed to load organization');
+        }
+      } catch (error: any) {
+        message.error('Error loading organization: ' + (error.message || 'Unknown error'));
+      } finally {
+        setLoading(false);
       }
-    } catch (error: any) {
-      message.error('Error loading organization: ' + (error.message || 'Unknown error'));
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    load();
+  }, [organizationId, form]);
 
   const handleSubmit = async (values: OrganizationFormValues) => {
     setSubmitting(true);

@@ -38,78 +38,71 @@ const UserRoles: React.FC = () => {
   ];
 
   useEffect(() => {
-    fetchUserRoles();
+    const load = async () => {
+      setLoading(true);
+      try {
+        // Simulate API call - replace with actual service
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        const mockData: UserRole[] = [
+          {
+            key: '1',
+            roleId: 'ROLE001',
+            roleName: 'Administrator',
+            description: 'Full system access with all permissions',
+            permissions: ['admin.full_access'],
+            userCount: 2,
+            status: 'active',
+            createdDate: '2024-01-01',
+            lastModified: '2024-01-20'
+          },
+          {
+            key: '2',
+            roleId: 'ROLE002',
+            roleName: 'Loan Officer',
+            description: 'Manage loan applications and approvals',
+            permissions: ['loans.view', 'loans.create', 'loans.approve', 'members.view'],
+            userCount: 5,
+            status: 'active',
+            createdDate: '2024-01-01',
+            lastModified: '2024-01-15'
+          },
+          {
+            key: '3',
+            roleId: 'ROLE003',
+            roleName: 'Teller',
+            description: 'Handle member deposits and basic transactions',
+            permissions: ['members.view', 'deposits.view', 'deposits.create'],
+            userCount: 8,
+            status: 'active',
+            createdDate: '2024-01-01',
+            lastModified: '2024-01-10'
+          },
+          {
+            key: '4',
+            roleId: 'ROLE004',
+            roleName: 'Accountant',
+            description: 'Generate reports and view financial data',
+            permissions: ['reports.view', 'reports.generate', 'deposits.view', 'loans.view'],
+            userCount: 3,
+            status: 'active',
+            createdDate: '2024-01-01',
+            lastModified: '2024-01-18'
+          }
+        ];
+        setData(mockData);
+      } catch (error) {
+        console.error('Error fetching user roles:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
   }, []);
 
   useEffect(() => {
-    filterData();
-  }, [data, searchText]);
-
-  const fetchUserRoles = async () => {
-    setLoading(true);
-    try {
-      // Simulate API call - replace with actual service
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock data
-      const mockData: UserRole[] = [
-        {
-          key: '1',
-          roleId: 'ROLE001',
-          roleName: 'Administrator',
-          description: 'Full system access with all permissions',
-          permissions: ['admin.full_access'],
-          userCount: 2,
-          status: 'active',
-          createdDate: '2024-01-01',
-          lastModified: '2024-01-20'
-        },
-        {
-          key: '2',
-          roleId: 'ROLE002',
-          roleName: 'Loan Officer',
-          description: 'Manage loan applications and approvals',
-          permissions: ['loans.view', 'loans.create', 'loans.approve', 'members.view'],
-          userCount: 5,
-          status: 'active',
-          createdDate: '2024-01-01',
-          lastModified: '2024-01-15'
-        },
-        {
-          key: '3',
-          roleId: 'ROLE003',
-          roleName: 'Teller',
-          description: 'Handle member deposits and basic transactions',
-          permissions: ['members.view', 'deposits.view', 'deposits.create'],
-          userCount: 8,
-          status: 'active',
-          createdDate: '2024-01-01',
-          lastModified: '2024-01-10'
-        },
-        {
-          key: '4',
-          roleId: 'ROLE004',
-          roleName: 'Accountant',
-          description: 'Generate reports and view financial data',
-          permissions: ['reports.view', 'reports.generate', 'deposits.view', 'loans.view'],
-          userCount: 3,
-          status: 'active',
-          createdDate: '2024-01-01',
-          lastModified: '2024-01-18'
-        }
-      ];
-      
-      setData(mockData);
-    } catch (error) {
-      console.error('Error fetching user roles:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterData = () => {
     let filtered = [...data];
-    
+
     if (searchText) {
       filtered = filtered.filter(item =>
         item.roleName.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -117,9 +110,11 @@ const UserRoles: React.FC = () => {
         item.roleId.toLowerCase().includes(searchText.toLowerCase())
       );
     }
-    
+
     setFilteredData(filtered);
-  };
+  }, [data, searchText]);
+
+  
 
   const handleCreate = () => {
     setSelectedRole(null);

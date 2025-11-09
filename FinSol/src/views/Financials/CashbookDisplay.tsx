@@ -55,6 +55,7 @@ const CashbookDisplay: React.FC = () => {
         setCashbookData(response.data);
       }
     } catch (error) {
+      console.error('Failed to fetch cashbook data:', error);
       message.error("Failed to fetch cashbook data");
     } finally {
       setLoading(false);
@@ -66,7 +67,7 @@ const CashbookDisplay: React.FC = () => {
   };
 
   const handleExport = (format: 'excel' | 'pdf') => {
-    console.log(`Exporting cashbook as ${format}`);
+    console.debug(`Exporting cashbook as ${format}`);
     // Implement export functionality
   };
 

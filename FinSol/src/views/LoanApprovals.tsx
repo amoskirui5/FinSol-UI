@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Table, Button, Space, Typography, Row, Col, Tag, Input, Modal, Form, Select } from 'antd';
+import { Card, Table, Button, Space, Typography, Row, Col, Tag, Input, Modal, Form, Select, message } from 'antd';
 import { EditOutlined, SearchOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import * as memberLoanService from '../services/memberLoanService';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -36,7 +37,21 @@ const LoanApprovals: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    filterData();
+    let filtered = [...data];
+
+    if (searchText) {
+      filtered = filtered.filter(item =>
+        item.memberName.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.memberNumber.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.applicationId.toLowerCase().includes(searchText.toLowerCase())
+      );
+    }
+
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(item => item.status === statusFilter);
+    }
+
+    setFilteredData(filtered);
   }, [data, searchText, statusFilter]);
 
   const fetchLoanApprovals = async () => {
@@ -97,23 +112,7 @@ const LoanApprovals: React.FC = () => {
     }
   };
 
-  const filterData = () => {
-    let filtered = [...data];
-    
-    if (searchText) {
-      filtered = filtered.filter(item =>
-        item.memberName.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.memberNumber.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.applicationId.toLowerCase().includes(searchText.toLowerCase())
-      );
-    }
-    
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(item => item.status === statusFilter);
-    }
-    
-    setFilteredData(filtered);
-  };
+  
 
   const handleApprove = (record: LoanApproval) => {
     setSelectedLoan(record);
@@ -138,10 +137,15 @@ const LoanApprovals: React.FC = () => {
   const handleModalSubmit = async () => {
     try {
       const values = await form.validateFields();
-      console.log('Approval/Decline action:', {
-        applicationId: selectedLoan?.applicationId,
-        ...values
-      });
+      
+      if (values.action === 'declined') {
+        // Call the decline API
+        await memberLoanService.submitLoanRejection(selectedLoan?.applicationId || '', values.remarks);
+        message.success('Loan application declined successfully');
+      } else {
+        // For approval, we would call the approval API here
+        message.info('Approval functionality would be implemented here');
+      }
       
       // Update the record in the data
       const updatedData = data.map(item => 
@@ -161,7 +165,8 @@ const LoanApprovals: React.FC = () => {
       setSelectedLoan(null);
       form.resetFields();
     } catch (error) {
-      console.error('Validation failed:', error);
+      console.error('Action failed:', error);
+      message.error('Failed to process loan application. Please try again.');
     }
   };
 
@@ -270,7 +275,10 @@ const LoanApprovals: React.FC = () => {
           <Button
             size="small"
             icon={<EditOutlined />}
-            onClick={() => console.log('View details:', record.applicationId)}
+            onClick={() => {
+              // TODO: Implement view details functionality
+              message.info('View details functionality to be implemented');
+            }}
           >
             Details
           </Button>

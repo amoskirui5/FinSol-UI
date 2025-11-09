@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, Table, Button, Space, Typography, Row, Col, Tag, Input, DatePicker, Modal, Form, InputNumber, Select, message } from 'antd';
 import { PlusOutlined, SearchOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
@@ -31,15 +31,27 @@ const MemberDeposits: React.FC = () => {
     total: 0,
   });
 
-  useEffect(() => {
-    fetchMemberDeposits();
-  }, [pagination.current, pagination.pageSize]);
+ 
 
   useEffect(() => {
-    filterData();
+    let filtered = [...data];
+
+    if (searchText) {
+      filtered = filtered.filter(item =>
+        item.memberName.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.memberNumber.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.depositId.toLowerCase().includes(searchText.toLowerCase())
+      );
+    }
+
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(item => item.status === statusFilter);
+    }
+
+    setFilteredData(filtered);
   }, [data, searchText, statusFilter]);
 
-  const fetchMemberDeposits = async () => {
+  const fetchMemberDeposits = useCallback(async () => {
     setLoading(true);
     try {
       const paginationOptions: PaginationOptions = {
@@ -47,10 +59,10 @@ const MemberDeposits: React.FC = () => {
         pageSize: pagination.pageSize,
         searchTerm: searchText,
       };
-      
+
       // Use actual service call
       const response = await getMemberDeposits(paginationOptions);
-      
+
       if (response.success && response.data) {
         setData(response.data.items || []);
         setPagination(prev => ({ 
@@ -70,7 +82,11 @@ const MemberDeposits: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagination, searchText]);
+
+  useEffect(() => {
+    fetchMemberDeposits();
+  }, [fetchMemberDeposits]);
 
   const loadMockData = async () => {
     // Simulate API delay
@@ -128,23 +144,7 @@ const MemberDeposits: React.FC = () => {
     setPagination(prev => ({ ...prev, total: mockData.length }));
   };
 
-  const filterData = () => {
-    let filtered = [...data];
-    
-    if (searchText) {
-      filtered = filtered.filter(item =>
-        item.memberName.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.memberNumber.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.depositId.toLowerCase().includes(searchText.toLowerCase())
-      );
-    }
-    
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(item => item.status === statusFilter);
-    }
-    
-    setFilteredData(filtered);
-  };
+  
 
   const handleCreate = () => {
     setSelectedDeposit(null);

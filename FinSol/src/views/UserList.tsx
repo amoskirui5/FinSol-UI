@@ -37,7 +37,8 @@ const UserList: React.FC<UserListProps> = ({ onStatusChange }) => {
     };
 
     const handleFormSubmit =async (values: UserRegistrationFormValues) => {
-        console.log('User registered:', values);
+        // reduce console noise: keep as info if needed for audit during development
+        console.info('User registered:', values);
 
         const userRegisterParams: UserRegistrationFormValues = {
             email: values.email,
