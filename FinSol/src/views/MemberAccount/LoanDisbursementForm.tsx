@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, Select, DatePicker, message, Card, Row, Col } from 'antd';
 import { useParams } from 'react-router-dom';
-import { LoanDisbursementRequestDTO } from '../../types/loanTypeTypes';
+import { LoanToMemberDisbursementRequest } from '../../types/LoanTypesSettings/loanTypeTypes';
 import { fetchLoanApprovalDetailsById, submitLoanDisbursement } from '../../services/memberLoanService';
 import { getPayeableChartOfAccounts } from '../../services/chartOfAccountsService';
-import { ChartOfAccount } from '../../types/accountingTypes';
+import { ChartOfAccount } from '../../types/Accounting/accountingTypes';
 import { alertService } from '../../services/alertService';
 import { LoanApprovalListDTO } from '../../types/MemberLoan/memberLoanTypes';
 import { formatDate } from '../../helpers/dateFormater';
@@ -39,7 +39,7 @@ const LoanDisbursementForm: React.FC = () => {
                 message.error("Loan application ID is missing.");
                 return;
             }
-            var approvalData = await fetchLoanApprovalDetailsById(loanApplicationId);
+            const approvalData = await fetchLoanApprovalDetailsById(loanApplicationId);
             if (approvalData.success) {
                 setLoanApproval(approvalData.data);
             }
@@ -48,14 +48,21 @@ const LoanDisbursementForm: React.FC = () => {
     }, [loanApplicationId]);
 
     const handleSubmit = async (values: any) => {
-        if (isSubmitting) return; // prevent double-click
+        if (isSubmitting) return;
 
-        const disbursementData: LoanDisbursementRequestDTO = {
-            ...values,
-            loanAppId: loanApplicationId,
-            memberId: loanApproval?.memberId,
-            dateDisbursed: values.dateDisbursed.format(),
-            loanTypeId: loanApproval?.loanTypeId
+        const disbursementData: LoanToMemberDisbursementRequest = {
+            dateDisbursed: values.dateDisbursed.format(), // ISO string
+            amount: values.amount,
+            accountNumber: values.debitAccountId,
+            approvalId: loanApproval?.id ,
+            memberId: loanApproval?.memberId ?? '',
+            loanTypeId: loanApproval?.loanTypeId ?? '', 
+            paymentMethod: values.paymentMethod,
+            transactionReference: values.transactionReference,
+            creditAccountId: values.debitAccountId,
+            loanAppId: loanApplicationId ?? '',
+            isPartiallyDisbursed: false,
+            
         };
 
         if (disbursementData.amount <= 0) {
@@ -66,7 +73,7 @@ const LoanDisbursementForm: React.FC = () => {
             if (disbursementData.amount > loanApproval.approvedAmount) {
                 return showAlert(
                     'Error',
-                    `Disbursed amount ${disbursementData.amount} cannot be more than approved amount ${loanApproval.amount}`,
+                    `Disbursed amount ${disbursementData.amount} cannot be more than approved amount ${loanApproval.approvedAmount}`,
                     'error'
                 );
             }

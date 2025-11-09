@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Descriptions, Card, Spin } from 'antd';
 import { fetchLoanTypeById } from '../services/loanTypeService';
-import { LoanType } from '../types/loanTypeTypes';
+import { LoanType } from '../types/LoanTypesSettings/loanTypeTypes';
 import { formatCurrency } from '../Utility/formatCurrency';
 import { getInterestRateTypeName } from '../helpers/enumConversion';
 
@@ -12,37 +12,32 @@ const LoanTypeDetailsPage: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
+        const fetchLoanTypeDetails = async () => {
+            try {
+                setLoading(true);
+                if (!isValidUUID(id)) {
+                    console.error("Invalid or missing ID");
+                    return;
+                }
+                const response = await fetchLoanTypeById(id as string);
+
+                if (response.success) {
+                    setLoanType(response.data);
+                }
+            } catch (error) {
+                console.error('Failed to fetch loan type details:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
         fetchLoanTypeDetails();
     }, [id]);
 
     const isValidUUID = (id: string | undefined): id is `${string}-${string}-${string}-${string}-${string}` => {
         return !!id && /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
     };
-    const fetchLoanTypeDetails = async () => {
-
-        try {
-            setLoading(true);
-            if (!isValidUUID(id)) {
-                console.error("Invalid or missing ID");
-                return;
-            }
-            const response = await fetchLoanTypeById(id);
-
-            if (response.success) {
-                setLoanType(response.data);
-            }
-            setLoading(false);
-
-        } catch (error) {
-            setLoading(false);
-
-        }
-        finally {
-            setLoading(false);
-
-        }
-
-    };
+    
 
     if (loading) {
         return <Spin tip="Loading..." />;

@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { LoanInfoResponseDTO } from '../types/MemberLoan/memberLoanTypes';
+import React from 'react'
+import { LoanInfoResponseDTO, LoanElegibilityResponse } from '../types/MemberLoan/memberLoanTypes';
 import { Badge, Button, Modal, Spin, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 
@@ -9,6 +9,8 @@ interface LoanEligibilityModalProps {
     continueApproval: () => void;
     loanInfo: LoanInfoResponseDTO | null;
     loading: boolean;
+    appliedAmount?: number;
+    eligibilityResponse?: LoanElegibilityResponse | null;
 }
 
 interface DataType {
@@ -25,12 +27,18 @@ const LoanEligibilityModal: React.FC<LoanEligibilityModalProps> = ({
     continueApproval,
     loanInfo,
     loading,
+    appliedAmount,
+    eligibilityResponse,
 }) => {
+    // eligibilityResponse is available via props when provided
+    const appliedValue = typeof appliedAmount === 'number' ? `${appliedAmount.toLocaleString()}` : undefined;
     const dataSource: DataType[] = loanInfo
         ? [
             { key: '1', label: 'Member Number', value: loanInfo.memberNumber },
             { key: '2', label: 'Member Name', value: loanInfo.memberName },
             { key: '3', label: 'Total Deposits', value: `${loanInfo.totalDeposits.toLocaleString()}` },
+            // Show applied/requested amount if provided via props
+            { key: 'applied', label: 'Applied Amount', value: appliedValue ?? '-' },
             { key: '4', label: 'Max Loan Qualified', value: `${loanInfo.maxLoanQualified.toLocaleString()}` },
             { key: '5', label: 'Loan Balance', value: `${loanInfo.loanBalance.toLocaleString()}` },
             {
@@ -80,6 +88,12 @@ const LoanEligibilityModal: React.FC<LoanEligibilityModalProps> = ({
                 </Button>,
             ]}
         >
+            {/* Show API message if present */}
+            {eligibilityResponse?.message && (
+                <div style={{ marginBottom: 12 }}>
+                    <Text type="secondary">{eligibilityResponse.message}</Text>
+                </div>
+            )}
             {loading ? (
                 <div style={{ textAlign: 'center', padding: '2rem' }}>
                     <Spin size="large" />

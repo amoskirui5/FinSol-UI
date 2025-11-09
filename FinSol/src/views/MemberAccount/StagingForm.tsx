@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import { Form, Input, Button, DatePicker } from 'antd';
 import moment from 'moment';
-import { LoanStagingRequestDTO, PaymentStagingRequestDTO } from '../../types/MemberLoan/memberLoanTypes';
+import { LoanStagingRequestDTO } from '../../types/MemberLoan/memberLoanTypes';
 
 interface StagingFormProps {
   memberId: string;
   loanAppId: string;
   initialAmount?: number;
-  onSubmit: (dto: PaymentStagingRequestDTO) => void;
+  onSubmit: (dto: LoanStagingRequestDTO) => void;
 }
 
 export const StagingForm: React.FC<StagingFormProps> = ({

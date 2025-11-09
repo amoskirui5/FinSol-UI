@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button, DatePicker, InputNumber, Table, Modal, Alert, Switch, Space } from 'antd';
+import { Form, Button, DatePicker, InputNumber, Table, Modal, Alert, Switch, Space, Select, Input } from 'antd';
 import { alertService } from '../../services/alertService';
 import { useNavigate } from 'react-router-dom';
-import { ChartOfAccount } from '../../types/accountingTypes';
+import { ChartOfAccount } from '../../types/Accounting/accountingTypes';
 import moment from 'moment';
 import { MemberListDto } from '../../types/Member/memberTypes';
 import { CreateMemberPaymentRequestDTO, PaymentItemDTO } from '../../types/MemberAccount/memberAccountTypes';
 import { getPayeableChartOfAccounts } from '../../services/chartOfAccountsService';
 import { createMemberPayment, fetchMembersItemToPay } from '../../services/memberPaymentService';
 import MemberSelectField from '../../components/MemberSelectField';
+
+const { Option } = Select;
 
 const CreatePaymentForm: React.FC = () => {
     const [form] = Form.useForm();
@@ -19,7 +21,7 @@ const CreatePaymentForm: React.FC = () => {
     const [warningVisible, setWarningVisible] = useState(false);
     const [autoDistribute, setAutoDistribute] = useState(false);
     const [selectedMember, setSelectedMember] = useState<MemberListDto | null>(null);
-    const [, setChartsOfAccount] = useState<ChartOfAccount[]>([]);
+    const [chartsOfAccount, setChartsOfAccount] = useState<ChartOfAccount[]>([]);
     const [, setIsModalVisible] = useState<boolean>(false);
 
     const navigate = useNavigate();
@@ -38,7 +40,7 @@ const CreatePaymentForm: React.FC = () => {
             setPaymentItems(updatedItems);
             calculateTotalPaid(updatedItems);
         }
-    }, [autoDistribute]);
+    }, [autoDistribute, paymentItems]);
 
     const handleMemberSelect = async (member: MemberListDto) => {
         if (member) {
@@ -64,7 +66,7 @@ const CreatePaymentForm: React.FC = () => {
     };
 
     const calculateTotalDue = (items: PaymentItemDTO[]) => {
-        const totalDue = items.reduce((sum, item) => sum + item.amountPaid, 0);
+        const totalDue = items.reduce((sum, item) => sum + item.amountDue, 0);
         setTotalAmountDue(totalDue);
     };
 
@@ -97,8 +99,6 @@ const CreatePaymentForm: React.FC = () => {
     };
 
     const handleSubmit = async (values: any) => {
-        console.log('Processing payment...');
-
         if (totalAmountPaid !== totalAmount) {
             showAlert('Error', 'The total paid amount must match the distributed amount.', 'error');
             return;
@@ -117,7 +117,7 @@ const CreatePaymentForm: React.FC = () => {
                 description: item.description,
                 loanNo: item?.loanNo,
                 loanAppId: item?.loanAppId,
-                amountDue: item.amountPaid,
+                amountDue: item.amountDue,
                 amountPaid: item.amountPaid,
                 memberAccountType: item.memberAccountType,
                 isPartiallyDisbursed: item.isPartiallyDisbursed,
@@ -159,8 +159,8 @@ const CreatePaymentForm: React.FC = () => {
                     onChange={value => handleAmountPaidChange(record.key, value || 0)}
                     style={{ width: '100%' }}
                     onBlur={() => {
-                        if (record.amountPaid > record.amountPaid) {
-                            confirmLargerAmountDistribution(record.amountPaid, record.amountPaid, record?.description);
+                        if (record.amountPaid > record.amountDue) {
+                            confirmLargerAmountDistribution(record.amountPaid, record.amountDue, record.description || 'Unknown item');
                         }
                     }}
                 />
@@ -216,6 +216,46 @@ const CreatePaymentForm: React.FC = () => {
                     name="paymentDate"
                     rules={[{ required: true, message: 'Please select a payment date' }]}>
                     <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
+                </Form.Item>
+            </div>
+
+            <div style={{ display: 'flex', gap: '24px', marginBottom: '24px' }}>
+                <Form.Item
+                    label="Payment Method"
+                    name="paymentMethod"
+                    rules={[{ required: true, message: 'Please select a payment method' }]}>
+                    <Select placeholder="Select payment method" style={{ width: '100%' }}>
+                        <Option value="cash">Cash</Option>
+                        <Option value="bank_transfer">Bank Transfer</Option>
+                        <Option value="cheque">Cheque</Option>
+                    </Select>
+                </Form.Item>
+
+                <Form.Item
+                    label="Credit Account"
+                    name="creditAccountId"
+                    rules={[{ required: true, message: 'Please select a credit account' }]}>
+                    <Select placeholder="Select credit account" style={{ width: '100%' }} loading={!chartsOfAccount.length}>
+                        {chartsOfAccount.map(account => (
+                            <Option key={account.id} value={account.id}>{account.accountName}</Option>
+                        ))}
+                    </Select>
+                </Form.Item>
+            </div>
+
+            <div style={{ display: 'flex', gap: '24px', marginBottom: '24px' }}>
+                <Form.Item
+                    label="Transaction Reference"
+                    name="transactionReference"
+                    rules={[{ required: true, message: 'Please enter transaction reference' }]}>
+                    <Input placeholder="Enter transaction reference" />
+                </Form.Item>
+
+                <Form.Item
+                    label="Description"
+                    name="description"
+                    rules={[{ required: true, message: 'Please enter description' }]}>
+                    <Input.TextArea rows={2} placeholder="Enter description" />
                 </Form.Item>
             </div>
 

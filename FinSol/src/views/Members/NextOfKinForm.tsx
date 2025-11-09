@@ -15,7 +15,7 @@ interface NextOfKinFormProps {
 const NextOfKinForm: React.FC<NextOfKinFormProps> = ({ kinId, onSuccess }) => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
-    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [, setIsModalVisible] = useState(false);
     const [selectedMember, setSelectedMember] = useState<MemberListDto | null>(null);
     const [nextOfKins, setNextOfKins] = useState<MemberNextOfKinDto[]>([]); // New state for next-of-kin list
     const [editingKinId, setEditingKinId] = useState<string | null>(null); // Track editing next-of-kin
@@ -45,7 +45,7 @@ const NextOfKinForm: React.FC<NextOfKinFormProps> = ({ kinId, onSuccess }) => {
             };
             fetchKin();
         }
-    }, [kinId, form]);
+    }, [kinId, form, editingKinId]);
 
     // Fetch next-of-kin records when selectedMember changes
     useEffect(() => {

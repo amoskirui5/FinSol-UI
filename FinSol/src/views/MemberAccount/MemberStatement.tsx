@@ -31,6 +31,7 @@ const MemberStatement: React.FC = () => {
                 setMemberStatementData(data);
                 setError(null);
             } catch (err) {
+                console.error('Failed to load member statement:', err);
                 setError('Failed to load member data');
             } finally {
                 setLoading(false);

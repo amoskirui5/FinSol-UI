@@ -25,17 +25,17 @@ const MemberAccountsTable: React.FC = () => {
 
   const handleEdit = (accountId: string) => {
     // Handle edit logic here, e.g., redirect to edit form
-    console.log('Edit:', accountId);
+    console.debug('Edit:', accountId);
   };
 
   const handleDelete = (accountId: string) => {
     // Handle delete logic here, e.g., make API call to delete
-    console.log('Delete:', accountId);
+    console.debug('Delete:', accountId);
   };
 
   const handleView = (accountId: string) => {
     // Handle view details logic, e.g., redirect to details page
-    console.log('View:', accountId);
+    console.debug('View:', accountId);
   };
 
   const columns = [

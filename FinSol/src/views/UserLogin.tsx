@@ -24,6 +24,7 @@ const LoginPage: React.FC = () => {
                 navigate('/dashboard');
             }
         } catch (error) {
+            console.error('Login error:', error);
         } finally {
             setLoading(false);
         }

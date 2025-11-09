@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, Select, Switch, message } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
-import { AccountClass, ChartOfAccount, RegisterAccountDTO, SubAccountClass } from '../types/accountingTypes';
+import { AccountClass, ChartOfAccount, RegisterAccountDTO, SubAccountClass } from '../types/Accounting/accountingTypes';
 import { editChartOfAccount, getAccountClass, getChartOfAccountsById, getSubAccountClassByClassId, registerChartOfAccount } from '../services/chartOfAccountsService';
 import Title from 'antd/es/typography/Title';
 
@@ -19,40 +19,30 @@ const ChartOfAccountsRegistrationForm: React.FC = () => {
         return !!id && /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
     };
 
-    const fetchAccountClasses = async () => {
-        const results = await getAccountClass();
-        if (results.success) {
-            setAccountClasses(results.data);
-        }
-    };
-
-    const fetchSubAccountClasses = async (classId: string) => {
-        const results = await getSubAccountClassByClassId(classId);
-        if (results.success) {
-            setSubAccountClasses(results.data);
-        } else {
-            setSubAccountClasses([]);
-        }
-    };
-
-    const fetchChartsOfAccountById = async (id: string) => {
-        const results = await getChartOfAccountsById(id);
-        if (results) {
-            setChartsOfAccount(results.data);
-            setSelectedClassId(results.data.classId);
-            fetchSubAccountClasses(results.data.classId);
-        }
-    };
+    
 
     useEffect(() => {
-        fetchAccountClasses();
-        if (id && isValidUUID(id)) {
-            fetchChartsOfAccountById(id);
-        } else if (id && !isValidUUID(id)) {
-            message.error("Invalid ID format");
-            navigate('/chart-of-accounts');
-        }
-    }, [id]);
+        const load = async () => {
+            const results = await getAccountClass();
+            if (results.success) setAccountClasses(results.data);
+
+            if (id && isValidUUID(id)) {
+                const chartRes = await getChartOfAccountsById(id);
+                if (chartRes) {
+                    setChartsOfAccount(chartRes.data);
+                    setSelectedClassId(chartRes.data.classId);
+                    const subRes = await getSubAccountClassByClassId(chartRes.data.classId);
+                    if (subRes.success) setSubAccountClasses(subRes.data);
+                    else setSubAccountClasses([]);
+                }
+            } else if (id && !isValidUUID(id)) {
+                message.error("Invalid ID format");
+                navigate('/chart-of-accounts');
+            }
+        };
+
+        load();
+    }, [id, navigate]);
 
     useEffect(() => {
         if (chartsOfAccount) {
@@ -69,10 +59,14 @@ const ChartOfAccountsRegistrationForm: React.FC = () => {
 
     useEffect(() => {
         if (selectedClassId) {
-            fetchSubAccountClasses(selectedClassId);
+            (async () => {
+                const res = await getSubAccountClassByClassId(selectedClassId);
+                if (res.success) setSubAccountClasses(res.data);
+                else setSubAccountClasses([]);
+            })();
             form.setFieldsValue({ SubClassId: undefined });
         }
-    }, [selectedClassId]);
+    }, [selectedClassId, form]);
 
     const handleBack = () => {
         navigate('/chart-of-accounts');
@@ -98,6 +92,7 @@ const ChartOfAccountsRegistrationForm: React.FC = () => {
             }
             handleBack();
         } catch (error) {
+            console.error('Error saving Chart of Accounts:', error);
             message.error("An error occurred while saving the Chart of Accounts");
         } finally {
             setLoading(false);

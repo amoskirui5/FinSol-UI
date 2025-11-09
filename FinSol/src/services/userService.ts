@@ -3,7 +3,7 @@ import { ACCESS_TOKEN } from "../constants/applicationNames";
 import { getUser, setToken } from "../helpers/tokenService";
 import axiosInstance from "../interceptors/globaInterceptor";
 import { AuthParams, LoginResponse, RegisterSystemUser } from "../types/authTypes";
-import { UsersListResponse } from "../types/systemUsersTypes";
+import { UsersListResponse } from "../types/System/systemUsersTypes";
 
 
 export const userLogin = async (params: AuthParams): Promise<LoginResponse | undefined> => {

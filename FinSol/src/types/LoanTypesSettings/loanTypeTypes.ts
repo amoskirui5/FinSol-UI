@@ -1,4 +1,3 @@
-
 import { UUID } from "crypto";
 
 export interface LoanType {
@@ -91,16 +90,37 @@ export interface LoanApprovalFormProps {
     loading?: boolean;
 }
 
+export interface LoanDisbursementPaymentItem {
+  loanNo: string;
+  loanAppId: string;
+  description: string;
+  memberAccountType: number;
+  amountPaid: number;
+  amountDue: number;
+  isPartiallyDisbursed: boolean;
+}
+
 export interface LoanDisbursementRequestDTO {
-    dateDisbursed: string;
+  memberId: string;
+  amount: number;
+  paymentDate: string;
+  paymentMethod: string;
+  description: string;
+  transactionReference: string;
+  creditAccount: string;
+  paymentItems: LoanDisbursementPaymentItem[];
+}
+
+export interface LoanToMemberDisbursementRequest {
+    dateDisbursed: string; // ISO date string
     amount: number;
     accountNumber: string;
     approvalId?: string;
-    loanAppId?: string;
-    memberId?: string;
+    memberId: string;
+    loanTypeId: string;
     paymentMethod: string;
     transactionReference: string;
-    loanId: string;
-    debitAccountId: string;
-    loanTypeId: string
+    loanAppId: string;
+    creditAccountId: string;
+    isPartiallyDisbursed: boolean;
 }

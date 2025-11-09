@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Switch, Button } from 'antd';
 import UserRegistrationForm from './UserRegistrationForm';
-import { User, UserListProps, UserRegistrationFormValues, UserRole } from '../types/systemUsersTypes';
+import { User, UserListProps, UserRegistrationFormValues, UserRole } from '../types/System/systemUsersTypes';
 import { getAllSystemUsers, registerSystemUser } from '../services/userService';
 
 const UserList: React.FC<UserListProps> = ({ onStatusChange }) => {
@@ -37,7 +37,8 @@ const UserList: React.FC<UserListProps> = ({ onStatusChange }) => {
     };
 
     const handleFormSubmit =async (values: UserRegistrationFormValues) => {
-        console.log('User registered:', values);
+        // reduce console noise: keep as info if needed for audit during development
+        console.info('User registered:', values);
 
         const userRegisterParams: UserRegistrationFormValues = {
             email: values.email,

@@ -1,0 +1,311 @@
+/* Enhanced component-specific styles */
+
+/* Enterprise Search Component */
+.enterprise-search .ant-input {
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--border-medium) !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.enterprise-search .ant-input:focus {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 2px rgba(26, 54, 93, 0.1) !important;
+}
+
+.enterprise-search .ant-input-search-button {
+  border-radius: 0 var(--radius-md) var(--radius-md) 0 !important;
+  background: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+/* Table Row Alternating Colors */
+.table-row-light {
+  background: var(--surface-color) !important;
+}
+
+.table-row-dark {
+  background: var(--background-primary) !important;
+}
+
+.table-row-light:hover,
+.table-row-dark:hover {
+  background: var(--background-secondary) !important;
+}
+
+/* Enterprise Table Cell Padding */
+.enterprise-table-cell {
+  padding: var(--spacing-md) !important;
+}
+
+.enterprise-table-container .ant-table-container {
+  border-radius: var(--radius-lg) !important;
+  overflow: hidden !important;
+}
+
+.enterprise-table-container .ant-table-header {
+  background: linear-gradient(135deg, var(--background-secondary) 0%, var(--surface-color) 100%) !important;
+}
+
+/* Enhanced Menu Toggle Button */
+.menu-toggle-btn:hover {
+  background: var(--background-primary) !important;
+  color: var(--primary-color) !important;
+}
+
+/* User Profile Trigger Animation */
+.user-profile-trigger:hover .ant-avatar {
+  transform: scale(1.05) !important;
+  transition: transform 0.2s ease-in-out !important;
+}
+
+/* Page Header Animation */
+.page-header {
+  position: relative;
+  overflow: hidden;
+}
+
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(26, 54, 93, 0.05),
+    transparent
+  );
+  transition: left 0.5s ease-in-out;
+}
+
+.page-header:hover::before {
+  left: 100%;
+}
+
+/* Enhanced Status Tags */
+.ant-tag.status-tag {
+  border-radius: var(--radius-md) !important;
+  font-weight: 500 !important;
+  padding: 6px 12px !important;
+  font-size: 12px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+/* Loading States for Cards */
+.loading-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.loading-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: loading-shimmer 1.5s infinite;
+}
+
+@keyframes loading-shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Enhanced Form Components */
+.enterprise-form .ant-form-item {
+  margin-bottom: var(--spacing-lg) !important;
+}
+
+.enterprise-form .ant-form-item-label {
+  padding-bottom: var(--spacing-sm) !important;
+}
+
+.enterprise-form .ant-form-item-label > label {
+  font-size: var(--font-size-sm) !important;
+  font-weight: 500 !important;
+  color: var(--text-primary) !important;
+}
+
+.enterprise-form .ant-form-item-label > label.ant-form-item-required::before {
+  color: var(--error-color) !important;
+}
+
+/* Enhanced Select Components */
+.enterprise-form .ant-select-selector {
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--border-medium) !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.enterprise-form .ant-select-focused .ant-select-selector {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 2px rgba(26, 54, 93, 0.1) !important;
+}
+
+/* Enhanced DatePicker */
+.enterprise-form .ant-picker {
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--border-medium) !important;
+  width: 100% !important;
+}
+
+.enterprise-form .ant-picker:hover,
+.enterprise-form .ant-picker-focused {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 2px rgba(26, 54, 93, 0.1) !important;
+}
+
+/* Enhanced Checkbox and Radio */
+.enterprise-form .ant-checkbox-wrapper {
+  color: var(--text-primary) !important;
+}
+
+.enterprise-form .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+.enterprise-form .ant-radio-checked .ant-radio-inner {
+  border-color: var(--primary-color) !important;
+}
+
+.enterprise-form .ant-radio-inner::after {
+  background-color: var(--primary-color) !important;
+}
+
+/* Enhanced Pagination */
+.ant-pagination .ant-pagination-item {
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+.ant-pagination .ant-pagination-item-active {
+  background: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+.ant-pagination .ant-pagination-item-active a {
+  color: var(--text-white) !important;
+}
+
+.ant-pagination .ant-pagination-prev,
+.ant-pagination .ant-pagination-next {
+  border-radius: var(--radius-md) !important;
+}
+
+/* Enhanced Tabs */
+.ant-tabs .ant-tabs-tab {
+  border-radius: var(--radius-md) var(--radius-md) 0 0 !important;
+  background: var(--background-secondary) !important;
+  border: 1px solid var(--border-light) !important;
+  border-bottom: none !important;
+  margin-right: 4px !important;
+  color: var(--text-secondary) !important;
+}
+
+.ant-tabs .ant-tabs-tab-active {
+  background: var(--surface-color) !important;
+  color: var(--primary-color) !important;
+  font-weight: 600 !important;
+}
+
+.ant-tabs .ant-tabs-content-holder {
+  background: var(--surface-color) !important;
+  border-radius: 0 var(--radius-lg) var(--radius-lg) var(--radius-lg) !important;
+  border: 1px solid var(--border-light) !important;
+  padding: var(--spacing-lg) !important;
+}
+
+/* Enhanced Alerts */
+.ant-alert {
+  border-radius: var(--radius-md) !important;
+  border: none !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.ant-alert-success {
+  background: rgba(56, 161, 105, 0.1) !important;
+  color: var(--success-color) !important;
+  border-left: 4px solid var(--success-color) !important;
+}
+
+.ant-alert-error {
+  background: rgba(229, 62, 62, 0.1) !important;
+  color: var(--error-color) !important;
+  border-left: 4px solid var(--error-color) !important;
+}
+
+.ant-alert-warning {
+  background: rgba(214, 158, 46, 0.1) !important;
+  color: var(--warning-color) !important;
+  border-left: 4px solid var(--warning-color) !important;
+}
+
+.ant-alert-info {
+  background: rgba(49, 130, 206, 0.1) !important;
+  color: var(--info-color) !important;
+  border-left: 4px solid var(--info-color) !important;
+}
+
+/* Responsive Enhancements */
+@media (max-width: 1200px) {
+  .metrics-card {
+    margin-bottom: var(--spacing-md) !important;
+  }
+  
+  .enterprise-table-container {
+    overflow-x: auto !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    padding: var(--spacing-md) var(--spacing-lg) !important;
+  }
+  
+  .page-header h2 {
+    font-size: var(--font-size-xl) !important;
+  }
+  
+  .enterprise-content {
+    margin: var(--spacing-md) !important;
+    padding: var(--spacing-lg) !important;
+  }
+  
+  .metrics-card .ant-statistic-content-value {
+    font-size: var(--font-size-2xl) !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .enterprise-search {
+    width: 100% !important;
+  }
+  
+  .user-profile-trigger {
+    padding: var(--spacing-sm) !important;
+  }
+  
+  .user-profile-trigger > div {
+    display: none !important;
+  }
+}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Typography, message } from 'antd';
 import { editAccountClass, getAccountClassById, registerAccountClass } from '../services/chartOfAccountsService';
-import { AccountClass, RegisterAccountClassDTO } from '../types/accountingTypes';
+import { AccountClass, RegisterAccountClassDTO } from '../types/Accounting/accountingTypes';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const { Title } = Typography;
@@ -34,7 +34,7 @@ const AccountClassRegistration: React.FC = () => {
             navigate('/account-class'); // Redirect if ID is malformed
         }
         // If no id, do nothing (create mode)
-    }, [id]);
+    }, [id, navigate]);
 
     useEffect(() => {
         if (accountClasses) {
@@ -68,6 +68,7 @@ const AccountClassRegistration: React.FC = () => {
                 navigate('/account-class');
             }
         } catch (error) {
+            console.error('Account class save failed:', error);
             message.error("An error occurred while saving the account class");
         } finally {
             setLoading(false);

@@ -3,18 +3,19 @@ import { Gender } from "../../enums/enums";
 export interface CreateMemberRegistrationRequestDTO {
     firstName: string;
     otherName: string;
-    memberNumber: string;
+    memberNumber?: string;
     email: string;
     phoneNumber: string;
     bankAccount: string;
     bankName: string;
     workPlace?: string;
     workType?: string;
-    dateOfBirth?: Date;
-    dateJoined: Date;
+    dateOfBirth?: string; // ISO string for API
+    dateJoined: string; // ISO string for API
     nationalID?: string;
     passportNumber?: string;
     taxPIN?: string;
+    gender?: Gender;
 }
 
 export interface MemberFormProps {
@@ -32,13 +33,14 @@ export interface MemberListDto {
     bankName?: string;
     workPlace?: string; 
     workType?: string;
-    dateOfBirth?: Date | null; 
+    dateOfBirth?: string | null; // ISO string from API
     nationalID?: string;
     passportNumber?: string;
     taxPIN?: string;
-    dateJoined: Date; 
-    gender?:Gender
-  }
+    dateJoined?: string; // ISO string from API
+    gender?: Gender;
+    isInactive?: boolean;
+}
   
   export interface PaginatedMemberListResponse {
     data: {

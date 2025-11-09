@@ -19,21 +19,21 @@ const TrialBalance: React.FC = () => {
   ]);
 
   useEffect(() => {
+    const fetchTrialBalanceItems = async () => {
+      const result = await fetchTrialBalance(
+        useFinancialYear ? undefined : dateRange[0],
+        useFinancialYear ? undefined : dateRange[1]
+      );
+
+      if (result.success) {
+        setData(result.data.entries);
+        setTotalDebit(result.data.totalDebit);
+        setTotalCredit(result.data.totalCredit);
+      }
+    };
+
     fetchTrialBalanceItems();
   }, [useFinancialYear, dateRange]);
-
-  const fetchTrialBalanceItems = async () => {
-    const result = await fetchTrialBalance(
-      useFinancialYear ? undefined : dateRange[0],
-      useFinancialYear ? undefined : dateRange[1]
-    );
-
-    if (result.success) {
-      setData(result.data.entries);
-      setTotalDebit(result.data.totalDebit);
-      setTotalCredit(result.data.totalCredit);
-    }
-  };
 
   const onDateChange = (dates: [any, any] | null) => {
     if (dates) {

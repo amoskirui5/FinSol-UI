@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Form, Input, InputNumber, Button, Select, Switch, Row, Col, Typography, notification, Spin, Space, Modal } from 'antd';
 import { getChartOfAccounts } from '../services/chartOfAccountsService';
-import { ChartOfAccount } from '../types/accountingTypes';
+import { ChartOfAccount } from '../types/Accounting/accountingTypes';
 import { InterestRateMethodOptions, InterestRateTypeOptions } from '../enums/enums';
-import { LoanTypeCreationRequestDTO } from '../types/loanTypeTypes';
+import { LoanTypeCreationRequestDTO } from '../types/LoanTypesSettings/loanTypeTypes';
 import { createLoanType, editLoanType, fetchLoanTypeById } from '../services/loanTypeService';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const { Option } = Select;
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const LoanTypeForm: React.FC = () => {
     const [form] = Form.useForm();

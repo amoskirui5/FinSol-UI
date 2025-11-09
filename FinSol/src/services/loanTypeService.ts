@@ -1,6 +1,6 @@
 import { DELETE_LOAN_TYPE, EDIT_LOAN_TYPE, FETCH_LOAN_TYPE_BY_ID, FETCH_LOAN_TYPES, REGISTER_LOAN_TYPE } from "../constants/apiEndpoints";
 import axiosInstance from "../interceptors/globaInterceptor";
-import { LoanTypeCreationRequestDTO, LoanTypeDetailsResponse, PaginatedLoanTypeResponse } from "../types/loanTypeTypes";
+import { LoanTypeCreationRequestDTO, LoanTypeDetailsResponse, PaginatedLoanTypeResponse } from "../types/LoanTypesSettings/loanTypeTypes";
 import { PaginationOptions } from "../types/paginationTypes";
 
 export const createLoanType = async (params: LoanTypeCreationRequestDTO): Promise<void> => {

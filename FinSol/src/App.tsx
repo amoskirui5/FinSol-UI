@@ -8,7 +8,7 @@ import Dashboard from './views/Dashboard';
 import MemberRegistrationForm from './views/RegisterMemberForm';
 import MemberList from './views/Members/MemberList';
 import UserList from './views/UserList';
-import { User } from './types/systemUsersTypes';
+import { User } from './types/System/systemUsersTypes';
 import ChangePasswordForm, { ChangePasswordFormValues } from './views/ChangePasswordForm';
 import { UUID } from 'crypto';
 import AccountClassTableListPage from './views/AccountClassTableListPage';
@@ -33,6 +33,22 @@ import BalanceSheet from './views/Financials/BalanceSheet';
 import CashbookDisplay from './views/Financials/CashbookDisplay';
 import CreatePaymentForm from './views/Members/CreatePaymentForm';
 import NextOfKinForm from './views/Members/NextOfKinForm';
+import FinancialYearTable from './components/FinancialYearPage';
+import OrganizationManagementPage from './views/OrganizationManagementPage';
+import ProfitLoss from './views/Financials/ProfitLoss';
+import LoanApprovals from './views/LoanApprovals';
+import LoanDisbursements from './views/LoanDisbursements';
+import MemberDeposits from './views/MemberDeposits';
+import MemberShareCapital from './views/MemberShareCapital';
+import Administration from './views/Administration';
+import UserRoles from './views/UserRoles';
+import AccessLogs from './views/AccessLogs';
+import GeneralSettings from './views/GeneralSettings';
+import EmailSettings from './views/EmailSettings';
+import BackupRestore from './views/BackupRestore';
+import PasswordPolicy from './views/PasswordPolicy';
+import TwoFactorAuth from './views/TwoFactorAuth';
+import AuditTrail from './views/AuditTrail';
 
 const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -44,8 +60,8 @@ const App: React.FC = () => {
       )
     );
   };
-  const handlePasswordChange = (values: ChangePasswordFormValues) => {
-    console.log('Password change request:', values);
+  const handlePasswordChange = (_values: ChangePasswordFormValues) => {
+    // Password change handling will be implemented here (avoid logging sensitive data)
   };
 
 
@@ -91,8 +107,24 @@ const App: React.FC = () => {
           <Route path='/finance/trial-balance' element={<TrialBalance />} />
           <Route path='/finance/balance-sheet' element={<BalanceSheet />} />
           <Route path='/finance/cash-book' element={<CashbookDisplay />} />
-          <Route path='/member-payment' element={<CreatePaymentForm />} />
+          <Route path='/member-payments' element={<CreatePaymentForm />} />
           <Route path='/next-of-kin' element={<NextOfKinForm />} />
+          <Route path='/financial-year' element={<FinancialYearTable />} />
+          <Route path='/organizations' element={<OrganizationManagementPage />} />
+          <Route path='/finance/profit-loss' element={<ProfitLoss />} />
+          <Route path='/loan-approvals' element={<LoanApprovals />} />
+          <Route path='/loan-disbursements' element={<LoanDisbursements />} />
+          <Route path='/member-deposits' element={<MemberDeposits />} />
+          <Route path='/member-share-capital' element={<MemberShareCapital />} />
+          <Route path='/administration' element={<Administration />} />
+          <Route path='/user-roles' element={<UserRoles />} />
+          <Route path='/access-logs' element={<AccessLogs />} />
+          <Route path='/general-settings' element={<GeneralSettings />} />
+          <Route path='/email-settings' element={<EmailSettings />} />
+          <Route path='/backup-restore' element={<BackupRestore />} />
+          <Route path='/password-policy' element={<PasswordPolicy />} />
+          <Route path='/two-factor-authentication' element={<TwoFactorAuth />} />
+          <Route path='/audit-trail' element={<AuditTrail />} />
 
 
           <Route

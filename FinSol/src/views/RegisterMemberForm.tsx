@@ -24,7 +24,8 @@ const MemberRegistrationForm: React.FC = () => {
     const workplaces = ['Office A', 'Office B', 'Remote'];
 
     const onFinish = (values: FormValues) => {
-        console.log('Received values:', values);
+        // keep as debug during development
+        console.debug('Received values:', values);
         // Handle form submission logic here
     };
 

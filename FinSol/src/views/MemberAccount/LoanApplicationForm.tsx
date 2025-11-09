@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Form, Button, DatePicker, Select, InputNumber, Row, Col, notification, Spin, Space, Modal } from 'antd';
 import { fetchLoanTypes } from '../../services/loanTypeService';
-import { PaginationOptions } from '../../types/paginationTypes';
-import { LoanType } from '../../types/loanTypeTypes';
+import { LoanType } from '../../types/LoanTypesSettings/loanTypeTypes';
 import { submitLoanApplication } from '../../services/memberLoanService';
 import dayjs, { Dayjs } from 'dayjs';
 import { CreateLoanApplicationRequest } from '../../types/MemberLoan/memberLoanTypes';
-import { fetchAllMembers } from '../../services/memberService';
 import { MemberListDto } from '../../types/Member/memberTypes';
 import MemberSelectField from '../../components/MemberSelectField';
 import Title from 'antd/es/typography/Title';
@@ -20,21 +18,27 @@ const LoanApplicationForm: React.FC = () => {
     const [apiLoading, setApiLoading] = useState(false);
     const [selectedMember, setSelectedMember] = useState<MemberListDto | null>(null);
     const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
-    const [pagination, setPagination] = useState<PaginationOptions>({
-        pageNumber: 1,
-        pageSize: 10,
-        searchTerm: '',
-        searchField: '',
-        sortDescending: false,
-    });
 
     // Fetch loan types
     const fetchLoanTypesData = useCallback(async () => {
         try {
             setApiLoading(true);
-            const types = await fetchLoanTypes(pagination);
-            setLoanTypes(types.data.items);
+            const response = await fetchLoanTypes({
+                pageNumber: 1,
+                pageSize: 100, // Get all loan types
+                searchTerm: '',
+                searchField: '',
+            });
+            if (response.success) {
+                setLoanTypes(response.data.items);
+            } else {
+                notification.error({
+                    message: 'Error',
+                    description: 'Failed to fetch loan types.',
+                });
+            }
         } catch (error) {
+            console.error('Error fetching loan types:', error);
             notification.error({
                 message: 'Error',
                 description: 'Failed to fetch loan types. Please try again.',
@@ -42,7 +46,7 @@ const LoanApplicationForm: React.FC = () => {
         } finally {
             setApiLoading(false);
         }
-    }, [pagination]);
+    }, []);
 
     useEffect(() => {
         fetchLoanTypesData();
@@ -69,13 +73,17 @@ const LoanApplicationForm: React.FC = () => {
             form.resetFields();
             setSelectedMember(null);
         } catch (error) {
-
+            console.error('Loan application submission error:', error);
+            notification.error({
+                message: 'Submission Failed',
+                description: 'Failed to submit loan application. Please try again.',
+            });
         } finally {
             setLoading(false);
         }
     };
 
-    // Validate application date
+    // Validate application date - prevent future dates
     const validateDate = (current: Dayjs) => {
         return current && current.isAfter(dayjs().endOf('day'));
     };
@@ -92,13 +100,6 @@ const LoanApplicationForm: React.FC = () => {
     const handleReset = () => {
         form.resetFields();
         setSelectedMember(null);
-        setPagination({
-            pageNumber: 1,
-            pageSize: 10,
-            searchTerm: '',
-            searchField: '',
-            sortDescending: false,
-        });
         notification.info({
             message: 'Form Reset',
             description: 'All fields have been cleared.',
@@ -172,13 +173,6 @@ const LoanApplicationForm: React.FC = () => {
                             size="large"
                             showSearch
                             optionFilterProp="children"
-                            onSearch={(value) =>
-                                setPagination((prev) => ({
-                                    ...prev,
-                                    searchTerm: value,
-                                    searchField: 'loanType',
-                                }))
-                            }
                             aria-label="Loan type"
                         >
                             {loanTypes.map((type) => (

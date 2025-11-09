@@ -17,7 +17,7 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { LoanApplicationList } from '../../types/MemberLoan/memberLoanTypes';
 import { fetchLoanDetailsById, submitLoanApproval } from '../../services/memberLoanService';
-import { LoanApprovalRequest } from '../../types/loanTypeTypes';
+import { LoanApprovalRequest } from '../../types/LoanTypesSettings/loanTypeTypes';
 
 const LoanApprovalForm: React.FC = () => {
     const [form] = Form.useForm();
@@ -27,6 +27,8 @@ const LoanApprovalForm: React.FC = () => {
     const [pageLoading, setPageLoading] = useState(true);
     const location = useLocation();
     const loanInfo = location.state?.loanInfo;
+    // appliedAmount may be passed in navigation state from the table when continuing approval
+    const appliedAmountFromState: number | undefined = location.state?.appliedAmount;
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -43,25 +45,38 @@ const LoanApprovalForm: React.FC = () => {
             try {
                 const apiResponse = await fetchLoanDetailsById(loanApplicationId);
                 setLoanData(apiResponse.data);
+
+                // Determine applied amount from API response (preferred), then from navigation state (table),
+                // then fallback to loanInfo.maxLoanQualified or 0.
+                const appliedAmount = Number(
+                    apiResponse.data?.amount ?? appliedAmountFromState ?? loanInfo?.maxLoanQualified ?? 0
+                );
+
                 form.setFieldsValue({
                     approvalDate: dayjs(),
-                    amount: apiResponse.data?.amount,
+                    amount: appliedAmount,
                     comments: '',
                     repaymentPeriod: apiResponse.data?.repayPeriod
                 });
-            } catch {
-                message.error('Failed to load loan details.');
+            } catch (error) {
+                console.error('Failed to load loan details:', error);
+                message.error('Failed to load loan details. Please try again.');
             } finally {
                 setPageLoading(false);
             }
         };
 
         fetchLoanData();
-    }, [loanApplicationId, form]);
+    }, [loanApplicationId, form, appliedAmountFromState, loanInfo?.maxLoanQualified]);
 
-    const handleFinish = async (values: any) => {
+    const handleFinish = async (values: {
+        approvalDate: dayjs.Dayjs;
+        amount: number;
+        comments?: string;
+        repaymentPeriod: number;
+    }) => {
         const requestData: LoanApprovalRequest = {
-            approvalDate: values.approvalDate.format('YYYY-MM-DD'),
+            approvalDate: values.approvalDate.toDate(),
             amount: values.amount,
             comments: values.comments || '',
             repaymentPeriod: values.repaymentPeriod,
@@ -90,8 +105,11 @@ const LoanApprovalForm: React.FC = () => {
                 setLoading(true);
                 try {
                     await submitLoanApproval(requestData);
+                    message.success('Loan approved successfully!');
                     navigate('/loan-applications');
-                } catch {
+                } catch (error) {
+                    console.error('Loan approval failed:', error);
+                    message.error('Failed to approve loan. Please try again.');
                 } finally {
                     setLoading(false);
                 }

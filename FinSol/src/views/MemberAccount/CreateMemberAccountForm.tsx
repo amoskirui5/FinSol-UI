@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, Select, Switch } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { getChartOfAccounts } from '../../services/chartOfAccountsService';
-import { ChartOfAccount } from '../../types/accountingTypes';
+import { ChartOfAccount } from '../../types/Accounting/accountingTypes';
 import { MemberAccountType } from '../../enums/enums';
 import { registerMemberAccountSettings } from '../../services/memberAccountService';
 import { RegisterMemberAccountDTO } from '../../types/MemberAccount/memberAccountTypes';
