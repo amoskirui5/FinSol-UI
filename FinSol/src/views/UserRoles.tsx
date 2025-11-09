@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Table, Button, Space, Typography, Row, Col, Tag, Input, Modal, Form, Select, Checkbox } from 'antd';
+import { Card, Table, Button, Space, Typography, Row, Col, Tag, Input, Modal, Form, Select, Checkbox, message } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
@@ -250,7 +250,7 @@ const UserRoles: React.FC = () => {
             size="small"
             danger
             icon={<DeleteOutlined />}
-            onClick={() => console.log('Delete role:', record.roleId)}
+            onClick={() => message.info(`Delete role: ${record.roleId} (not implemented)`)}
           >
             Delete
           </Button>

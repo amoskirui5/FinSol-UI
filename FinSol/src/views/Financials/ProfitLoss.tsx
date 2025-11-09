@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Table, DatePicker, Button, Space, Typography, Row, Col, Spin } from 'antd';
+import { Card, Table, DatePicker, Button, Space, Typography, Row, Col, Spin, message } from 'antd';
 import { CalendarOutlined, FileExcelOutlined, FilePdfOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
@@ -174,7 +174,7 @@ const ProfitLoss: React.FC = () => {
   const netIncome = totalRevenue - totalExpenses;
 
   const handleExport = (format: 'excel' | 'pdf') => {
-    console.log(`Exporting profit & loss as ${format}`);
+    message.info(`Exporting profit & loss as ${format} (not implemented)`);
     // Implement export functionality
   };
 

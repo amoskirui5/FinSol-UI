@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Typography, Row, Col, Statistic, Button, Space, Table, Progress, Alert } from 'antd';
+import { Card, Typography, Row, Col, Statistic, Button, Space, Table, Progress, Alert, message } from 'antd';
 import { 
   DatabaseOutlined, 
   UserOutlined, 
@@ -160,25 +160,25 @@ const Administration: React.FC = () => {
       icon: <DatabaseOutlined />, 
       title: 'Database Maintenance', 
       description: 'Optimize and maintain database performance',
-      action: () => console.log('Database maintenance')
+    action: () => message.info('Database maintenance (not implemented)')
     },
     { 
       icon: <UserOutlined />, 
       title: 'User Management', 
       description: 'Manage user accounts and permissions',
-      action: () => console.log('User management')
+      action: () => message.info('User management (not implemented)')
     },
     { 
       icon: <SecurityScanOutlined />, 
       title: 'Security Scan', 
       description: 'Run security vulnerability scan',
-      action: () => console.log('Security scan')
+      action: () => message.info('Security scan (not implemented)')
     },
     { 
       icon: <BugOutlined />, 
       title: 'System Diagnostics', 
       description: 'Check system health and performance',
-      action: () => console.log('System diagnostics')
+      action: () => message.info('System diagnostics (not implemented)')
     }
   ];
 

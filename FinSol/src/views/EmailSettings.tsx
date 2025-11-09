@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Form, Input, Button, Typography, Row, Col, Divider, InputNumber, Switch, Alert } from 'antd';
+import { Card, Form, Input, Button, Typography, Row, Col, Divider, InputNumber, Switch, Alert, message } from 'antd';
 import { MailOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
@@ -7,12 +7,14 @@ const { Title, Text } = Typography;
 const EmailSettings: React.FC = () => {
   const [form] = Form.useForm();
 
-  const handleSubmit = (values: any) => {
-    console.log('Email settings updated:', values);
+  const handleSubmit = (_values: any) => {
+    // Stub: save email settings
+    message.success('Email settings saved (stub)');
+    // console.debug('Email settings updated:', _values);
   };
 
   const testConnection = () => {
-    console.log('Testing email connection...');
+    message.info('Testing email connection (stub)');
   };
 
   return (

@@ -303,8 +303,8 @@ const MemberList: React.FC = () => {
       //   message.error(response.message || 'Failed to update member status');
       // }
       
-      // Placeholder implementation
-      console.log(`Changing status for member with ID: ${id}`);
+  // Placeholder implementation
+  console.debug(`Changing status for member with ID: ${id}`);
       message.success('Member status updated successfully');
       fetchAllMembersAPI();
     } catch (error) {
@@ -377,7 +377,7 @@ const MemberList: React.FC = () => {
           // }
           
           // Placeholder implementation
-          console.log(`Bulk ${actionText} for members:`, selectedRowKeys);
+          console.debug(`Bulk ${actionText} for members:`, selectedRowKeys);
           message.success(`Bulk ${actionText} completed successfully`);
           setSelectedRowKeys([]);
           fetchAllMembersAPI();

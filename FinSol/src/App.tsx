@@ -60,8 +60,8 @@ const App: React.FC = () => {
       )
     );
   };
-  const handlePasswordChange = (values: ChangePasswordFormValues) => {
-    console.log('Password change request:', values);
+  const handlePasswordChange = (_values: ChangePasswordFormValues) => {
+    // Password change handling will be implemented here (avoid logging sensitive data)
   };
 
 

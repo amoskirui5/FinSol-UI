@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Form, Input, Button, Switch, Typography, Row, Col, Divider, Select } from 'antd';
+import { Card, Form, Input, Button, Switch, Typography, Row, Col, Divider, Select, message } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
@@ -8,8 +8,10 @@ const { Option } = Select;
 const GeneralSettings: React.FC = () => {
   const [form] = Form.useForm();
 
-  const handleSubmit = (values: any) => {
-    console.log('General settings updated:', values);
+  const handleSubmit = (_values: any) => {
+    // Stub: save general settings (not implemented)
+    message.success('General settings saved (stub)');
+    // console.debug('General settings updated:', _values);
   };
 
   return (

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Space, Typography, Popconfirm, Card, Row, Col, Input } from 'antd';
+import { Table, Button, Space, Typography, Popconfirm, Card, Row, Col, Input, message } from 'antd';
 import { FolderOutlined, EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, FileExcelOutlined, FilePdfOutlined } from '@ant-design/icons';
 import { AccountClass } from '../types/Accounting/accountingTypes';
 import { deleteAccountClass, getAccountClass } from '../services/chartOfAccountsService';
@@ -39,7 +39,7 @@ const AccountClassTableListPage: React.FC = () => {
 
     const handleDelete = async (id: UUID) => {
         const response = await deleteAccountClass(id);
-        console.log(response);
+            console.debug(response);
 
         if (response.success) {
             setData(prevData => prevData.filter(item => item.id !== id));
@@ -47,7 +47,7 @@ const AccountClassTableListPage: React.FC = () => {
     };
 
     const handleExport = (format: 'excel' | 'pdf') => {
-        console.log(`Exporting account classes as ${format}`);
+        message.info(`Exporting account classes as ${format} (not implemented)`);
         // Implement export functionality
     };
 

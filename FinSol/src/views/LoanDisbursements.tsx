@@ -124,7 +124,7 @@ const LoanDisbursements: React.FC = () => {
   const handleModalSubmit = async () => {
     try {
       const values = await form.validateFields();
-      console.log('Disbursement action:', {
+      console.debug('Disbursement action:', {
         applicationId: selectedLoan?.applicationId,
         ...values
       });
@@ -267,7 +267,7 @@ const LoanDisbursements: React.FC = () => {
           <Button
             size="small"
             icon={<BankOutlined />}
-            onClick={() => console.log('View details:', record.applicationId)}
+            onClick={() => message.info(`View details: ${record.applicationId}`)}
           >
             Details
           </Button>

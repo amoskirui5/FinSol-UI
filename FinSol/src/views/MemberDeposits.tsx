@@ -336,7 +336,7 @@ const MemberDeposits: React.FC = () => {
             size="small"
             danger
             icon={<DeleteOutlined />}
-            onClick={() => console.log('Delete:', record.depositId)}
+            onClick={() => message.info(`Delete: ${record.depositId} (not implemented)`)}
           >
             Delete
           </Button>

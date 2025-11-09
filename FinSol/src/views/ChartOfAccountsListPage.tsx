@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Space, Typography, Popconfirm, Tooltip, Card, Row, Col, Input, Tag } from 'antd';
+import { Table, Button, Space, Typography, Popconfirm, Tooltip, Card, Row, Col, Input, Tag, message } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined, BankOutlined, SearchOutlined, FileExcelOutlined, FilePdfOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { ChartOfAccount } from '../types/Accounting/accountingTypes';
@@ -45,7 +45,7 @@ const ChartOfAccountsListPage: React.FC = () => {
     };
 
     const handleExport = (format: 'excel' | 'pdf') => {
-        console.log(`Exporting chart of accounts as ${format}`);
+        message.info(`Exporting chart of accounts as ${format} (not implemented)`);
         // Implement export functionality
     };
 

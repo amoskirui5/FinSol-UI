@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Table, Button, Space, Typography, Row, Col, Tag, Input, DatePicker, Modal, Form, InputNumber, Select } from 'antd';
+import { Card, Table, Button, Space, Typography, Row, Col, Tag, Input, DatePicker, Modal, Form, InputNumber, Select, message } from 'antd';
 import { PlusOutlined, SearchOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
@@ -306,7 +306,7 @@ const MemberShareCapital: React.FC = () => {
             size="small"
             danger
             icon={<DeleteOutlined />}
-            onClick={() => console.log('Delete:', record.transactionId)}
+            onClick={() => message.info(`Delete: ${record.transactionId} (not implemented)`)}
           >
             Delete
           </Button>
