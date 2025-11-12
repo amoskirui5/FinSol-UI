@@ -16,7 +16,6 @@ import {
   Badge,
   message,
   Dropdown,
-  Menu
 } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
@@ -240,25 +239,23 @@ const MemberList: React.FC = () => {
             />
           </Tooltip>
           <Dropdown 
-            overlay={
-              <Menu>
-                <Menu.Item 
-                  key="nextOfKin" 
-                  icon={<UserAddOutlined />}
-                  onClick={() => addNextOfKin(record.memberId)}
-                >
-                  Add Next of Kin
-                </Menu.Item>
-                <Menu.Item 
-                  key="deactivate" 
-                  icon={<StopOutlined />}
-                  danger
-                  onClick={() => confirmDeactivate(record.memberId, `${record.firstName} ${record.otherName}`)}
-                >
-                  {record.isInactive ? 'Activate' : 'Deactivate'}
-                </Menu.Item>
-              </Menu>
-            }
+            menu={{
+              items: [
+                {
+                  key: 'nextOfKin',
+                  icon: <UserAddOutlined />,
+                  label: 'Add Next of Kin',
+                  onClick: () => addNextOfKin(record.memberId),
+                },
+                {
+                  key: 'deactivate',
+                  icon: <StopOutlined />,
+                  label: record.isInactive ? 'Activate' : 'Deactivate',
+                  onClick: () => confirmDeactivate(record.memberId, `${record.firstName} ${record.otherName}`),
+                  danger: true,
+                },
+              ]
+            }}
             trigger={['click']}
           >
             <Button type="text" size="small" icon={<MoreOutlined />} />

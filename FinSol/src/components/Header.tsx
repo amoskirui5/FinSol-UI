@@ -101,9 +101,10 @@ const AppHeader: React.FC<AppHeaderProps> = ({ collapsed, onCollapse }) => {
         <div style={{ width: '1px', height: '32px', background: 'var(--border-light)' }} />
 
         <Dropdown 
-          overlay={<UserProfileMenu />} 
+          menu={{ items: [] }}
           trigger={['click']}
           placement="bottomRight"
+          dropdownRender={() => <UserProfileMenu />}
         >
           <div 
             style={{ 

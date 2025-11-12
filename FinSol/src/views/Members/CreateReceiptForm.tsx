@@ -39,12 +39,6 @@ export default function CreateReceiptForm() {
 
     useEffect(() => {
         if (!autoDistribute || receiptItems.length === 0 || totalAmount <= 0) {
-            const updatedItems = receiptItems.map(item => ({
-                ...item,
-                amountReceipted: 0,
-            }));
-            setReceiptItems(updatedItems);
-            calculateTotalReceipted(updatedItems);
             return;
         }
 
@@ -60,24 +54,35 @@ export default function CreateReceiptForm() {
 
         setReceiptItems(updatedItems);
         calculateTotalReceipted(updatedItems);
-    }, [autoDistribute, totalAmount, receiptItems]);
+    }, [autoDistribute, totalAmount]);
 
     const fetchMemberItems = async (memberId: string) => {
-        const response = await fetchMembersItemToReceipt(memberId);
-        if (response.success) {
-            const apiItems = response.data;
-            const fetchedItems: ReceiptItemDTO[] = apiItems.map((item: any, index: number) => ({
-                key: (index + 1).toString(),
-                description: item.description,
-                loanNo: item.loanNo,
-                loanAppId: item?.loanAppId,
-                amountDue: item.amountDue,
-                amountReceipted: 0,
-                accountType: item.accountType,
-            }));
-            setReceiptItems(fetchedItems);
-            calculateTotalDue(fetchedItems);
-            calculateTotalReceipted(fetchedItems);
+        try {
+            const response = await fetchMembersItemToReceipt(memberId);
+            
+            if (response.success && response.data && response.data.length > 0) {
+                const apiItems = response.data;
+                const fetchedItems: ReceiptItemDTO[] = apiItems.map((item: any, index: number) => ({
+                    key: (index + 1).toString(),
+                    description: item.description,
+                    loanNo: item.loanNo,
+                    loanAppId: item?.loanAppId,
+                    amountDue: item.amountDue,
+                    amountReceipted: 0,
+                    accountType: item.accountType,
+                }));
+                setReceiptItems(fetchedItems);
+                calculateTotalDue(fetchedItems);
+                calculateTotalReceipted(fetchedItems);
+            } else {
+                setReceiptItems([]);
+                setTotalAmountDue(0);
+                setTotalAmountReceipted(0);
+                message.info('No items to receipt for this member.');
+            }
+        } catch (error) {
+            showAlert('Error', 'Failed to fetch receipt items. Please try again.', 'error');
+            setReceiptItems([]);
         }
     };
 
@@ -162,7 +167,6 @@ export default function CreateReceiptForm() {
             showAlert('Success', 'Receipt created successfully!', 'success');
             navigate('/receipt-list');
         } catch (error) {
-            console.error('Failed to create receipt:', error);
             showAlert('Error', 'Failed to create receipt. Please try again.', 'error');
         }
     };
@@ -393,7 +397,7 @@ export default function CreateReceiptForm() {
                 onCancel={() => setIsModalVisible(false)}
                 footer={null}
                 width="80%"
-                bodyStyle={{ padding: 0 }}
+                styles={{ body: { padding: 0 } }}
             >
                 <MemberSearch onMemberSelect={handleMemberSelect} />
             </Modal>
