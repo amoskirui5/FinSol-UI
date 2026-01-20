@@ -4,7 +4,7 @@ import { ColumnsType } from "antd/es/table";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { FinancialYear, FinancialYearApiPayload, FinancialYearFormInput, FinancialYearListResponse } from "../types/Settings/financialYearTypes";
 import FinancialYearForm from "../views/Settings/FinancialYearForm";
-import { fetchFinancialYears, saveFinancialYear } from "../services/financialYearService";
+import { fetchFinancialYears, saveFinancialYear, updateFinancialYear } from "../services/financialYearService";
 
 const FinancialYearTable: React.FC = () => {
     const [data, setData] = useState<FinancialYearListResponse>();
@@ -45,16 +45,30 @@ const FinancialYearTable: React.FC = () => {
     const handleSave = async (values: FinancialYearFormInput) => {
         setSaving(true);
         try {
-
-            // Format dates before sending
-            const payload: FinancialYearApiPayload = {
-                ...values,
-                startDate: values.startDate.format("YYYY-MM-DD"), 
-                endDate: values.endDate.format("YYYY-MM-DD"),     
-                financialYearId: selectedYear?.financialYearId || "", // if updating
-            };
-            await saveFinancialYear(payload);
-            await fetchFinancialYears();
+            // Use update if editing, otherwise create
+            if (selectedYear) {
+                // Update payload - excludes year field
+                const updatePayload = {
+                    financialYearId: selectedYear.financialYearId,
+                    startDate: values.startDate.format("YYYY-MM-DD"),
+                    endDate: values.endDate.format("YYYY-MM-DD"),
+                    isActive: values.isActive,
+                };
+                await updateFinancialYear(updatePayload);
+                message.success("Financial year updated successfully");
+            } else {
+                // Create payload - includes year field
+                const createPayload = {
+                    year: values.year,
+                    startDate: values.startDate.format("YYYY-MM-DD"),
+                    endDate: values.endDate.format("YYYY-MM-DD"),
+                    isActive: values.isActive,
+                };
+                await saveFinancialYear(createPayload);
+                message.success("Financial year created successfully");
+            }
+            
+            await fetchFinancialYearsResult();
             setModalVisible(false);
             setSelectedYear(null);
         } catch (error) {

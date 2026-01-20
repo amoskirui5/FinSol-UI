@@ -52,11 +52,11 @@ export const CREATE_MEMBER_LOAN_APPLICATION = `${import.meta.env.VITE_API_BASE_U
 export const FETCH_MEMBER_LOAN_APPLICATION = `${import.meta.env.VITE_API_BASE_URL}api/LoanManagement/applications`
 export const FETCH_LOAN_ELIGIBILITY = `${import.meta.env.VITE_API_BASE_URL}api/LoanManagement/eligibility`
 export const FETCH_LOAN_APPLICATION_BY_ID = `${import.meta.env.VITE_API_BASE_URL}api/LoanManagement/applications`
-export const CREATE_MEMBER_LOAN_APPROVAL = `${import.meta.env.VITE_API_BASE_URL}api/LoanManagement/member/approvals`
+export const CREATE_MEMBER_LOAN_APPROVAL = `${import.meta.env.VITE_API_BASE_URL}api/LoanManagement/approvals`
 export const CREATE_MEMBER_LOAN_DISBURSEMENT1 = `${import.meta.env.VITE_API_BASE_URL}api/MemberPayment/add-payment`
 export const FETCH_LOAN_APPROVAL_BY_ID = `${import.meta.env.VITE_API_BASE_URL}api/LoanManagement/approvals`
-export const CREATE_MEMBER_LOAN_STAGE = `${import.meta.env.VITE_API_BASE_URL}api/LoanManagement/member/stage-disbursement`
-export const CREATE_MEMBER_LOAN_DISBURSEMENT = `${import.meta.env.VITE_API_BASE_URL}api/LoanManagement/member/disbursements`
+export const CREATE_MEMBER_LOAN_STAGE = `${import.meta.env.VITE_API_BASE_URL}api/LoanManagement/disbursements/stage`
+export const CREATE_MEMBER_LOAN_DISBURSEMENT = `${import.meta.env.VITE_API_BASE_URL}api/LoanManagement/disbursements`
 
 // Additional new loan management endpoints
 export const GET_MEMBER_LOAN_BALANCE = `${import.meta.env.VITE_API_BASE_URL}api/LoanManagement/member`
