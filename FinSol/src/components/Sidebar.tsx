@@ -5,7 +5,7 @@ import {
   OrderedListOutlined, UsergroupAddOutlined, UserAddOutlined, FileAddOutlined,
   CheckCircleOutlined, WalletOutlined, StockOutlined, ApartmentOutlined,
   TeamOutlined, IdcardOutlined, FileSearchOutlined, MailOutlined, DatabaseOutlined,
-  SafetyOutlined, LockOutlined, MobileOutlined, FilePdfOutlined, FilePdfFilled,
+  SafetyOutlined, LockOutlined, MobileOutlined, FilePdfOutlined,
   FileDoneOutlined, AccountBookOutlined, BookOutlined, CalendarOutlined
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -141,9 +141,6 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
                 key: 'member-statement',
                 icon: <FilePdfOutlined />,
                 label: 'Member Statement',
-                children: [
-                  { key: 'member-statement', icon: <FilePdfFilled />, label: 'Loan & Deposit Statement' },
-                ],
               },
             ],
           },
@@ -216,7 +213,7 @@ const Sidebar: React.FC<{ collapsed: boolean; onCollapse: (collapsed: boolean) =
                 ],
               },
               {
-                key: 'loan-settings',
+                key: 'loan-settings-menu',
                 icon: <AccountBookOutlined />,
                 label: 'Loan',
                 children: [

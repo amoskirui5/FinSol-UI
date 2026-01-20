@@ -25,20 +25,18 @@ const MemberSearch: React.FC<MemberSearchProps> = ({ onMemberSelect }) => {
 
     useEffect(() => {
         const handler = debounce(async (term: string, field: string) => {
-            if (!term.trim()) {
-                setMembersList([]);
-                return;
-            }
+            // allow empty term to fetch default list (e.g., all members or server-handled default)
+            const trimmed = term.trim();
 
             setLoading(true);
             try {
                 const response = await fetchAllMembers({
-                    searchTerm: term,
+                    searchTerm: trimmed,
                     searchField: field,
                     pageNumber: 1,
                     pageSize: 50,
                 });
-                if (response.success) {
+                if (response && response.success) {
                     setMembersList(response.data.items);
                 } else {
                     setMembersList([]);
@@ -82,19 +80,19 @@ const MemberSearch: React.FC<MemberSearchProps> = ({ onMemberSelect }) => {
             title: 'Email',
             dataIndex: 'email',
             key: 'email',
-            render: (email: string) => maskData(email, 'email')
+            render: (email?: string) => email ? maskData(email, 'email') : ''
         },
         {
             title: 'Phone Number',
             dataIndex: 'phoneNumber',
             key: 'phoneNumber',
-            render: (phone: string) => maskData(phone, 'phone')
+            render: (phone?: string) => phone ? maskData(phone, 'phone') : ''
         },
         {
             title: 'National Id',
             dataIndex: 'nationalID',
             key: 'nationalID',
-            render: (nationalID: string) => maskData(nationalID, 'nationalID')
+            render: (nationalID?: string) => nationalID ? maskData(nationalID, 'nationalID') : ''
         },
         {
             title: 'Action',

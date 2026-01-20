@@ -23,13 +23,20 @@ export interface FinancialYearFormInput {
     financialYearId?: string; // Optional for new financial years
 }
 
-// For sending to API
+// For sending to API - Create
 export interface FinancialYearApiPayload {
   year: string;
   startDate: string; // ISO date string "YYYY-MM-DD"
   endDate: string;
   isActive: boolean;
-  financialYearId?: string;
+}
+
+// For sending to API - Update
+export interface UpdateFinancialYearApiPayload {
+  financialYearId: string;
+  startDate: string; // ISO date string "YYYY-MM-DD"
+  endDate: string;
+  isActive: boolean;
 }
 
  export interface FinancialYearListResponse {

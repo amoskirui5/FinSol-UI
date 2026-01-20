@@ -66,6 +66,7 @@ const LoanApplicationsTable: React.FC = () => {
       setLoading(true);
       const response = await fetchLoanApplications(paginationOptions);
 
+      console.log('Loan Applications Data:', response.data.items);
       setLoanApplications(response.data.items);
       setLoading(false);
     };
@@ -347,6 +348,15 @@ const LoanApplicationsTable: React.FC = () => {
       render: (_: unknown, record: LoanApplicationList) =>
         record.loanDisbursement?.disbursedAmount != null
           ? formatCurrency(record.loanDisbursement.disbursedAmount)
+          : '-',
+    },
+    {
+      title: 'Loan Balance',
+      dataIndex: 'loanBalance',
+      key: 'loanBalance',
+      render: (_: unknown, record: LoanApplicationList) =>
+        (record as any).loanBalance != null
+          ? formatCurrency((record as any).loanBalance)
           : '-',
     },
     {
